@@ -7,10 +7,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
 
 public class QueriesHelper {
 
+	private static String userName;
+	
 	public static void setDefaultAuthenticator() {
 		final Authenticator myAuth = getTokenAuthenticator();
 		Authenticator.setDefault(myAuth);
@@ -23,7 +28,9 @@ public class QueriesHelper {
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
-		final PasswordAuthentication passwordAuthentication = new PasswordAuthentication("plaquette-mido",
+		if (userName.isEmpty())
+			userName="plaquette-mido";
+		final PasswordAuthentication passwordAuthentication = new PasswordAuthentication(userName,
 				tokenValue.toCharArray());
 		final Authenticator myAuth = getConstantAuthenticator(passwordAuthentication);
 		return myAuth;
@@ -52,7 +59,9 @@ public class QueriesHelper {
 		if (!Files.exists(path)) {
 			return Optional.empty();
 		}
-		final String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+		final List<String> lines = new ArrayList<String>(Files.readAllLines(path, StandardCharsets.UTF_8));
+		userName=lines.get(0);
+		final String content = lines.get(1);
 		return Optional.of(content.replaceAll("\n", ""));
 	}
 
