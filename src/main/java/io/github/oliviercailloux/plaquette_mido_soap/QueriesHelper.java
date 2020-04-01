@@ -9,60 +9,60 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 
 public class QueriesHelper {
 
-	private static String userName;
-	
 	public static void setDefaultAuthenticator() {
 		final Authenticator myAuth = getTokenAuthenticator();
 		Authenticator.setDefault(myAuth);
 	}
 
 	public static Authenticator getTokenAuthenticator() {
-		final String tokenValue;
+		final PasswordAuthentication passwordAuthentication;
 		try {
-			tokenValue = getTokenValue();
+			passwordAuthentication = getAuthentication();
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
-		if (userName.isEmpty())
-			userName="plaquette-mido";
-		final PasswordAuthentication passwordAuthentication = new PasswordAuthentication(userName,
-				tokenValue.toCharArray());
+
 		final Authenticator myAuth = getConstantAuthenticator(passwordAuthentication);
 		return myAuth;
 	}
 
-	private static String getTokenValue() throws IOException, IllegalStateException {
-		final Optional<String> tokenOpt = getTokenOpt();
-		return tokenOpt
-				.orElseThrow(() -> new IllegalStateException("No token found in environment, in property or in file."));
+	private static PasswordAuthentication getAuthentication() throws IOException {
+		final Authentication authentication = readAuthentication();
+		final PasswordAuthentication passwordAuthentication;
+		if (authentication.getUserName().isEmpty())
+			throw new IOException("username is missing");
+		if (authentication.getPassword().isEmpty())
+			throw new IOException("password is missing for username " + authentication.getUserName());
+		passwordAuthentication = new PasswordAuthentication(authentication.getUserName().toString(),
+				authentication.getPassword().toString().toCharArray());
+		return passwordAuthentication;
 	}
 
-	private static Optional<String> getTokenOpt() throws IOException {
+	private static Authentication readAuthentication() throws IOException {
+
 		{
-			final String token = System.getenv("API_password");
-			if (token != null) {
-				return Optional.of(token);
+			final String tokenPassword = System.getenv("API_password");
+			final String tokenUserName = System.getenv("API_username");
+			if (tokenPassword != null && tokenUserName != null) {
+				return Authentication.given(tokenUserName, tokenPassword);
 			}
 		}
 		{
-			final String token = System.getProperty("API_password");
-			if (token != null) {
-				return Optional.of(token);
+			final String tokenPassword = System.getProperty("API_password");
+			final String tokenUserName = System.getProperty("API_username");
+			if (tokenPassword != null && tokenUserName != null) {
+				return Authentication.given(tokenUserName, tokenPassword);
 			}
 		}
-		final Path path = Paths.get("API_password.txt");
+		final Path path = Paths.get("API_login.txt");
 		if (!Files.exists(path)) {
-			return Optional.empty();
+			return Authentication.empty();
 		}
 		final List<String> lines = new ArrayList<String>(Files.readAllLines(path, StandardCharsets.UTF_8));
-		userName=lines.get(0);
-		final String content = lines.get(1);
-		return Optional.of(content.replaceAll("\n", ""));
+		return Authentication.given(lines.get(0), lines.get(1));
 	}
 
 	private static Authenticator getConstantAuthenticator(PasswordAuthentication passwordAuthentication) {
