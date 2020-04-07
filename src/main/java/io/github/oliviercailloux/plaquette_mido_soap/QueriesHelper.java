@@ -33,26 +33,26 @@ public class QueriesHelper {
 		final Authentication authentication = readAuthentication();
 		final PasswordAuthentication passwordAuthentication;
 		if (authentication.getUserName().isEmpty())
-			throw new IOException("username is missing");
+			throw new IllegalStateException("username is missing");
 		if (authentication.getPassword().isEmpty())
-			throw new IOException("password is missing for username " + authentication.getUserName());
-		passwordAuthentication = new PasswordAuthentication(authentication.getUserName().toString(),
-				authentication.getPassword().toString().toCharArray());
+			throw new IllegalStateException("password is missing for username " + authentication.getUserName());
+		passwordAuthentication = new PasswordAuthentication(authentication.getUserName().get(),
+				authentication.getPassword().get().toCharArray());
 		return passwordAuthentication;
 	}
 
 	private static Authentication readAuthentication() throws IOException {
 
 		{
-			final String tokenPassword = System.getenv("API_password");
 			final String tokenUserName = System.getenv("API_username");
+			final String tokenPassword = System.getenv("API_password");
 			if (tokenPassword != null && tokenUserName != null) {
 				return Authentication.given(tokenUserName, tokenPassword);
 			}
 		}
 		{
-			final String tokenPassword = System.getProperty("API_password");
 			final String tokenUserName = System.getProperty("API_username");
+			final String tokenPassword = System.getProperty("API_password");
 			if (tokenPassword != null && tokenUserName != null) {
 				return Authentication.given(tokenUserName, tokenPassword);
 			}
@@ -61,8 +61,20 @@ public class QueriesHelper {
 		if (!Files.exists(path)) {
 			return Authentication.empty();
 		}
+		if (Files.readString(path).isEmpty()) {
+			return Authentication.empty();
+		}
 		final List<String> lines = new ArrayList<String>(Files.readAllLines(path, StandardCharsets.UTF_8));
-		return Authentication.given(lines.get(0), lines.get(1));
+		{
+			if (lines.size() == 1) {
+				return Authentication.onlyUserName(lines.get(0).replaceAll("\n", ""));
+			} else if (lines.size() == 2) {
+				String userName = lines.get(0).replaceAll("\n", "");
+				String password = lines.get(1).replaceAll("\n", "");
+				return Authentication.given(userName, password);
+			} else
+				throw new IllegalStateException("File API_login.txt is not written correctly");
+		}
 	}
 
 	private static Authenticator getConstantAuthenticator(PasswordAuthentication passwordAuthentication) {

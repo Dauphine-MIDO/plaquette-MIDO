@@ -2,6 +2,10 @@ package io.github.oliviercailloux.plaquette_mido_soap;
 
 import java.util.Optional;
 
+/**
+ * This class is used to contain the information to connect to the API. It is
+ * immutable and can be initialized by an username, a password, both or nothing.
+ */
 public class Authentication {
 	private final Optional<String> userName;
 	private final Optional<String> password;
@@ -27,7 +31,7 @@ public class Authentication {
 	 * 
 	 */
 
-	public Authentication(Optional<String> userName, Optional<String> password) {
+	private Authentication(Optional<String> userName, Optional<String> password) {
 		this.userName = userName;
 		this.password = password;
 	}
@@ -51,7 +55,7 @@ public class Authentication {
 		Authentication authentication = new Authentication(Optional.empty(), Optional.empty());
 		return authentication;
 	}
-	
+
 	public Optional<String> getUserName() {
 		return userName;
 	}
