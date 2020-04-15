@@ -1,7 +1,7 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
 import java.util.Optional;
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkNotNull;;
 
 /**
  * This class is used to contain the information to connect to the API. It is
@@ -12,7 +12,7 @@ public class Authentication {
 	private final Optional<String> password;
 
 	private Authentication(Optional<String> userName, Optional<String> password) {
-		this.userName = Preconditions.checkNotNull(userName);
+		this.userName = checkNotNull(userName);
 		this.password = password;
 	}
 

@@ -14,7 +14,6 @@ class AuthenticationTest {
 	@Rule
 	public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
-//ReadAuthentication Tests
 
 	@Test
 	public void testPropReadAuthentication() throws IOException {
@@ -92,7 +91,6 @@ class AuthenticationTest {
 		System.clearProperty("API_password");
 	}
 
-//GetTokenAuthenticator Tests
 
 	@Test
 	public void testNoneGetTokenAuthenticator() {
@@ -105,7 +103,7 @@ class AuthenticationTest {
 		environmentVariables.set("API_username", "env username");
 		
 		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getTokenAuthenticator());
-		assertEquals("password is missing for username \"env username\"", exception.getMessage());
+		assertEquals("password is missing for username env username", exception.getMessage());
 		
 		environmentVariables.set("API_username", null);
 	}
@@ -115,7 +113,7 @@ class AuthenticationTest {
 		System.setProperty("API_username", "prop username");
 		
 		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getTokenAuthenticator());
-		assertEquals("password is missing for username \"prop username\"", exception.getMessage());
+		assertEquals("password is missing for username prop username", exception.getMessage());
 		
 		environmentVariables.set("API_username", null);
 		System.clearProperty("API_username");
