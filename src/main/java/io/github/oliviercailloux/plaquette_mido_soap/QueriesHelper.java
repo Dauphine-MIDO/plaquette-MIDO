@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.nio.charset.StandardCharsets;
@@ -9,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.TreeMap;
 
 public class QueriesHelper {
 
@@ -22,7 +25,7 @@ public class QueriesHelper {
 		try {
 			passwordAuthentication = getAuthentication();
 		} catch (IOException e) {
-			throw new IllegalStateException(e);
+			throw new UncheckedIOException(e);
 		}
 
 		final Authenticator myAuth = getConstantAuthenticator(passwordAuthentication);
@@ -35,46 +38,71 @@ public class QueriesHelper {
 		if (authentication.getUserName().isEmpty())
 			throw new IllegalStateException("username is missing");
 		if (authentication.getPassword().isEmpty())
-			throw new IllegalStateException("password is missing for username " + authentication.getUserName());
+			throw new IllegalStateException("password is missing for username \"" + authentication.getUserName().get()+"\"");
 		passwordAuthentication = new PasswordAuthentication(authentication.getUserName().get(),
 				authentication.getPassword().get().toCharArray());
 		return passwordAuthentication;
 	}
 
-	private static Authentication readAuthentication() throws IOException {
+	public static Authentication readAuthentication() throws IOException {
 
+		TreeMap<Float, Authentication> map = new TreeMap<>();
+		Optional<String> optUserName;
+		Optional<String> optPassword;
 		{
 			final String tokenUserName = System.getenv("API_username");
 			final String tokenPassword = System.getenv("API_password");
-			if (tokenPassword != null && tokenUserName != null) {
-				return Authentication.given(tokenUserName, tokenPassword);
+			if (tokenUserName != null) {
+				optUserName = Optional.of(tokenUserName);
+
+				if (tokenPassword != null) {
+					optPassword = Optional.of(tokenPassword);
+					map.put((float) 1.1, Authentication.given(optUserName, optPassword));
+				} else {
+					optPassword = Optional.ofNullable(tokenPassword);
+					map.put((float) .1, Authentication.given(optUserName, optPassword));
+				}
 			}
 		}
 		{
 			final String tokenUserName = System.getProperty("API_username");
 			final String tokenPassword = System.getProperty("API_password");
-			if (tokenPassword != null && tokenUserName != null) {
-				return Authentication.given(tokenUserName, tokenPassword);
+			if (tokenUserName != null) {
+				optUserName = Optional.of(tokenUserName);
+
+				if (tokenPassword != null) {
+					optPassword = Optional.of(tokenPassword);
+					map.put((float) 1.2, Authentication.given(optUserName, optPassword));
+				} else {
+					optPassword = Optional.ofNullable(tokenPassword);
+					map.put((float) .2, Authentication.given(optUserName, optPassword));
+				}
 			}
 		}
-		final Path path = Paths.get("API_login.txt");
-		if (!Files.exists(path)) {
-			return Authentication.empty();
-		}
-		if (Files.readString(path).isEmpty()) {
-			return Authentication.empty();
-		}
-		final List<String> lines = new ArrayList<String>(Files.readAllLines(path, StandardCharsets.UTF_8));
 		{
-			if (lines.size() == 1) {
-				return Authentication.onlyUserName(lines.get(0).replaceAll("\n", ""));
-			} else if (lines.size() == 2) {
-				String userName = lines.get(0).replaceAll("\n", "");
-				String password = lines.get(1).replaceAll("\n", "");
-				return Authentication.given(userName, password);
-			} else
-				throw new IllegalStateException("File API_login.txt is not written correctly");
+			final Path path = Paths.get("API_login.txt");
+			if (!Files.exists(path)) {
+				map.put((float) 0, Authentication.empty());
+			}
+			final List<String> lines = new ArrayList<String>(Files.readAllLines(path, StandardCharsets.UTF_8));
+			{
+				if (lines.isEmpty()) {
+					map.put((float) 0, Authentication.empty());
+				}
+				else if (lines.size() == 1) {
+					optUserName = Optional.of(lines.get(0).replaceAll("\n", ""));
+					optPassword = Optional.empty();
+					map.put((float) .3, Authentication.given(optUserName, optPassword));
+				} else if (lines.size() == 2) {
+					optUserName = Optional.of(lines.get(0).replaceAll("\n", ""));
+					optPassword = Optional.of(lines.get(1).replaceAll("\n", ""));
+					map.put((float) 1.3, Authentication.given(optUserName, optPassword));
+				} else
+					throw new IllegalStateException(lines.toString() + " File API_login.txt is not written correctly");
+			}
 		}
+		return map.lastEntry().getValue();
+
 	}
 
 	private static Authenticator getConstantAuthenticator(PasswordAuthentication passwordAuthentication) {
