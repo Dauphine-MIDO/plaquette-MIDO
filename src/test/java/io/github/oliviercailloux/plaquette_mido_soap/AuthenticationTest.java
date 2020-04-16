@@ -2,11 +2,13 @@ package io.github.oliviercailloux.plaquette_mido_soap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
+import java.nio.file.Path;
 
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,107 +19,97 @@ class AuthenticationTest {
 
 	@Rule
 	public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
+	@Rule
+	public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
 	@Test
-	public void testPropReadAuthentication() throws IOException {
-
+	public void testPropReadAuthentication() throws Exception {
 		System.setProperty("API_username", "prop username");
 		System.setProperty("API_password", "prop password");
-		Authentication myAuth = QueriesHelper.readAuthentication();
+		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
+
+		final Authentication myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
-
-		System.clearProperty("API_username");
-		System.clearProperty("API_password");
 	}
 
 	@Test
-	public void testReadAuthentication() throws IOException {
+	public void testHalfEnvAndPropReadAuthentication() throws Exception {
 		environmentVariables.set("API_username", "env username");
 		System.setProperty("API_username", "prop username");
 		System.setProperty("API_password", "prop password");
-		Authentication myAuth = QueriesHelper.readAuthentication();
+		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
+
+		final Authentication myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
-
-		environmentVariables.set("API_username", null);
-		System.clearProperty("API_username");
-		System.clearProperty("API_password");
 	}
 
 	@Test
-	public void testEnvReadAuthentication() throws IOException {
-
+	public void testHalfPropAndEnvReadAuthentication() throws Exception {
+		System.setProperty("API_username", "prop username");
 		environmentVariables.set("API_username", "env username");
 		environmentVariables.set("API_password", "env password");
-		System.setProperty("API_username", "prop username");
-		Authentication myAuth = QueriesHelper.readAuthentication();
+		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
+
+		final Authentication myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("env username", myAuth.getUsername().get());
 		assertEquals("env password", myAuth.getPassword().get());
-
-		environmentVariables.set("API_username", null);
-		environmentVariables.set("API_password", null);
-		System.clearProperty("API_username");
 	}
 
 	@Test
-	public void testEmptypasswordReadAuthentication() throws IOException {
+	public void testNoPasswordReadAuthentication() throws Exception {
 		environmentVariables.set("API_username", "env username");
 		System.setProperty("API_username", "prop username");
-		Authentication myAuth = QueriesHelper.readAuthentication();
+		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
+
+		final Authentication myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
-
-		environmentVariables.set("API_username", null);
-		System.clearProperty("API_username");
+		assertTrue(myAuth.getPassword().isEmpty(), myAuth.getPassword().toString());
 	}
 
 	@Test
-	public void testEnvOrPropAuthentication() throws IOException {
-
+	public void testPropAndEnvReadAuthentication() throws Exception {
 		environmentVariables.set("API_username", "env username");
 		environmentVariables.set("API_password", "env password");
 		System.setProperty("API_username", "prop username");
 		System.setProperty("API_password", "prop password");
-		Authentication myAuth = QueriesHelper.readAuthentication();
+		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
+
+		final Authentication myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
-
-		environmentVariables.set("API_username", null);
-		environmentVariables.set("API_password", null);
-		System.clearProperty("API_username");
-		System.clearProperty("API_password");
 	}
 
 	@Test
-	public void testNoneGetTokenAuthenticator() {
-		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
-		assertEquals("username is missing", exception.getMessage());
+	public void testNoneGetAuthenticator() throws Exception {
+		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
+
+		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
+		assertEquals("Login information not found.", exception.getMessage());
 	}
 
 	@Test
-	public void testEnvUserNameGetTokenAuthenticator() {
+	public void testNoPasswordGetAuthenticator() throws Exception {
 		environmentVariables.set("API_username", "env username");
+		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
+		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
 		assertEquals("password is missing for username env username", exception.getMessage());
-
-		environmentVariables.set("API_username", null);
 	}
 
 	@Test
-	public void testPropUserNameGetTokenAuthenticator() {
+	public void testPropAndEnvUserNameNoPasswordGetAuthenticator() throws Exception {
 		environmentVariables.set("API_username", "env username");
 		System.setProperty("API_username", "prop username");
+		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
+		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
 		assertEquals("password is missing for username prop username", exception.getMessage());
-
-		environmentVariables.set("API_username", null);
-		System.clearProperty("API_username");
 	}
 }
