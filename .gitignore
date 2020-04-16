@@ -4,7 +4,7 @@
 /target/
 .checkstyle
 
-WSDL_access.txt
+WSDL_login.txt
 API_login.txt
 
 out.adoc
