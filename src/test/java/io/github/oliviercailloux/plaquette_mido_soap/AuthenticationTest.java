@@ -22,7 +22,7 @@ class AuthenticationTest {
 		System.setProperty("API_password", "prop password");
 		Authentication myAuth = QueriesHelper.readAuthentication();
 
-		assertEquals("prop username", myAuth.getUserName().get());
+		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
 
 		System.clearProperty("API_username");
@@ -37,7 +37,7 @@ class AuthenticationTest {
 		System.setProperty("API_password", "prop password");
 		Authentication myAuth = QueriesHelper.readAuthentication();
 
-		assertEquals("prop username", myAuth.getUserName().get());
+		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
 
 		environmentVariables.set("API_username", null);
@@ -53,7 +53,7 @@ class AuthenticationTest {
 		System.setProperty("API_username", "prop username");
 		Authentication myAuth = QueriesHelper.readAuthentication();
 
-		assertEquals("env username", myAuth.getUserName().get());
+		assertEquals("env username", myAuth.getUsername().get());
 		assertEquals("env password", myAuth.getPassword().get());
 
 		environmentVariables.set("API_username", null);
@@ -67,7 +67,7 @@ class AuthenticationTest {
 		System.setProperty("API_username", "prop username");
 		Authentication myAuth = QueriesHelper.readAuthentication();
 
-		assertEquals("prop username", myAuth.getUserName().get());
+		assertEquals("prop username", myAuth.getUsername().get());
 
 		environmentVariables.set("API_username", null);
 		System.clearProperty("API_username");
@@ -82,7 +82,7 @@ class AuthenticationTest {
 		System.setProperty("API_password", "prop password");
 		Authentication myAuth = QueriesHelper.readAuthentication();
 
-		assertEquals("prop username", myAuth.getUserName().get());
+		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
 
 		environmentVariables.set("API_username", null);

@@ -35,12 +35,12 @@ public class QueriesHelper {
 	private static PasswordAuthentication getAuthentication() throws IOException {
 		final Authentication authentication = readAuthentication();
 		final PasswordAuthentication passwordAuthentication;
-		if (authentication.getUserName().isEmpty())
+		if (authentication.getUsername().isEmpty())
 			throw new IllegalStateException("username is missing");
 		if (authentication.getPassword().isEmpty())
 			throw new IllegalStateException(
-					"password is missing for username " + authentication.getUserName().get());
-		passwordAuthentication = new PasswordAuthentication(authentication.getUserName().get(),
+					"password is missing for username " + authentication.getUsername().get());
+		passwordAuthentication = new PasswordAuthentication(authentication.getUsername().get(),
 				authentication.getPassword().get().toCharArray());
 		return passwordAuthentication;
 	}
