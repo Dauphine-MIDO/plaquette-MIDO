@@ -48,4 +48,8 @@ class Authentication {
 	public Optional<String> getPassword() {
 		return password;
 	}
+
+	public int getInformationValue() {
+		return (username.isPresent() ? 1 : 0) + (password.isPresent() ? 1 : 0);
+	}
 }

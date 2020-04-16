@@ -1,19 +1,22 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
 import org.junit.Rule;
-import org.junit.jupiter.api.Test;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class AuthenticationTest {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationTest.class);
 
 	@Rule
 	public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
-
 
 	@Test
 	public void testPropReadAuthentication() throws IOException {
@@ -31,7 +34,6 @@ class AuthenticationTest {
 
 	@Test
 	public void testReadAuthentication() throws IOException {
-
 		environmentVariables.set("API_username", "env username");
 		System.setProperty("API_username", "prop username");
 		System.setProperty("API_password", "prop password");
@@ -91,30 +93,30 @@ class AuthenticationTest {
 		System.clearProperty("API_password");
 	}
 
-
 	@Test
 	public void testNoneGetTokenAuthenticator() {
-		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getTokenAuthenticator());
+		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
 		assertEquals("username is missing", exception.getMessage());
 	}
-	
+
 	@Test
 	public void testEnvUserNameGetTokenAuthenticator() {
 		environmentVariables.set("API_username", "env username");
-		
-		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getTokenAuthenticator());
+
+		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
 		assertEquals("password is missing for username env username", exception.getMessage());
-		
+
 		environmentVariables.set("API_username", null);
 	}
+
 	@Test
 	public void testPropUserNameGetTokenAuthenticator() {
 		environmentVariables.set("API_username", "env username");
 		System.setProperty("API_username", "prop username");
-		
-		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getTokenAuthenticator());
+
+		Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
 		assertEquals("password is missing for username prop username", exception.getMessage());
-		
+
 		environmentVariables.set("API_username", null);
 		System.clearProperty("API_username");
 	}
