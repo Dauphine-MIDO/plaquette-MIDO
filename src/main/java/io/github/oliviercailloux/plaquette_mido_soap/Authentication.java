@@ -5,10 +5,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Optional;;
 
 /**
- * This class is used to contain the information to connect to the API. It is
- * immutable and can be initialized by an username, a password, both or nothing.
+ * Immutable.
  */
-public class Authentication {
+class Authentication {
 	public static Authentication given(Optional<String> userName, Optional<String> password) {
 		Authentication authentication = new Authentication(userName, password);
 		return authentication;

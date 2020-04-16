@@ -35,17 +35,18 @@ public class QueriesHelper {
 	private static PasswordAuthentication getAuthentication() throws IOException {
 		final Authentication authentication = readAuthentication();
 		final PasswordAuthentication passwordAuthentication;
-		if (authentication.getUsername().isEmpty())
+		if (authentication.getUsername().isEmpty()) {
 			throw new IllegalStateException("username is missing");
-		if (authentication.getPassword().isEmpty())
-			throw new IllegalStateException(
-					"password is missing for username " + authentication.getUsername().get());
+		}
+		if (authentication.getPassword().isEmpty()) {
+			throw new IllegalStateException("password is missing for username " + authentication.getUsername().get());
+		}
 		passwordAuthentication = new PasswordAuthentication(authentication.getUsername().get(),
 				authentication.getPassword().get().toCharArray());
 		return passwordAuthentication;
 	}
 
-	public static Authentication readAuthentication() throws IOException {
+	static Authentication readAuthentication() throws IOException {
 
 		TreeMap<Float, Authentication> map = new TreeMap<>();
 		Optional<String> optUserName;
@@ -66,7 +67,7 @@ public class QueriesHelper {
 				}
 			}
 		}
-		
+
 		{
 			final String tokenUserName = System.getenv("API_username");
 			final String tokenPassword = System.getenv("API_password");
@@ -82,7 +83,7 @@ public class QueriesHelper {
 				}
 			}
 		}
-		
+
 		{
 			final Path path = Paths.get("API_login.txt");
 			if (!Files.exists(path)) {
@@ -100,11 +101,12 @@ public class QueriesHelper {
 					optUserName = Optional.of(lines.get(0).replaceAll("\n", ""));
 					optPassword = Optional.of(lines.get(1).replaceAll("\n", ""));
 					map.put((float) 1.1, Authentication.given(optUserName, optPassword));
-				} else
+				} else {
 					throw new IllegalStateException(lines.toString() + " File API_login.txt is not written correctly");
+				}
 			}
 		}
-		
+
 		return map.lastEntry().getValue();
 
 	}
