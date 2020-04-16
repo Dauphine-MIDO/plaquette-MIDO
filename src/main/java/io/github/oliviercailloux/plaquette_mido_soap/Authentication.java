@@ -2,7 +2,7 @@ package io.github.oliviercailloux.plaquette_mido_soap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Optional;;
+import java.util.Optional;
 
 /**
  * Immutable.
