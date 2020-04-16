@@ -9,14 +9,6 @@ import java.util.Optional;;
  * immutable and can be initialized by an username, a password, both or nothing.
  */
 public class Authentication {
-	private final Optional<String> username;
-	private final Optional<String> password;
-
-	private Authentication(Optional<String> username, Optional<String> password) {
-		this.username = checkNotNull(username);
-		this.password = checkNotNull(password);
-	}
-
 	public static Authentication given(Optional<String> userName, Optional<String> password) {
 		Authentication authentication = new Authentication(userName, password);
 		return authentication;
@@ -40,6 +32,14 @@ public class Authentication {
 	public static Authentication empty() {
 		Authentication authentication = new Authentication(Optional.empty(), Optional.empty());
 		return authentication;
+	}
+
+	private final Optional<String> username;
+	private final Optional<String> password;
+
+	private Authentication(Optional<String> username, Optional<String> password) {
+		this.username = checkNotNull(username);
+		this.password = checkNotNull(password);
 	}
 
 	public Optional<String> getUsername() {
