@@ -8,8 +8,8 @@ import java.util.Optional;
  * Immutable.
  */
 class LoginOpt {
-	public static LoginOpt given(Optional<String> userName, Optional<String> password) {
-		LoginOpt authentication = new LoginOpt(userName, password);
+	public static LoginOpt given(Optional<String> username, Optional<String> password) {
+		LoginOpt authentication = new LoginOpt(username, password);
 		return authentication;
 	}
 
