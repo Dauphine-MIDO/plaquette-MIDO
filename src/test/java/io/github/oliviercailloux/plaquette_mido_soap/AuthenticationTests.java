@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class AuthenticationTest {
+class AuthenticationTests {
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationTests.class);
 
 	@Rule
 	public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
