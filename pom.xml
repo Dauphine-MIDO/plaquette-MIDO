@@ -123,12 +123,19 @@
 		</dependency>
 
 		<dependency>
+			<!-- For AuthenticationTests, should be replaced when proper support for 
+				Jupiter is implemented. -->
 			<groupId>com.github.stefanbirkner</groupId>
 			<artifactId>system-rules</artifactId>
 			<version>1.17.2</version>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.junit-pioneer</groupId>
+			<artifactId>junit-pioneer</artifactId>
+			<version>0.5.6</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

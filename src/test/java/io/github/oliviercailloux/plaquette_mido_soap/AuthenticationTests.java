@@ -8,8 +8,8 @@ import java.nio.file.Path;
 
 import org.junit.Rule;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
-import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,15 +17,18 @@ class AuthenticationTests {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationTests.class);
 
+	/**
+	 * This is for JUnit 4, no equivalent system for JUnit 5 found (but see
+	 * https://github.com/stefanbirkner/system-rules/issues/55). Apparently, it
+	 * works…
+	 */
 	@Rule
 	public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
-	@Rule
-	public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
+	@SetSystemProperty(key = "API_username", value = "prop username")
+	@SetSystemProperty(key = "API_password", value = "prop password")
 	@Test
 	public void testPropReadAuthentication() throws Exception {
-		System.setProperty("API_username", "prop username");
-		System.setProperty("API_password", "prop password");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
 		final Authentication myAuth = QueriesHelper.readAuthentication();
@@ -34,11 +37,11 @@ class AuthenticationTests {
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
+	@SetSystemProperty(key = "API_username", value = "prop username")
+	@SetSystemProperty(key = "API_password", value = "prop password")
 	@Test
 	public void testHalfEnvAndPropReadAuthentication() throws Exception {
 		environmentVariables.set("API_username", "env username");
-		System.setProperty("API_username", "prop username");
-		System.setProperty("API_password", "prop password");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
 		final Authentication myAuth = QueriesHelper.readAuthentication();
@@ -47,9 +50,9 @@ class AuthenticationTests {
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
+	@SetSystemProperty(key = "API_username", value = "prop username")
 	@Test
 	public void testHalfPropAndEnvReadAuthentication() throws Exception {
-		System.setProperty("API_username", "prop username");
 		environmentVariables.set("API_username", "env username");
 		environmentVariables.set("API_password", "env password");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
@@ -60,10 +63,10 @@ class AuthenticationTests {
 		assertEquals("env password", myAuth.getPassword().get());
 	}
 
+	@SetSystemProperty(key = "API_username", value = "prop username")
 	@Test
 	public void testNoPasswordReadAuthentication() throws Exception {
 		environmentVariables.set("API_username", "env username");
-		System.setProperty("API_username", "prop username");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
 		final Authentication myAuth = QueriesHelper.readAuthentication();
@@ -72,10 +75,10 @@ class AuthenticationTests {
 		assertTrue(myAuth.getPassword().isEmpty(), myAuth.getPassword().toString());
 	}
 
+	@SetSystemProperty(key = "API_username", value = "prop username")
+	@SetSystemProperty(key = "API_password", value = "prop password")
 	@Test
 	public void testPropAndEnvReadAuthentication() throws Exception {
-		environmentVariables.set("API_username", "env username");
-		environmentVariables.set("API_password", "env password");
 		System.setProperty("API_username", "prop username");
 		System.setProperty("API_password", "prop password");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
@@ -100,16 +103,16 @@ class AuthenticationTests {
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
 		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
-		assertEquals("password is missing for username env username", exception.getMessage());
+		assertEquals("Found username 'env username' but no password.", exception.getMessage());
 	}
 
+	@SetSystemProperty(key = "API_username", value = "prop username")
 	@Test
 	public void testPropAndEnvUserNameNoPasswordGetAuthenticator() throws Exception {
 		environmentVariables.set("API_username", "env username");
-		System.setProperty("API_username", "prop username");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
 		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
-		assertEquals("password is missing for username prop username", exception.getMessage());
+		assertEquals("Found username 'prop username' but no password.", exception.getMessage());
 	}
 }

@@ -55,7 +55,7 @@ public class QueriesHelper {
 		}
 		if (authentication.getPassword().isEmpty()) {
 			throw new IllegalStateException(
-					"Found username " + authentication.getUsername().get() + " but no password.");
+					"Found username '" + authentication.getUsername().get() + "' but no password.");
 		}
 		final PasswordAuthentication passwordAuthentication = new PasswordAuthentication(
 				authentication.getUsername().get(), authentication.getPassword().get().toCharArray());
