@@ -31,7 +31,7 @@ class AuthenticationTests {
 	public void testPropReadAuthentication() throws Exception {
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		final Authentication myAuth = QueriesHelper.readAuthentication();
+		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
@@ -44,7 +44,7 @@ class AuthenticationTests {
 		environmentVariables.set("API_username", "env username");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		final Authentication myAuth = QueriesHelper.readAuthentication();
+		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
@@ -57,7 +57,7 @@ class AuthenticationTests {
 		environmentVariables.set("API_password", "env password");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		final Authentication myAuth = QueriesHelper.readAuthentication();
+		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("env username", myAuth.getUsername().get());
 		assertEquals("env password", myAuth.getPassword().get());
@@ -69,7 +69,7 @@ class AuthenticationTests {
 		environmentVariables.set("API_username", "env username");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		final Authentication myAuth = QueriesHelper.readAuthentication();
+		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertTrue(myAuth.getPassword().isEmpty(), myAuth.getPassword().toString());
@@ -83,7 +83,7 @@ class AuthenticationTests {
 		System.setProperty("API_password", "prop password");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		final Authentication myAuth = QueriesHelper.readAuthentication();
+		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());

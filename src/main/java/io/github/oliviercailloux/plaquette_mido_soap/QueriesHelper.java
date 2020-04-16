@@ -27,7 +27,7 @@ public class QueriesHelper {
 	 *
 	 * @throws IllegalStateException if information is missing
 	 */
-	public static Authenticator getAuthenticator() throws IllegalStateException {
+	private static Authenticator getAuthenticator() throws IllegalStateException {
 		final PasswordAuthentication passwordAuthentication = getAuthentication();
 
 		return getConstantAuthenticator(passwordAuthentication);
@@ -40,7 +40,7 @@ public class QueriesHelper {
 	 * @throws IllegalStateException if information is missing
 	 */
 	private static PasswordAuthentication getAuthentication() throws IllegalStateException {
-		final Authentication authentication;
+		final LoginOpt authentication;
 		try {
 			authentication = readAuthentication();
 		} catch (IOException e) {
@@ -66,22 +66,22 @@ public class QueriesHelper {
 	 * Returns the best authentication information it could find, throwing no error
 	 * if some is missing.
 	 */
-	static Authentication readAuthentication() throws IOException {
-		final Authentication propertyAuthentication;
+	static LoginOpt readAuthentication() throws IOException {
+		final LoginOpt propertyAuthentication;
 		{
 			final String username = System.getProperty("API_username");
 			final String password = System.getProperty("API_password");
-			propertyAuthentication = Authentication.given(Optional.ofNullable(username), Optional.ofNullable(password));
+			propertyAuthentication = LoginOpt.given(Optional.ofNullable(username), Optional.ofNullable(password));
 		}
 
-		final Authentication envAuthentication;
+		final LoginOpt envAuthentication;
 		{
 			final String username = System.getenv("API_username");
 			final String password = System.getenv("API_password");
-			envAuthentication = Authentication.given(Optional.ofNullable(username), Optional.ofNullable(password));
+			envAuthentication = LoginOpt.given(Optional.ofNullable(username), Optional.ofNullable(password));
 		}
 
-		final Authentication fileAuthentication;
+		final LoginOpt fileAuthentication;
 		{
 			final Optional<String> optUsername;
 			final Optional<String> optPassword;
@@ -107,10 +107,10 @@ public class QueriesHelper {
 							"File " + apiLoginFile + " is too long: " + lines.toString() + " lines");
 				}
 			}
-			fileAuthentication = Authentication.given(optUsername, optPassword);
+			fileAuthentication = LoginOpt.given(optUsername, optPassword);
 		}
 
-		final TreeMap<Double, Authentication> map = new TreeMap<>();
+		final TreeMap<Double, LoginOpt> map = new TreeMap<>();
 		map.put(propertyAuthentication.getInformationValue() * 1.2d, propertyAuthentication);
 		map.put(envAuthentication.getInformationValue() * 1.1d, envAuthentication);
 		map.put(fileAuthentication.getInformationValue() * 1.0d, fileAuthentication);
