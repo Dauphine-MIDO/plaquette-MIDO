@@ -93,7 +93,8 @@ class AuthenticationTests {
 	public void testNoneGetAuthenticator() throws Exception {
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
+		final Exception exception = assertThrows(IllegalStateException.class,
+				() -> QueriesHelper.setDefaultAuthenticator());
 		assertEquals("Login information not found.", exception.getMessage());
 	}
 
@@ -102,7 +103,8 @@ class AuthenticationTests {
 		environmentVariables.set("API_username", "env username");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
+		final Exception exception = assertThrows(IllegalStateException.class,
+				() -> QueriesHelper.setDefaultAuthenticator());
 		assertEquals("Found username 'env username' but no password.", exception.getMessage());
 	}
 
@@ -112,7 +114,8 @@ class AuthenticationTests {
 		environmentVariables.set("API_username", "env username");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
-		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.getAuthenticator());
+		final Exception exception = assertThrows(IllegalStateException.class,
+				() -> QueriesHelper.setDefaultAuthenticator());
 		assertEquals("Found username 'prop username' but no password.", exception.getMessage());
 	}
 }
