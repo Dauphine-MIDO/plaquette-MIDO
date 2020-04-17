@@ -104,7 +104,7 @@ public class QueriesHelper {
 				}
 				if (iterator.hasNext()) {
 					throw new IllegalStateException(
-							"File " + apiLoginFile + " is too long: " + lines.toString() + " lines");
+							"File " + apiLoginFile + " is too long: " + lines.size() + " lines");
 				}
 			}
 			fileAuthentication = LoginOpt.given(optUsername, optPassword);
