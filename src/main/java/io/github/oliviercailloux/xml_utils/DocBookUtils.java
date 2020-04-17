@@ -75,8 +75,7 @@ public class DocBookUtils {
 	}
 
 	public static boolean validate(InputSource docBook) {
-		InputSource schemaSource = new InputSource(
-				Path.of("/usr/share/xml/docbook/schema/rng/5.0/docbook.rng").toUri().toString());
+		InputSource schemaSource = new InputSource(DocBookUtils.class.getResource("docbook.rng").toString());
 		return validate(docBook, schemaSource);
 	}
 
