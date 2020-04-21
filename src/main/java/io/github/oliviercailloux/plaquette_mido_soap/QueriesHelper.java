@@ -10,11 +10,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
 public class QueriesHelper {
 	static Path apiLoginFile = Path.of("API_login.txt");
+	static Map<String, String> env = System.getenv();
 
 	public static void setDefaultAuthenticator() {
 		final Authenticator myAuth = getAuthenticator();
@@ -76,8 +78,8 @@ public class QueriesHelper {
 
 		final LoginOpt envAuthentication;
 		{
-			final String username = System.getenv("API_username");
-			final String password = System.getenv("API_password");
+			final String username = env.get("API_username");
+			final String password = env.get("API_password");
 			envAuthentication = LoginOpt.given(Optional.ofNullable(username), Optional.ofNullable(password));
 		}
 
