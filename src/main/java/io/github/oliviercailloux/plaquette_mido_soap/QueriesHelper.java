@@ -104,7 +104,7 @@ public class QueriesHelper {
 				} else {
 					optPassword = Optional.empty();
 				}
-				if (iterator.hasNext()) {
+				if (iterator.hasNext() && !iterator.next().isEmpty()) {
 					throw new IllegalStateException(
 							"File " + apiLoginFile + " is too long: " + lines.size() + " lines");
 				}
