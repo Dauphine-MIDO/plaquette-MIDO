@@ -12,7 +12,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.slf4j.Logger;
