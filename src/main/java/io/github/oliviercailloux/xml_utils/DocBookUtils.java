@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -75,8 +74,7 @@ public class DocBookUtils {
 	}
 
 	public static boolean validate(InputSource docBook) {
-		InputSource schemaSource = new InputSource(
-				Path.of("/usr/share/xml/docbook/schema/rng/5.0/docbook.rng").toUri().toString());
+		InputSource schemaSource = new InputSource(DocBookUtils.class.getResource("docbook.rng").toString());
 		return validate(docBook, schemaSource);
 	}
 
