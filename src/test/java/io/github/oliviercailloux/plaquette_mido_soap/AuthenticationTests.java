@@ -234,7 +234,7 @@ class AuthenticationTests {
 
 	@Test
 	public void testNoPasswordFileGetAuthenticator() throws Exception {
-		List<String> lines = ImmutableList.of("file username");
+		List<String> lines = ImmutableList.of("file username","");
 		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
 		QueriesHelper.env = System.getenv();
 
