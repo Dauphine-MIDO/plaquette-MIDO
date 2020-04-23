@@ -73,8 +73,9 @@ class AuthenticationTests {
 	@SetSystemProperty(key = "API_username", value = "prop username")
 	@Test
 	public void testNoPasswordReadAuthentication() throws Exception {
+		List<String> lines = ImmutableList.of("file username");
+		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
 		QueriesHelper.env = Map.of("API_username", "env username");
-		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
@@ -86,8 +87,6 @@ class AuthenticationTests {
 	@SetSystemProperty(key = "API_password", value = "prop password")
 	@Test
 	public void testPropAndEnvReadAuthentication() throws Exception {
-		System.setProperty("API_username", "prop username");
-		System.setProperty("API_password", "prop password");
 		QueriesHelper.apiLoginFile = Path.of("nonexistent.txt");
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
@@ -97,7 +96,7 @@ class AuthenticationTests {
 	}
 
 	@Test
-	public void testFileReadAuthentication() throws IOException {
+	public void testFileReadAuthentication() throws Exception {
 		ImmutableList<String> lines = ImmutableList.of("file username", "file password");
 		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
 		QueriesHelper.env = System.getenv();
@@ -109,19 +108,19 @@ class AuthenticationTests {
 	}
 
 	@Test
-	public void testEmptyUsernameFileReadAuthentication() throws IOException {
+	public void testEmptyUsernameFileReadAuthentication() throws Exception {
 		List<String> lines = ImmutableList.of("", "file password");
 		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
 		QueriesHelper.env = System.getenv();
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
-		assertEquals("", myAuth.getUsername().get());
+		assertTrue(myAuth.getUsername().isEmpty());
 		assertEquals("file password", myAuth.getPassword().get());
 	}
 
 	@Test
-	public void testNoPasswordFileReadAuthentication() throws IOException {
+	public void testNoPasswordFileReadAuthentication() throws Exception {
 		List<String> lines = ImmutableList.of("file username");
 		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
 		QueriesHelper.env = System.getenv();
@@ -133,7 +132,7 @@ class AuthenticationTests {
 	}
 
 	@Test
-	public void testEmptyPasswordFileReadAuthentication() throws IOException {
+	public void testEmptyPasswordFileReadAuthentication() throws Exception {
 		List<String> lines = ImmutableList.of("file username", "");
 		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
 		QueriesHelper.env = System.getenv();
@@ -141,11 +140,11 @@ class AuthenticationTests {
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
 		assertEquals("file username", myAuth.getUsername().get());
-		assertEquals("", myAuth.getPassword().get());
+		assertTrue(myAuth.getPassword().isEmpty());
 	}
 
 	@Test
-	public void testIncorrectFileReadAuthentication() throws IOException {
+	public void testIncorrectFileReadAuthentication() throws Exception {
 		List<String> lines = ImmutableList.of("file username", "file password", "garbage");
 		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
 		QueriesHelper.env = System.getenv();
@@ -155,7 +154,7 @@ class AuthenticationTests {
 	}
 
 	@Test
-	public void testEmptyThirdLineFileReadAuthentication() throws IOException {
+	public void testEmptyThirdLineFileReadAuthentication() throws Exception {
 		List<String> lines = ImmutableList.of("file username", "file password", "");
 		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
 		QueriesHelper.env = System.getenv();
@@ -164,6 +163,32 @@ class AuthenticationTests {
 
 		assertEquals("file username", myAuth.getUsername().get());
 		assertEquals("file password", myAuth.getPassword().get());
+	}
+
+	@SetSystemProperty(key = "API_username", value = "prop username")
+	public void testHalfPropHaldEnvAndFileReadAuthentication() throws IOException {
+		ImmutableList<String> lines = ImmutableList.of("file username", "file password");
+		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
+		QueriesHelper.env = Map.of("API_username", "env username");
+
+		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+
+		assertEquals("file username", myAuth.getUsername().get());
+		assertEquals("file password", myAuth.getPassword().get());
+	}
+
+	@SetSystemProperty(key = "API_username", value = "prop username")
+	@SetSystemProperty(key = "API_password", value = "prop password")
+	@Test
+	public void testPropEnvAndFileReadAuthentication() throws Exception {
+		ImmutableList<String> lines = ImmutableList.of("file username", "file password");
+		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
+		QueriesHelper.env = Map.of("API_username", "env username", "API_password", "env password");
+
+		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+
+		assertEquals("prop username", myAuth.getUsername().get());
+		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
 	@Test
@@ -202,7 +227,9 @@ class AuthenticationTests {
 		QueriesHelper.apiLoginFile = createApiLoginFile(lines);
 		QueriesHelper.env = System.getenv();
 
-		assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
+		final Exception exception = assertThrows(IllegalStateException.class,
+				() -> QueriesHelper.setDefaultAuthenticator());
+		assertEquals("Found password but no username.", exception.getMessage());
 	}
 
 	@Test
