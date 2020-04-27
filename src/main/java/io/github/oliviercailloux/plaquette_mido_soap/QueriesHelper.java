@@ -94,18 +94,30 @@ public class QueriesHelper {
 				final List<String> lines = Files.readAllLines(path);
 				final Iterator<String> iterator = lines.iterator();
 				if (iterator.hasNext()) {
-					optUsername = Optional.of(iterator.next());
+					String line1 = iterator.next();
+					if (!line1.isEmpty()) {
+						optUsername = Optional.of(line1);
+					} else {
+						optUsername = Optional.empty();
+					}
 				} else {
 					optUsername = Optional.empty();
 				}
 				if (iterator.hasNext()) {
-					optPassword = Optional.of(iterator.next());
+					String line2 = iterator.next();
+					if (!line2.isEmpty()) {
+						optPassword = Optional.of(line2);
+					} else {
+						optPassword = Optional.empty();
+					}
 				} else {
 					optPassword = Optional.empty();
 				}
-				if (iterator.hasNext() && !iterator.next().isEmpty()) {
-					throw new IllegalStateException(
-							"File " + apiLoginFile + " is too long: " + lines.size() + " lines");
+				while (iterator.hasNext()) {
+					if (!iterator.next().isEmpty()) {
+						throw new IllegalStateException(
+								"File " + apiLoginFile + " is too long: " + lines.size() + " lines");
+					}
 				}
 			}
 			fileAuthentication = LoginOpt.given(optUsername, optPassword);
