@@ -39,11 +39,8 @@ class AuthenticationTests {
 
 	Path createApiLoginFile(String... lines) throws IOException {
 		Path filePath = jimfs.getPath("API_login.txt");
-		if (lines.length != 0) {
-			Files.write(filePath, ImmutableList.copyOf(lines));
-		} else {
-			Files.createFile(filePath);
-		}
+		/** If lines is empty, an empty file gets created. */
+		Files.write(filePath, ImmutableList.copyOf(lines));
 		return filePath;
 	}
 
@@ -51,10 +48,11 @@ class AuthenticationTests {
 		return jimfs.getPath("Nonexistent.txt");
 	}
 
-	@SetSystemProperty(key = "API_username", value = "prop username")
-	@SetSystemProperty(key = "API_password", value = "prop password")
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testPropReadAuthentication() throws Exception {
+		QueriesHelper.env = System.getenv();
 		QueriesHelper.apiLoginFile = getNonExistentFile();
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
@@ -63,11 +61,11 @@ class AuthenticationTests {
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = "API_username", value = "prop username")
-	@SetSystemProperty(key = "API_password", value = "prop password")
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testHalfEnvAndPropReadAuthentication() throws Exception {
-		QueriesHelper.env = Map.of("API_username", "env username");
+		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
 		QueriesHelper.apiLoginFile = getNonExistentFile();
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
@@ -76,10 +74,11 @@ class AuthenticationTests {
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = "API_username", value = "prop username")
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
 	@Test
 	public void testHalfPropAndEnvReadAuthentication() throws Exception {
-		QueriesHelper.env = Map.of("API_username", "env username", "API_password", "env password");
+		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username", QueriesHelper.PASSWORD_KEY,
+				"env password");
 		QueriesHelper.apiLoginFile = getNonExistentFile();
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
@@ -88,10 +87,10 @@ class AuthenticationTests {
 		assertEquals("env password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = "API_username", value = "prop username")
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
 	@Test
 	public void testHalfPropAndHalfEnvAndFullFileReadAuthentication() throws Exception {
-		QueriesHelper.env = Map.of("API_username", "env username");
+		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
 		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password");
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
@@ -100,22 +99,12 @@ class AuthenticationTests {
 		assertEquals("file password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = "API_username", value = "prop username")
-	@Test
-	public void testNoPasswordReadAuthentication() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "");
-		QueriesHelper.env = Map.of("API_username", "env username");
-
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
-
-		assertEquals("prop username", myAuth.getUsername().get());
-		assertTrue(myAuth.getPassword().isEmpty());
-	}
-
-	@SetSystemProperty(key = "API_username", value = "prop username")
-	@SetSystemProperty(key = "API_password", value = "prop password")
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testPropAndEnvReadAuthentication() throws Exception {
+		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username", QueriesHelper.PASSWORD_KEY,
+				"env password");
 		QueriesHelper.apiLoginFile = getNonExistentFile();
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
@@ -124,48 +113,154 @@ class AuthenticationTests {
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "")
+	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "")
+	@Test
+	public void testPropSetToEmptyStringsReadAuthentication() throws Exception {
+		QueriesHelper.env = System.getenv();
+		QueriesHelper.apiLoginFile = getNonExistentFile();
+
+		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+
+		assertEquals("", myAuth.getUsername().get());
+		assertEquals("", myAuth.getPassword().get());
+	}
+
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@Test
+	public void testNoPasswordReadAuthentication() throws Exception {
+		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
+		QueriesHelper.apiLoginFile = getNonExistentFile();
+
+		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+
+		assertEquals("prop username", myAuth.getUsername().get());
+		assertTrue(myAuth.getPassword().isEmpty(), myAuth.getPassword().toString());
+	}
+
 	@Test
 	public void testFileReadAuthentication() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password");
+		{
+			QueriesHelper.env = System.getenv();
+			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password");
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
-		assertEquals("file username", myAuth.getUsername().get());
-		assertEquals("file password", myAuth.getPassword().get());
+			assertEquals("file username", myAuth.getUsername().get());
+			assertEquals("file password", myAuth.getPassword().get());
+		}
+		{
+			QueriesHelper.env = System.getenv();
+			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "");
+
+			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+
+			assertEquals("file username", myAuth.getUsername().get());
+			assertEquals("file password", myAuth.getPassword().get());
+		}
+		{
+			QueriesHelper.env = System.getenv();
+			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "", "");
+
+			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+
+			assertEquals("file username", myAuth.getUsername().get());
+			assertEquals("file password", myAuth.getPassword().get());
+		}
 	}
 
 	@Test
-	public void testEmptyUsernameFileReadAuthentication() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile("", "file password");
+	public void testEmptyFile() throws Exception {
+		QueriesHelper.env = System.getenv();
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile();
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
-		assertTrue(myAuth.getUsername().isEmpty());
-		assertEquals("file password", myAuth.getPassword().get());
+			assertEquals("", myAuth.getUsername().get());
+			assertEquals("", myAuth.getPassword().get());
+		}
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile("", "", "", "", "");
+
+			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+
+			assertEquals("", myAuth.getUsername().get());
+			assertEquals("", myAuth.getPassword().get());
+		}
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile();
+			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
+		}
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile("", "", "", "", "");
+			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
+		}
 	}
 
 	@Test
-	public void testNoPasswordFileReadAuthentication() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username");
+	public void testEmptyUsernameFile() throws Exception {
+		{
+			QueriesHelper.env = System.getenv();
+			QueriesHelper.apiLoginFile = createApiLoginFile("", "file password");
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
-		assertEquals("file username", myAuth.getUsername().get());
-		assertTrue(myAuth.getPassword().isEmpty());
+			assertEquals("", myAuth.getUsername().get());
+			assertEquals("file password", myAuth.getPassword().get());
+		}
+		{
+			QueriesHelper.env = System.getenv();
+			QueriesHelper.apiLoginFile = createApiLoginFile("", "file password");
+
+			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
+		}
 	}
 
 	@Test
-	public void testEmptySecondLineFileReadAuthentication() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "");
+	public void testEmptyPasswordFile() throws Exception {
+		QueriesHelper.env = System.getenv();
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile("file username");
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
-		assertEquals("file username", myAuth.getUsername().get());
-		assertTrue(myAuth.getPassword().isEmpty());
+			assertEquals("file username", myAuth.getUsername().get());
+			assertEquals("", myAuth.getPassword().get());
+		}
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "");
+
+			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+
+			assertEquals("file username", myAuth.getUsername().get());
+			assertEquals("", myAuth.getPassword().get());
+		}
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "", "");
+
+			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+
+			assertEquals("file username", myAuth.getUsername().get());
+			assertEquals("", myAuth.getPassword().get());
+		}
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile("file username");
+			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
+		}
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "");
+			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
+		}
+		{
+			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "", "", "");
+			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
+		}
 	}
 
 	@Test
 	public void testIncorrectFileReadAuthentication() throws Exception {
+		QueriesHelper.env = System.getenv();
 		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "garbage");
 
 		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.readAuthentication());
@@ -173,37 +268,18 @@ class AuthenticationTests {
 	}
 
 	@Test
-	public void testEmptyThirdLineFileReadAuthentication() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "");
-
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
-
-		assertEquals("file username", myAuth.getUsername().get());
-		assertEquals("file password", myAuth.getPassword().get());
-	}
-
-	@Test
-	public void testEmptyMoreLinesFileReadAuthentication() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "", "");
-
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
-
-		assertEquals("file username", myAuth.getUsername().get());
-		assertEquals("file password", myAuth.getPassword().get());
-	}
-
-	@Test
 	public void testGarbageLaterFileReadAuthentication() throws Exception {
+		QueriesHelper.env = System.getenv();
 		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "", "Garbage");
 
 		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.readAuthentication());
 		assertEquals("File API_login.txt is too long: 4 lines", exception.getMessage());
 	}
 
-	@SetSystemProperty(key = "API_username", value = "prop username")
-	public void testHalfPropHaldEnvAndFileReadAuthentication() throws IOException {
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	public void testHalfPropHalfEnvAndFileReadAuthentication() throws IOException {
+		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
 		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password");
-		QueriesHelper.env = Map.of("API_username", "env username");
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
@@ -211,12 +287,13 @@ class AuthenticationTests {
 		assertEquals("file password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = "API_username", value = "prop username")
-	@SetSystemProperty(key = "API_password", value = "prop password")
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testPropEnvAndFileReadAuthentication() throws Exception {
+		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username", QueriesHelper.PASSWORD_KEY,
+				"env password");
 		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password");
-		QueriesHelper.env = Map.of("API_username", "env username", "API_password", "env password");
 
 		final LoginOpt myAuth = QueriesHelper.readAuthentication();
 
@@ -226,6 +303,7 @@ class AuthenticationTests {
 
 	@Test
 	public void testNoneGetAuthenticator() throws Exception {
+		QueriesHelper.env = System.getenv();
 		QueriesHelper.apiLoginFile = getNonExistentFile();
 
 		final Exception exception = assertThrows(IllegalStateException.class,
@@ -234,8 +312,8 @@ class AuthenticationTests {
 	}
 
 	@Test
-	public void testEnvNoPasswordGetAuthenticator() throws Exception {
-		QueriesHelper.env = Map.of("API_username", "env username");
+	public void testHalfEnvGetAuthenticator() throws Exception {
+		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
 		QueriesHelper.apiLoginFile = getNonExistentFile();
 
 		final Exception exception = assertThrows(IllegalStateException.class,
@@ -243,10 +321,10 @@ class AuthenticationTests {
 		assertEquals("Found username but no password.", exception.getMessage());
 	}
 
-	@SetSystemProperty(key = "API_username", value = "prop username")
+	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
 	@Test
-	public void testPropAndEnvUserNameNoPasswordGetAuthenticator() throws Exception {
-		QueriesHelper.env = Map.of("API_username", "env username");
+	public void testHalfPropAndHalfEnvGetAuthenticator() throws Exception {
+		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
 		QueriesHelper.apiLoginFile = getNonExistentFile();
 
 		final Exception exception = assertThrows(IllegalStateException.class,
@@ -254,42 +332,6 @@ class AuthenticationTests {
 		assertEquals("Found username but no password.", exception.getMessage());
 	}
 
-	@Test
-	public void testEmptyUsernameGetAuthenticator() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile("\nfile password");
-
-		final Exception exception = assertThrows(IllegalStateException.class,
-				() -> QueriesHelper.setDefaultAuthenticator());
-		assertEquals("Found password but no username.", exception.getMessage());
-	}
-
-	@Test
-	public void testNoPasswordFileGetAuthenticator() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "");
-
-		final Exception exception = assertThrows(IllegalStateException.class,
-				() -> QueriesHelper.setDefaultAuthenticator());
-		assertEquals("Found username but no password.", exception.getMessage());
-	}
-	
-	@Test
-	public void testEmptyFileGetAuthenticator() throws Exception {
-		QueriesHelper.apiLoginFile = createApiLoginFile();
-		
-		final Exception exception = assertThrows(IllegalStateException.class,
-				() -> QueriesHelper.setDefaultAuthenticator());
-		assertEquals("Login information not found.", exception.getMessage());
-	}
-
-	@Test
-	public void testEmptyLinesFileGetAuthenticator() throws Exception {
-QueriesHelper.apiLoginFile = createApiLoginFile("","","","","");
-		
-		final Exception exception = assertThrows(IllegalStateException.class,
-				() -> QueriesHelper.setDefaultAuthenticator());
-		assertEquals("Login information not found.", exception.getMessage());
-	}
-	
 	@AfterEach
 	void closeJimFs() throws IOException {
 		jimfs.close();

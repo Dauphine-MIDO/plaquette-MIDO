@@ -14,9 +14,21 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class QueriesHelper {
-	static Path apiLoginFile = Path.of("API_login.txt");
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(QueriesHelper.class);
+
+	public static final String USERNAME_KEY = "API_username";
+
+	public static final String PASSWORD_KEY = "API_password";
+
+	public static final String FILE_NAME = "API_login.txt";
 	static Map<String, String> env = System.getenv();
+
+	static Path apiLoginFile = Path.of(FILE_NAME);
 
 	public static void setDefaultAuthenticator() {
 		final Authenticator myAuth = getAuthenticator();
@@ -64,22 +76,67 @@ public class QueriesHelper {
 	}
 
 	/**
+	 * <p>
 	 * Returns the best authentication information it could find, throwing no error
 	 * if some is missing.
+	 * </p>
+	 * <p>
+	 * For each piece of information, distinguishes <em>missing information</em> and
+	 * <em>empty string</em>. Considers the following possible sources (displayed
+	 * here by order of priority).
+	 * </p>
+	 * <ol>
+	 * <li>Properties {@value #USERNAME_KEY} and {@value #PASSWORD_KEY}. Each
+	 * property may be set, including to the empty string, or not set. An
+	 * information is considered missing (from the properties source) iff the
+	 * corresponding property is not set.</li>
+	 * <li>Environment variables {@value #USERNAME_KEY} and {@value #PASSWORD_KEY}.
+	 * Each variable may be set, including to the empty string, or not set. An
+	 * information is considered missing (from the environment variables source) iff
+	 * the corresponding environment variable is not set.</li>
+	 * <li>File {@value #FILE_NAME}. The two pieces of information are considered
+	 * missing (from the files source) iff the file does not exist. If the file
+	 * exists, no piece of information is considered missing. The first line of the
+	 * file gives the username, the second one gives the password. If the file has
+	 * only one line, the password (from the files source) is set to the empty
+	 * string. If the file is empty, both pieces of information (from the files
+	 * source) are set to the empty string. Empty lines are not considered at all.
+	 * If the file has non empty line content after the second line, it is an
+	 * error.</li>
+	 * </ol>
+	 * <p>
+	 * The source used to return information is the one that has the highest
+	 * informational value, as determined by
+	 * {@link LoginOpt#getInformationalValue()} (meaning that sources are ordered by
+	 * increasing number of pieces of information missing), and, in case of ex-æquo,
+	 * the order of priority displayed in the previous paragraph determines which
+	 * source wins.
+	 * </p>
+	 *
+	 * @throws IllegalStateException if a file source is provided but has non empty
+	 *                               line content after the second line.
+	 * @see LoginOpt
 	 */
-	static LoginOpt readAuthentication() throws IOException {
+	static LoginOpt readAuthentication() throws IOException, IllegalStateException {
 		final LoginOpt propertyAuthentication;
 		{
-			final String username = System.getProperty("API_username");
-			final String password = System.getProperty("API_password");
+			final String username = System.getProperty(USERNAME_KEY);
+			final String password = System.getProperty(PASSWORD_KEY);
 			propertyAuthentication = LoginOpt.given(Optional.ofNullable(username), Optional.ofNullable(password));
+			final int informationalValue = propertyAuthentication.getInformationalValue();
+			LOGGER.info(
+					"Found {} piece" + (informationalValue >= 2 ? "s" : "") + " of login information in properties.",
+					informationalValue);
 		}
 
 		final LoginOpt envAuthentication;
 		{
-			final String username = env.get("API_username");
-			final String password = env.get("API_password");
+			final String username = env.get(USERNAME_KEY);
+			final String password = env.get(PASSWORD_KEY);
 			envAuthentication = LoginOpt.given(Optional.ofNullable(username), Optional.ofNullable(password));
+			final int informationalValue = envAuthentication.getInformationalValue();
+			LOGGER.info("Found {} piece" + (informationalValue >= 2 ? "s" : "")
+					+ " of login information in environment variables.", informationalValue);
 		}
 
 		final LoginOpt fileAuthentication;
@@ -95,23 +152,15 @@ public class QueriesHelper {
 				final Iterator<String> iterator = lines.iterator();
 				if (iterator.hasNext()) {
 					String line1 = iterator.next();
-					if (!line1.isEmpty()) {
-						optUsername = Optional.of(line1);
-					} else {
-						optUsername = Optional.empty();
-					}
+					optUsername = Optional.of(line1);
 				} else {
-					optUsername = Optional.empty();
+					optUsername = Optional.of("");
 				}
 				if (iterator.hasNext()) {
 					String line2 = iterator.next();
-					if (!line2.isEmpty()) {
-						optPassword = Optional.of(line2);
-					} else {
-						optPassword = Optional.empty();
-					}
+					optPassword = Optional.of(line2);
 				} else {
-					optPassword = Optional.empty();
+					optPassword = Optional.of("");
 				}
 				while (iterator.hasNext()) {
 					if (!iterator.next().isEmpty()) {
@@ -121,12 +170,15 @@ public class QueriesHelper {
 				}
 			}
 			fileAuthentication = LoginOpt.given(optUsername, optPassword);
+			final int informationalValue = fileAuthentication.getInformationalValue();
+			LOGGER.info("Found {} piece" + (informationalValue >= 2 ? "s" : "") + " of login information in file.",
+					informationalValue);
 		}
 
 		final TreeMap<Double, LoginOpt> map = new TreeMap<>();
-		map.put(propertyAuthentication.getInformationValue() * 1.2d, propertyAuthentication);
-		map.put(envAuthentication.getInformationValue() * 1.1d, envAuthentication);
-		map.put(fileAuthentication.getInformationValue() * 1.0d, fileAuthentication);
+		map.put(propertyAuthentication.getInformationalValue() * 1.2d, propertyAuthentication);
+		map.put(envAuthentication.getInformationalValue() * 1.1d, envAuthentication);
+		map.put(fileAuthentication.getInformationalValue() * 1.0d, fileAuthentication);
 		return map.lastEntry().getValue();
 	}
 
