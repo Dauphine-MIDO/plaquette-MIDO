@@ -1,9 +1,16 @@
 language: java
-git:
-  depth: false
 jdk:
   - openjdk11
 cache:
   directories:
     - "$HOME/.m2"
+before_install: 
+  - chmod +x ./script/cibuild.sh
+  - echo https://${API_username}:${API_password}@* > WSDL_access.txt
 
+script: ./script/cibuild.sh
+
+sudo: false
+
+notifications:
+  email: false
