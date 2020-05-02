@@ -151,14 +151,12 @@ public class QueriesHelper {
 				final List<String> lines = Files.readAllLines(path);
 				final Iterator<String> iterator = lines.iterator();
 				if (iterator.hasNext()) {
-					String line1 = iterator.next();
-					optUsername = Optional.of(line1);
+					optUsername = Optional.of(iterator.next());
 				} else {
 					optUsername = Optional.of("");
 				}
 				if (iterator.hasNext()) {
-					String line2 = iterator.next();
-					optPassword = Optional.of(line2);
+					optPassword = Optional.of(iterator.next());
 				} else {
 					optPassword = Optional.of("");
 				}
