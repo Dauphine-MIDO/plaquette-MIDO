@@ -1,3 +1,4 @@
+#${ACCESS_TOKEN} is a personnal access token from GitHub with the repo autorisations 
 set -e
 REPO="receive_plaquette"
 FILE_LOG=out.log
