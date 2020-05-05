@@ -29,6 +29,7 @@ Travis will run two scripts :
 
 . writeWSDL.sh to create the WSDL_login.txt file thanks to API_username and API_password variables
 . cibuild.sh which does :
+.. clean the last PDF and Log files if there are one in order to avoid pushing old files
 .. building the docs by executing M1ApprBuilder
 .. deploy the PDF and Log files in the reception repository (here is https://github.com/barnabegeffroy/receive_plaquette[receive_plaquette])
 

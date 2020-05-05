@@ -5,6 +5,7 @@ FILE_LOG="out.log"
 FILE_PDF="out.pdf"
 DEPLOY_REPO="https://${ACCESS_TOKEN}@github.com/barnabegeffroy/${REPO}.git" 
 function main {
+	clean
 	get_current_doc
 	build_doc
 	if [ -z "$TRAVIS_PULL_REQUEST" ]; then
@@ -12,6 +13,12 @@ function main {
     else 
 		deploy
 	fi  
+}
+
+function clean { 
+	echo "cleaning docs folder"
+	if [ -f "${FILE_LOG}" ]; then rm -f ${FILE_LOG}; fi 
+	if [ -f "${FILE_PDF}" ]; then rm -f ${FILE_PDF}; fi 
 }
 
 function get_current_doc { 
