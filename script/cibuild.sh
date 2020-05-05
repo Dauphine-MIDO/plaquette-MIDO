@@ -1,8 +1,8 @@
 #${ACCESS_TOKEN} is a personnal access token from GitHub with the repo autorisations 
 set -e
 REPO="receive_plaquette"
-FILE_LOG=out.log
-FILE_PDF=out.pdf
+FILE_LOG="out.log"
+FILE_PDF="out.pdf"
 DEPLOY_REPO="https://${ACCESS_TOKEN}@github.com/barnabegeffroy/${REPO}.git" 
 function main {
 	get_current_doc
@@ -30,15 +30,17 @@ function build_doc {
 
 function deploy {
 	echo "deploying changes"
-	FILES="${FILE_LOG}"
+	mv -f "${FILE_LOG}" ../${REPO}
 	if test -f "${FILE_PDF}"; then
-		FILES="${FILES} ${FILE_PDF}"		
+		mv -f "${FILE_PDF}" ../${REPO}		
 	fi
-	mv -f ${FILES} ../${REPO}
 	cd ../${REPO}
 	git config --global user.name "Travis CI"
     git config --global user.email barnabe.geffroy@psl.eu
-	git add ${FILES}
+	git add "${FILE_LOG}"
+	if test -f "${FILE_PDF}"; then
+		git add "${FILE_PDF}"		
+	fi
 	git status
 	git commit -m "Lastest doc built on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to github"
 	git push $DEPLOY_REPO master
