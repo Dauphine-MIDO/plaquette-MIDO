@@ -33,6 +33,8 @@ Travis will run two scripts :
 .. building the docs by executing M1ApprBuilder
 .. deploy the PDF and Log files in the reception repository (here is https://github.com/barnabegeffroy/receive_plaquette[receive_plaquette])
 
+.. if the PDF file is not built, then only logs are pushed and Travis' built is broken. To do so, there is a BUILT variable equals to 0 if it's built and 1 if it isn't.
+
 === Cron Jobs
 
 Travis allows us to automate this process on a daily basis with Cron Jobs that can be activated in the Travis settings.

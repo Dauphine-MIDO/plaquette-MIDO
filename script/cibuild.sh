@@ -4,6 +4,7 @@ REPO="receive_plaquette"
 FILE_LOG="out.log"
 FILE_PDF="out.pdf"
 DEPLOY_REPO="https://${ACCESS_TOKEN}@github.com/barnabegeffroy/${REPO}.git" 
+BUILT=0
 function main {
 	clean
 	get_current_doc
@@ -16,7 +17,7 @@ function main {
 }
 
 function clean { 
-	echo "cleaning docs folder"
+	echo "cleaning docs"
 	if [ -f "${FILE_LOG}" ]; then rm -f ${FILE_LOG}; fi 
 	if [ -f "${FILE_PDF}" ]; then rm -f ${FILE_PDF}; fi 
 }
@@ -32,6 +33,7 @@ function build_doc {
 		echo "Build succeeded"
 	else
    		echo "Build failed"
+		BUILT=1
 	fi
 }
 
@@ -49,8 +51,9 @@ function deploy {
 		git add "${FILE_PDF}"		
 	fi
 	git status
-	git commit -m "Lastest doc built on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to github"
+	git commit -m "Lastest doc built on travis build $TRAVIS_BUILD_NUMBER auto-pushed to github"
 	git push $DEPLOY_REPO master
+	exit ${BUILT}
 }
 
 main
