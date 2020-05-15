@@ -8,9 +8,9 @@ BUILT_EXIT_CODE=1
 
 function main {
 	clean
-	get_current_doc
+	get_current_deploy
 	build_doc
-	if [ -z "$TRAVIS_PULL_REQUEST" ]; then
+	if [ -z "${TRAVIS_PULL_REQUEST}" ]; then
 	   	echo "except don't publish doc for pull requests"
     else 
 		deploy
@@ -18,29 +18,29 @@ function main {
 }
 
 function clean { 
-	echo "cleaning docs"
+	echo "Cleaning docs."
 	if [ -f "${FILE_LOG}" ]; then rm -f "${FILE_LOG}"; fi 
 	if [ -f "${FILE_PDF}" ]; then rm -f "${FILE_PDF}"; fi 
 }
 
-function get_current_doc { 
-	echo "getting latest doc"
-	git clone --depth 1 $DEPLOY_REPO "../${REPO}"
+function get_current_deploy { 
+	echo "Getting latest target deployment repository."
+	git clone --depth 1 ${DEPLOY_REPO} "../${REPO}"
 }
 
 function build_doc { 
-	echo "trying to build doc"
-	if	mvn exec:java -Dexec.mainClass=io.github.oliviercailloux.plaquette_mido_soap.M1ApprBuilder; then
-		echo "Build succeeded"
+	echo "Trying to generate document."
+	if	mvn exec:java "-Dexec.mainClass=io.github.oliviercailloux.plaquette_mido_soap.M1ApprBuilder"; then
+		echo "Document generation succeeded."
 		BUILT_EXIT_CODE=0
 	else
-   		echo "Build failed"
+   		echo "Document generation failed."
 		BUILT_EXIT_CODE=1
 	fi
 }
 
 function deploy {
-	echo "deploying changes"
+	echo "Deploying changes."
 	mv -f "${FILE_LOG}" "../${REPO}"
 	if test -f "${FILE_PDF}"; then
 		mv -f "${FILE_PDF}" "../${REPO}"
@@ -54,7 +54,7 @@ function deploy {
 	fi
 	git status
 	git commit -m "Lastest doc built on travis build $TRAVIS_BUILD_NUMBER auto-pushed to github (exit code ${BUILT_EXIT_CODE})"
-	git push $DEPLOY_REPO master
+	git push ${DEPLOY_REPO} master
 	exit ${BUILT_EXIT_CODE}
 }
 
