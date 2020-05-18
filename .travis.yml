@@ -12,5 +12,6 @@ script: ./script/cibuild.sh
 
 sudo: false
 
+#While Travis is not set
 notifications:
   email: false
