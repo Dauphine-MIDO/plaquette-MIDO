@@ -148,7 +148,7 @@
 							<goal>wsimport</goal>
 						</goals>
 						<configuration>
-							<wsdlUrls>https://rof.testapi.dauphine.fr/ebx-dataservices/tables/pvRefRof/RefRof?WSDL</wsdlUrls>
+							<wsdlUrls>https://rof.api.dauphine.fr/ebx-dataservices/tables/pvRefRof/RefRof?WSDL</wsdlUrls>
 							<xauthFile>WSDL_login.txt</xauthFile>
 							<vmArgs>
 								<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
