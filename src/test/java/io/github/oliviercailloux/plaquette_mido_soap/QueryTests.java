@@ -20,6 +20,7 @@ import com.google.common.collect.Iterables;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.Contacts;
 import schemas.ebx.dataservices_1.MentionType.Root.Mention;
+import schemas.ebx.dataservices_1.PersonType.Root.Person;
 import schemas.ebx.dataservices_1.ProgramType.Root.Program;
 
 class QueryTests {
@@ -73,14 +74,18 @@ class QueryTests {
 
 	@Test
 	void testCourseJavaObject() throws Exception {
-		final Course course = querier.getCourse("FRUAI0750736TCOENA3IIMD-100-S5L1C1");
+		final Course course = querier.getCourse("FRUAI0750736TCOENA3AMIA-100-S6L1C1");
 		assertEquals("Java-Objet", course.getCourseName().getValue());
+		assertEquals(M1ApprBuilder.MAIN_MANAGER_PERSON_ID, course.getManagingTeacher().getValue());
 		assertEquals(ImmutableList.of(), course.getTeachers());
 		final JAXBElement<Contacts> contactsElement = course.getContacts();
-		/** TODO Wendy has changed this (28 January 2020), this should not be null. */
 		assertNotNull(contactsElement);
-//		final Contacts contacts = contactsElement.getValue();
-//		assertEquals(ImmutableList.of("Olivier Cailloux"), contacts);
+		final Contacts contacts = contactsElement.getValue();
+		final String caillouxId = "FRUAI0750736TPEIN7547";
+		assertEquals(ImmutableList.of(caillouxId), contacts.getRefPerson());
+		final Person cailloux = querier.getPerson(caillouxId);
+		assertEquals("Cailloux".toUpperCase(), cailloux.getFamilyName().getValue());
+		assertEquals("Olivier".toUpperCase(), cailloux.getGivenName().getValue());
 	}
 
 	@Test
