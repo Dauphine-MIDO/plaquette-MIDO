@@ -6,6 +6,8 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,6 +94,8 @@ public class M1ApprBuilder {
 		writer.h1("Programme du M1 MIAGE en apprentissage");
 		writer.addAttribute("lang", "fr");
 		writer.eol();
+		writer.paragraph("Généré le " + DateFormat.getDateInstance(DateFormat.FULL).format(new Date())
+				+ " à partir des données du site internet de Dauphine.");
 
 		{
 			writer.h2("Semestre 1");
