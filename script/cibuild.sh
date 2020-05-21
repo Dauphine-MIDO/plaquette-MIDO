@@ -30,7 +30,8 @@ function get_current_deploy {
 
 function build_doc { 
 	echo "Trying to generate document."
-	if	mvn exec:java "-Dexec.mainClass=io.github.oliviercailloux.plaquette_mido_soap.M1ApprBuilder"; then
+	mvn dependency:build-classpath -Dmdep.outputFile=.classpath
+	if	java -cp "target/classes:$(cat .classpath)" "io.github.oliviercailloux.plaquette_mido_soap.M1ApprBuilder"; then
 		echo "Document generation succeeded."
 		BUILT_EXIT_CODE=0
 	else
