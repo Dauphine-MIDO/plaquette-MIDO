@@ -1,6 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_wwFO8JjvEeqW_P9EdbfFTg" name="doc">
-  <packageImport xmi:type="uml:PackageImport" xmi:id="_wyd0kJjvEeqW_P9EdbfFTg">
-    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
-  </packageImport>
-</uml:Model>
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:PapyrusJava="http://www.eclipse.org/papyrus/PapyrusJava/1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML">
+  <uml:Model xmi:id="_lj2IQJppEeqlhvoJSQrLiw" name="doc">
+    <packageImport xmi:type="uml:PackageImport" xmi:id="_pIQqMJppEeqlhvoJSQrLiw">
+      <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+    </packageImport>
+    <packagedElement xmi:type="uml:Package" xmi:id="_QGGJMJtZEeq2atfbccE1vg" name="creads_read">
+      <packagedElement xmi:type="uml:Class" xmi:id="_TuJ1AJtZEeq2atfbccE1vg" name="Login"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="_z9qXgJtbEeq2atfbccE1vg" name="AuthReader">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQfQMJteEeq2atfbccE1vg" name="FILE_NAME" visibility="public" isLeaf="true" isStatic="true" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQYigJteEeq2atfbccE1vg" name="PASSWORD_KEY" visibility="public" isLeaf="true" isStatic="true" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQMVQJteEeq2atfbccE1vg" name="USERNAME_KEY" visibility="public" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Srl9EJtfEeq2atfbccE1vg"/>
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Sq1IEJtfEeq2atfbccE1vg" value="*"/>
+        </ownedAttribute>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cR8BsJteEeq2atfbccE1vg" name="readAuthentication" visibility="private" isStatic="true" concurrency="guarded">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_FyAbgJtfEeq2atfbccE1vg" name="Login" type="_TuJ1AJtZEeq2atfbccE1vg"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cRumUJteEeq2atfbccE1vg" name="getAuthentication" visibility="private" isStatic="true">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_cR3wQJteEeq2atfbccE1vg" type="_cRwbgJteEeq2atfbccE1vg" direction="return"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cRR6YJteEeq2atfbccE1vg" name="getAuthenticator" visibility="private" isStatic="true">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_cRf80JteEeq2atfbccE1vg" type="_cRWL0JteEeq2atfbccE1vg" direction="return"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cSXfgJteEeq2atfbccE1vg" name="getConstantAuthenticator" visibility="private" isStatic="true">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSZ7wJteEeq2atfbccE1vg" type="_cRWL0JteEeq2atfbccE1vg" direction="return"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSc_EJteEeq2atfbccE1vg" name="passwordAuthentication" type="_cRwbgJteEeq2atfbccE1vg"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cRLzwJteEeq2atfbccE1vg" name="setDefaultAuthenticator" visibility="public" isStatic="true"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_cP-54JteEeq2atfbccE1vg" name="java">
+      <packagedElement xmi:type="uml:Package" xmi:id="_cQAIAJteEeq2atfbccE1vg" name="java">
+        <packagedElement xmi:type="uml:Package" xmi:id="_cRU9sJteEeq2atfbccE1vg" name="net">
+          <packagedElement xmi:type="uml:Class" xmi:id="_cRWL0JteEeq2atfbccE1vg" name="Authenticator"/>
+          <packagedElement xmi:type="uml:Class" xmi:id="_cRwbgJteEeq2atfbccE1vg" name="PasswordAuthentication"/>
+        </packagedElement>
+      </packagedElement>
+    </packagedElement>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_aawIgJtcEeq2atfbccE1vg">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_aax9sJtcEeq2atfbccE1vg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#ActionLanguage"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_cJvvAJteEeq2atfbccE1vg">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_cJvvAZteEeq2atfbccE1vg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/PapyrusJava/1#/"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://PapyrusJava_PROFILES/PapyrusJava.profile.uml#_j9REUByGEduN1bTiWJ0lyw"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_cKU90JteEeq2atfbccE1vg">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_cKWzAJteEeq2atfbccE1vg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/Codegen/1#/"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://Codegen_PROFILES/Codegen.profile.uml#_fPDsIBa-EearhdjjJ6cVzQ"/>
+    </profileApplication>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_cKYBIJteEeq2atfbccE1vg">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_cKZ2UJteEeq2atfbccE1vg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/uml2/5.0.0/UML/Profile/Standard#/"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://UML_PROFILES/Standard.profile.uml#_0"/>
+    </profileApplication>
+  </uml:Model>
+  <PapyrusJava:External xmi:id="_cRcScJteEeq2atfbccE1vg" name="java.net.Authenticator" base_Classifier="_cRWL0JteEeq2atfbccE1vg"/>
+  <PapyrusJava:External xmi:id="_cR17EJteEeq2atfbccE1vg" name="java.net.PasswordAuthentication" base_Classifier="_cRwbgJteEeq2atfbccE1vg"/>
+</xmi:XMI>
