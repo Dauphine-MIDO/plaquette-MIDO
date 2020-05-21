@@ -6,9 +6,12 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.xml.bind.JAXBElement;
@@ -94,7 +97,9 @@ public class M1ApprBuilder {
 		writer.h1("Programme du M1 MIAGE en apprentissage");
 		writer.addAttribute("lang", "fr");
 		writer.eol();
-		writer.paragraph("Généré le " + DateFormat.getDateInstance(DateFormat.FULL).format(new Date())
+		writer.paragraph("Généré le "
+				+ DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)
+						.withZone(ZoneId.systemDefault()).format(Instant.now())
 				+ " à partir des données du site internet de Dauphine.");
 
 		{
