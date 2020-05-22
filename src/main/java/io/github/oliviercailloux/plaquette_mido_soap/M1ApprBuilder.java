@@ -99,7 +99,7 @@ public class M1ApprBuilder {
 		writer.eol();
 		writer.paragraph("Généré le "
 				+ DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)
-						.withZone(ZoneId.systemDefault()).format(Instant.now())
+						.withZone(ZoneId.of("Europe/Paris")).format(Instant.now())
 				+ " à partir des données du site internet de Dauphine.");
 
 		{
