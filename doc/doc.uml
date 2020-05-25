@@ -6,6 +6,12 @@
     </packageImport>
     <packagedElement xmi:type="uml:Package" xmi:id="_QGGJMJtZEeq2atfbccE1vg" name="creds_read">
       <packagedElement xmi:type="uml:Class" xmi:id="_TuJ1AJtZEeq2atfbccE1vg" name="Login">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_K9n0cJ6DEeqhM7-Hbf1Uzg" name="password" visibility="private" isLeaf="true" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_K9q3wJ6DEeqhM7-Hbf1Uzg" name="username" visibility="private" isLeaf="true" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_EqvBcJwPEeqOrIhZhud6Nw" name="Login" visibility="private">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_EqvBcZwPEeqOrIhZhud6Nw" name="username">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
@@ -50,7 +56,7 @@
         </ownedOperation>
       </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_z9qXgJtbEeq2atfbccE1vg" name="AuthReader">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQfQMJteEeq2atfbccE1vg" name="FILE_NAME" visibility="public" isLeaf="true" isStatic="true" isUnique="false">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQfQMJteEeq2atfbccE1vg" name="FILE_NAME" visibility="public" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_cQYigJteEeq2atfbccE1vg" name="PASSWORD_KEY" visibility="public" isLeaf="true" isStatic="true" isUnique="false">
@@ -58,8 +64,6 @@
         </ownedAttribute>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_cQMVQJteEeq2atfbccE1vg" name="USERNAME_KEY" visibility="public" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Srl9EJtfEeq2atfbccE1vg"/>
-          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Sq1IEJtfEeq2atfbccE1vg" value="*"/>
         </ownedAttribute>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_cR8BsJteEeq2atfbccE1vg" name="readAuthentication" visibility="private" isStatic="true" concurrency="guarded">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_FyAbgJtfEeq2atfbccE1vg" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
@@ -96,11 +100,6 @@
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           </ownedParameter>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_83TPcJwQEeqOrIhZhud6Nw" name="CopyOf_getUsernameKey_11" visibility="public">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_83TPcZwQEeqOrIhZhud6Nw" direction="return">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-        </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_AYjvsJwREeqOrIhZhud6Nw" name="getFileName" visibility="public">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_AYjvsZwREeqOrIhZhud6Nw" direction="return">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
@@ -125,29 +124,6 @@
       <packagedElement xmi:type="uml:Class" xmi:id="_10OVoJwNEeqOrIhZhud6Nw" name="LoginOpt" visibility="private">
         <ownedAttribute xmi:type="uml:Property" xmi:id="_19PHsJwNEeqOrIhZhud6Nw" name="username" visibility="private" isLeaf="true" type="_10VqYJwNEeqOrIhZhud6Nw" isUnique="false"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_19XDgJwNEeqOrIhZhud6Nw" name="password" visibility="private" isLeaf="true" type="_10VqYJwNEeqOrIhZhud6Nw" isUnique="false"/>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_17YtkJwNEeqOrIhZhud6Nw" name="given" visibility="public" isStatic="true">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_17c_AJwNEeqOrIhZhud6Nw" type="_10OVoJwNEeqOrIhZhud6Nw" direction="return"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_17jssJwNEeqOrIhZhud6Nw" name="username" type="_10VqYJwNEeqOrIhZhud6Nw"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_17rogJwNEeqOrIhZhud6Nw" name="password" type="_10VqYJwNEeqOrIhZhud6Nw"/>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_19cjEJwNEeqOrIhZhud6Nw" name="LoginOpt" visibility="private">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_194A4JwNEeqOrIhZhud6Nw" name="username" type="_10VqYJwNEeqOrIhZhud6Nw"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_197EMJwNEeqOrIhZhud6Nw" name="password" type="_10VqYJwNEeqOrIhZhud6Nw"/>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_19C6cJwNEeqOrIhZhud6Nw" name="empty" visibility="public" isStatic="true">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_19EIkJwNEeqOrIhZhud6Nw" type="_10OVoJwNEeqOrIhZhud6Nw" direction="return"/>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_1-MJ8JwNEeqOrIhZhud6Nw" name="getPassword" visibility="public">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_1-RCcJwNEeqOrIhZhud6Nw" type="_10VqYJwNEeqOrIhZhud6Nw" direction="return"/>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_1-V68JwNEeqOrIhZhud6Nw" name="getInformationalValue" visibility="public">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_1-vjkJwNEeqOrIhZhud6Nw" direction="return">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://PapyrusJava_LIBRARIES/JavaLibrary.uml#_7wRIABydEduyofBvg4RL2w"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_1-DAAJwNEeqOrIhZhud6Nw" name="getUsername" visibility="public">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_1-H4gJwNEeqOrIhZhud6Nw" type="_10VqYJwNEeqOrIhZhud6Nw" direction="return"/>
-        </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_18PpMJwNEeqOrIhZhud6Nw" name="given" visibility="public" isStatic="true">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_18UhsJwNEeqOrIhZhud6Nw" type="_10OVoJwNEeqOrIhZhud6Nw" direction="return"/>
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_18YzIJwNEeqOrIhZhud6Nw" name="username">
@@ -156,6 +132,29 @@
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_18dEkJwNEeqOrIhZhud6Nw" name="password">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_19cjEJwNEeqOrIhZhud6Nw" name="LoginOpt" visibility="private">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_194A4JwNEeqOrIhZhud6Nw" name="username" type="_10VqYJwNEeqOrIhZhud6Nw"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_197EMJwNEeqOrIhZhud6Nw" name="password" type="_10VqYJwNEeqOrIhZhud6Nw"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_19C6cJwNEeqOrIhZhud6Nw" name="empty" visibility="public" isStatic="true">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_19EIkJwNEeqOrIhZhud6Nw" type="_10OVoJwNEeqOrIhZhud6Nw" direction="return"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_1-V68JwNEeqOrIhZhud6Nw" name="getInformationalValue" visibility="public">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_1-vjkJwNEeqOrIhZhud6Nw" direction="return">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://PapyrusJava_LIBRARIES/JavaLibrary.uml#_7wRIABydEduyofBvg4RL2w"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_1-MJ8JwNEeqOrIhZhud6Nw" name="getPassword" visibility="public">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_1-RCcJwNEeqOrIhZhud6Nw" type="_10VqYJwNEeqOrIhZhud6Nw" direction="return"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_1-DAAJwNEeqOrIhZhud6Nw" name="getUsername" visibility="public">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_1-H4gJwNEeqOrIhZhud6Nw" type="_10VqYJwNEeqOrIhZhud6Nw" direction="return"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_17YtkJwNEeqOrIhZhud6Nw" name="given" visibility="public" isStatic="true">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_17c_AJwNEeqOrIhZhud6Nw" type="_10OVoJwNEeqOrIhZhud6Nw" direction="return"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_17jssJwNEeqOrIhZhud6Nw" name="username" type="_10VqYJwNEeqOrIhZhud6Nw"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_17rogJwNEeqOrIhZhud6Nw" name="password" type="_10VqYJwNEeqOrIhZhud6Nw"/>
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_187lsJwNEeqOrIhZhud6Nw" name="onlyPassword" visibility="public" isStatic="true">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_188z0JwNEeqOrIhZhud6Nw" type="_10OVoJwNEeqOrIhZhud6Nw" direction="return"/>
