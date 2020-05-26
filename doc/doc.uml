@@ -5,7 +5,7 @@
       <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
     </packageImport>
     <packagedElement xmi:type="uml:Package" xmi:id="_QGGJMJtZEeq2atfbccE1vg" name="creds_read">
-      <packagedElement xmi:type="uml:Class" xmi:id="_TuJ1AJtZEeq2atfbccE1vg" name="Login">
+      <packagedElement xmi:type="uml:Class" xmi:id="_TuJ1AJtZEeq2atfbccE1vg" name="Credentials">
         <ownedAttribute xmi:type="uml:Property" xmi:id="_K9n0cJ6DEeqhM7-Hbf1Uzg" name="password" visibility="private" isLeaf="true" isUnique="false">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
@@ -19,9 +19,6 @@
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_EqvBcpwPEeqOrIhZhud6Nw" name="password">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           </ownedParameter>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_Eq4ycJwPEeqOrIhZhud6Nw" name="empty" visibility="public" isStatic="true">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_Eq4ycZwPEeqOrIhZhud6Nw" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_Eq9q8JwPEeqOrIhZhud6Nw" name="getPassword" visibility="public">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_Eq9q8ZwPEeqOrIhZhud6Nw" direction="return">
@@ -42,33 +39,57 @@
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           </ownedParameter>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_ErPXwJwPEeqOrIhZhud6Nw" name="onlyPassword" visibility="public" isStatic="true">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_ErPXwZwPEeqOrIhZhud6Nw" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_ErPXwpwPEeqOrIhZhud6Nw" name="password">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_ErVeYJwPEeqOrIhZhud6Nw" name="onlyUsername" visibility="public" isStatic="true">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_ErVeYZwPEeqOrIhZhud6Nw" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_ErVeYpwPEeqOrIhZhud6Nw" name="username">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-        </ownedOperation>
       </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_z9qXgJtbEeq2atfbccE1vg" name="AuthReader">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQfQMJteEeq2atfbccE1vg" name="FILE_NAME" visibility="public" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+      <packagedElement xmi:type="uml:Class" xmi:id="_z9qXgJtbEeq2atfbccE1vg" name="CredsReader">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQfQMJteEeq2atfbccE1vg" name="FILE_NAME" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQYigJteEeq2atfbccE1vg" name="PASSWORD_KEY" visibility="public" isLeaf="true" isStatic="true" isUnique="false">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQYigJteEeq2atfbccE1vg" name="PASSWORD_KEY" visibility="private" isLeaf="true" isStatic="true" isUnique="false">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQMVQJteEeq2atfbccE1vg" name="USERNAME_KEY" visibility="public" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQMVQJteEeq2atfbccE1vg" name="USERNAME_KEY" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_cR8BsJteEeq2atfbccE1vg" name="readAuthentication" visibility="private" isStatic="true" concurrency="guarded">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_FO3ecJ8eEeqmn7VvkVGjbw" name="DEFAULT_FILE_NAME" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          <defaultValue xmi:type="uml:LiteralString" xmi:id="_vDG8AJ8fEeqmn7VvkVGjbw" name="defaultValue" value="API_login.txt"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_FO9lEJ8eEeqmn7VvkVGjbw" name="DEFAULT_PASSWORD_KEY" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          <defaultValue xmi:type="uml:LiteralString" xmi:id="_lOQWwJ8fEeqmn7VvkVGjbw" name="defaultValue" value="API_password"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_FPAoYJ8eEeqmn7VvkVGjbw" name="DEFAULT_USERNAME_KEY" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          <defaultValue xmi:type="uml:LiteralString" xmi:id="_qdgp4J8fEeqmn7VvkVGjbw" name="defaultValue" value="API_username"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_c1tz8J8eEeqmn7VvkVGjbw" name="env" visibility="private" isStatic="true" type="_c1hmsZ8eEeqmn7VvkVGjbw" isUnique="false">
+          <defaultValue xmi:type="uml:OpaqueExpression" xmi:id="_c1w3QJ8eEeqmn7VvkVGjbw" name="defaultValue">
+            <language>JAVA</language>
+            <body>System.getenv()</body>
+          </defaultValue>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_c2AH0J8eEeqmn7VvkVGjbw" name="credsFile" visibility="private" isStatic="true" type="_c1z6kJ8eEeqmn7VvkVGjbw" isUnique="false">
+          <defaultValue xmi:type="uml:OpaqueExpression" xmi:id="_c2AH0Z8eEeqmn7VvkVGjbw" name="defaultValue">
+            <language>JAVA</language>
+            <body>Path.of(FILE_NAME)</body>
+          </defaultValue>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_33tL4J8kEeqmn7VvkVGjbw" name="defaultFileName" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          <defaultValue xmi:type="uml:LiteralString" xmi:id="_33tL4Z8kEeqmn7VvkVGjbw" name="defaultValue" value="API_login.txt"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_33tL4p8kEeqmn7VvkVGjbw" name="defaultPasswordKey" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          <defaultValue xmi:type="uml:LiteralString" xmi:id="_33tL458kEeqmn7VvkVGjbw" name="defaultValue" value="API_password"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_33tL5J8kEeqmn7VvkVGjbw" name="defaultUsernameKey" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          <defaultValue xmi:type="uml:LiteralString" xmi:id="_33tL5Z8kEeqmn7VvkVGjbw" name="defaultValue" value="API_username"/>
+        </ownedAttribute>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cR8BsJteEeq2atfbccE1vg" name="readCredentials" visibility="private" isStatic="true" concurrency="guarded">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_FyAbgJtfEeq2atfbccE1vg" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_cRumUJteEeq2atfbccE1vg" name="getAuthentication" visibility="public" isStatic="true" raisedException="_9j6BUJwREeqOrIhZhud6Nw">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cRumUJteEeq2atfbccE1vg" name="getCredentials" visibility="public" isStatic="true" raisedException="_9j6BUJwREeqOrIhZhud6Nw">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_cR3wQJteEeq2atfbccE1vg" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_cRR6YJteEeq2atfbccE1vg" name="getAuthenticator" visibility="private" isStatic="true">
@@ -78,8 +99,7 @@
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSZ7wJteEeq2atfbccE1vg" type="_cRWL0JteEeq2atfbccE1vg" direction="return"/>
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSc_EJteEeq2atfbccE1vg" name="Login" type="_TuJ1AJtZEeq2atfbccE1vg"/>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_cRLzwJteEeq2atfbccE1vg" name="setDefaultAuthenticator" visibility="public" isStatic="true"/>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_fMVbYJwQEeqOrIhZhud6Nw" name="AuthReader" visibility="private">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_fMVbYJwQEeqOrIhZhud6Nw" name="CredsReader" visibility="private">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_fMVbYpwQEeqOrIhZhud6Nw" name="USERNAME_KEY">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           </ownedParameter>
@@ -105,7 +125,7 @@
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           </ownedParameter>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_MelGUJwREeqOrIhZhud6Nw" name="default">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_MelGUJwREeqOrIhZhud6Nw" name="default" isStatic="true">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_VSvDkJwREeqOrIhZhud6Nw" type="_z9qXgJtbEeq2atfbccE1vg" direction="return"/>
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_bxZwIJwREeqOrIhZhud6Nw" name="given" visibility="public" isStatic="true">
@@ -121,7 +141,7 @@
           </ownedParameter>
         </ownedOperation>
       </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_10OVoJwNEeqOrIhZhud6Nw" name="LoginOpt" visibility="private">
+      <packagedElement xmi:type="uml:Class" xmi:id="_10OVoJwNEeqOrIhZhud6Nw" name="CredsOpt" visibility="private">
         <ownedAttribute xmi:type="uml:Property" xmi:id="_19PHsJwNEeqOrIhZhud6Nw" name="username" visibility="private" isLeaf="true" type="_10VqYJwNEeqOrIhZhud6Nw" isUnique="false"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_19XDgJwNEeqOrIhZhud6Nw" name="password" visibility="private" isLeaf="true" type="_10VqYJwNEeqOrIhZhud6Nw" isUnique="false"/>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_18PpMJwNEeqOrIhZhud6Nw" name="given" visibility="public" isStatic="true">
@@ -177,10 +197,21 @@
         </packagedElement>
         <packagedElement xmi:type="uml:Package" xmi:id="_10TOIJwNEeqOrIhZhud6Nw" name="util">
           <packagedElement xmi:type="uml:Class" xmi:id="_10VqYJwNEeqOrIhZhud6Nw" name="Optional"/>
+          <packagedElement xmi:type="uml:Class" xmi:id="_c1hmsZ8eEeqmn7VvkVGjbw" name="Map"/>
         </packagedElement>
         <packagedElement xmi:type="uml:Package" xmi:id="_8AgU4JwREeqOrIhZhud6Nw" name="lang">
           <packagedElement xmi:type="uml:Class" xmi:id="_9j6BUJwREeqOrIhZhud6Nw" name="IllegalStateException"/>
         </packagedElement>
+        <packagedElement xmi:type="uml:Package" xmi:id="_c1w3QZ8eEeqmn7VvkVGjbw" name="nio">
+          <packagedElement xmi:type="uml:Package" xmi:id="_c1w3Qp8eEeqmn7VvkVGjbw" name="file">
+            <packagedElement xmi:type="uml:Class" xmi:id="_c1z6kJ8eEeqmn7VvkVGjbw" name="Path"/>
+          </packagedElement>
+        </packagedElement>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_czOgoJ8eEeqmn7VvkVGjbw" name="plaquette-MIDO">
+      <packagedElement xmi:type="uml:Class" xmi:id="_z4p5MJ8gEeqmn7VvkVGjbw" name="QueriesHelper" visibility="public">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_z4p5MZ8gEeqmn7VvkVGjbw" name="setDefaultAuthenticator" visibility="public" isStatic="true"/>
       </packagedElement>
     </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_aawIgJtcEeq2atfbccE1vg">
@@ -214,4 +245,6 @@
   <standard:Create xmi:id="_Era98JwPEeqOrIhZhud6Nw" base_BehavioralFeature="_EqvBcJwPEeqOrIhZhud6Nw"/>
   <standard:Create xmi:id="_fMelUJwQEeqOrIhZhud6Nw" base_BehavioralFeature="_fMVbYJwQEeqOrIhZhud6Nw"/>
   <PapyrusJava:External xmi:id="_9j7PcJwREeqOrIhZhud6Nw" name="java.net.Authenticator" base_Classifier="_9j6BUJwREeqOrIhZhud6Nw"/>
+  <PapyrusJava:External xmi:id="_c1qwoJ8eEeqmn7VvkVGjbw" name="java.util.Map" base_Classifier="_c1hmsZ8eEeqmn7VvkVGjbw"/>
+  <PapyrusJava:External xmi:id="_c19EgJ8eEeqmn7VvkVGjbw" name="java.nio.file.Path" base_Classifier="_c1z6kJ8eEeqmn7VvkVGjbw"/>
 </xmi:XMI>
