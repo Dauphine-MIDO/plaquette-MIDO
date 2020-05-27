@@ -87,10 +87,6 @@
         <element href="doc.uml#_cRumUJteEeq2atfbccE1vg"/>
         <layoutConstraint xsi:type="notation:Location" xmi:id="_yfGskZ6BEeqhM7-Hbf1Uzg"/>
       </children>
-      <children xsi:type="notation:Shape" xmi:id="_yfhjUJ6BEeqhM7-Hbf1Uzg" type="Operation_ClassOperationLabel">
-        <element href="doc.uml#_cRR6YJteEeq2atfbccE1vg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_yfhjUZ6BEeqhM7-Hbf1Uzg"/>
-      </children>
       <children xsi:type="notation:Shape" xmi:id="_yf3hkJ6BEeqhM7-Hbf1Uzg" type="Operation_ClassOperationLabel">
         <element href="doc.uml#_cSXfgJteEeq2atfbccE1vg"/>
         <layoutConstraint xsi:type="notation:Location" xmi:id="_yf3hkZ6BEeqhM7-Hbf1Uzg"/>

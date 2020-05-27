@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.plaquette_mido_soap;
+package io.github.oliviercailloux.creds_read;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -24,36 +24,36 @@ import java.util.Optional;
  * mixed with a present optional containing an empty string).
  * </p>
  */
-class LoginOpt {
-	public static LoginOpt given(Optional<String> username, Optional<String> password) {
-		LoginOpt authentication = new LoginOpt(username, password);
+class CredsOpt {
+	public static CredsOpt given(Optional<String> username, Optional<String> password) {
+		CredsOpt authentication = new CredsOpt(username, password);
 		return authentication;
 	}
 
-	public static LoginOpt given(String username, String password) {
-		LoginOpt authentication = new LoginOpt(Optional.of(username), Optional.of(password));
+	public static CredsOpt given(String username, String password) {
+		CredsOpt authentication = new CredsOpt(Optional.of(username), Optional.of(password));
 		return authentication;
 	}
 
-	public static LoginOpt onlyUsername(String username) {
-		LoginOpt authentication = new LoginOpt(Optional.of(username), Optional.empty());
+	public static CredsOpt onlyUsername(String username) {
+		CredsOpt authentication = new CredsOpt(Optional.of(username), Optional.empty());
 		return authentication;
 	}
 
-	public static LoginOpt onlyPassword(String password) {
-		LoginOpt authentication = new LoginOpt(Optional.empty(), Optional.of(password));
+	public static CredsOpt onlyPassword(String password) {
+		CredsOpt authentication = new CredsOpt(Optional.empty(), Optional.of(password));
 		return authentication;
 	}
 
-	public static LoginOpt empty() {
-		LoginOpt authentication = new LoginOpt(Optional.empty(), Optional.empty());
+	public static CredsOpt empty() {
+		CredsOpt authentication = new CredsOpt(Optional.empty(), Optional.empty());
 		return authentication;
 	}
 
 	private final Optional<String> username;
 	private final Optional<String> password;
 
-	private LoginOpt(Optional<String> username, Optional<String> password) {
+	private CredsOpt(Optional<String> username, Optional<String> password) {
 		this.username = checkNotNull(username);
 		this.password = checkNotNull(password);
 	}

@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.plaquette_mido_soap;
+package io.github.oliviercailloux.CredsOpt;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,6 +21,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.jimfs.Jimfs;
 
+import io.github.oliviercailloux.creds_read.CredsReader;
+import io.github.oliviercailloux.plaquette_mido_soap.QueriesHelper;
+
+
 class AuthenticationTests {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationTests.class);
@@ -32,9 +36,9 @@ class AuthenticationTests {
 	}
 
 	@BeforeEach
-	void resetQueriesHelper() {
-		QueriesHelper.apiLoginFile = Path.of("API_login.txt");
-		QueriesHelper.env = System.getenv();
+	void resetCredsReader() {
+		CredsReader.credsFile = Path.of("API_login.txt");
+		CredsReader.env = System.getenv();
 	}
 
 	Path createApiLoginFile(String... lines) throws IOException {
@@ -48,91 +52,91 @@ class AuthenticationTests {
 		return jimfs.getPath("Nonexistent.txt");
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
-	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "prop password")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testPropReadAuthentication() throws Exception {
-		QueriesHelper.env = System.getenv();
-		QueriesHelper.apiLoginFile = getNonExistentFile();
+		CredsReader.env = System.getenv();
+		CredsReader.credsFile = getNonExistentFile();
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+		final CredsOpt myAuth = CredsReader.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
-	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "prop password")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testHalfEnvAndPropReadAuthentication() throws Exception {
-		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
-		QueriesHelper.apiLoginFile = getNonExistentFile();
+		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.credsFile = getNonExistentFile();
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+		final CredsOpt myAuth = CredsReader.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
 	@Test
 	public void testHalfPropAndEnvReadAuthentication() throws Exception {
-		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username", QueriesHelper.PASSWORD_KEY,
+		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username", CredsReader.PASSWORD_KEY,
 				"env password");
-		QueriesHelper.apiLoginFile = getNonExistentFile();
+		CredsReader.credsFile = getNonExistentFile();
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+		final CredsOpt myAuth = CredsReader.readAuthentication();
 
 		assertEquals("env username", myAuth.getUsername().get());
 		assertEquals("env password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
 	@Test
 	public void testHalfPropAndHalfEnvAndFullFileReadAuthentication() throws Exception {
-		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password");
+		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.credsFile = createApiLoginFile("file username", "file password");
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+		final CredsOpt myAuth = CredsReader.readAuthentication();
 
 		assertEquals("file username", myAuth.getUsername().get());
 		assertEquals("file password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
-	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "prop password")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testPropAndEnvReadAuthentication() throws Exception {
-		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username", QueriesHelper.PASSWORD_KEY,
+		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username", CredsReader.PASSWORD_KEY,
 				"env password");
-		QueriesHelper.apiLoginFile = getNonExistentFile();
+		CredsReader.credsFile = getNonExistentFile();
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+		final CredsOpt myAuth = CredsReader.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "")
-	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "")
+	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "")
 	@Test
 	public void testPropSetToEmptyStringsReadAuthentication() throws Exception {
-		QueriesHelper.env = System.getenv();
-		QueriesHelper.apiLoginFile = getNonExistentFile();
+		CredsReader.env = System.getenv();
+		CredsReader.credsFile = getNonExistentFile();
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+		final CredsOpt myAuth = CredsReader.readAuthentication();
 
 		assertEquals("", myAuth.getUsername().get());
 		assertEquals("", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
 	@Test
 	public void testNoPasswordReadAuthentication() throws Exception {
-		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
-		QueriesHelper.apiLoginFile = getNonExistentFile();
+		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.credsFile = getNonExistentFile();
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+		final CredsOpt myAuth = CredsReader.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertTrue(myAuth.getPassword().isEmpty(), myAuth.getPassword().toString());
@@ -141,28 +145,28 @@ class AuthenticationTests {
 	@Test
 	public void testFileReadAuthentication() throws Exception {
 		{
-			QueriesHelper.env = System.getenv();
-			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password");
+			CredsReader.env = System.getenv();
+			CredsReader.credsFile = createApiLoginFile("file username", "file password");
 
-			final LoginOpt myAuth = QueriesHelper.readAuthentication();
-
-			assertEquals("file username", myAuth.getUsername().get());
-			assertEquals("file password", myAuth.getPassword().get());
-		}
-		{
-			QueriesHelper.env = System.getenv();
-			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "");
-
-			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final CredsOpt myAuth = CredsReader.readAuthentication();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("file password", myAuth.getPassword().get());
 		}
 		{
-			QueriesHelper.env = System.getenv();
-			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "", "");
+			CredsReader.env = System.getenv();
+			CredsReader.credsFile = createApiLoginFile("file username", "file password", "");
 
-			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final CredsOpt myAuth = CredsReader.readAuthentication();
+
+			assertEquals("file username", myAuth.getUsername().get());
+			assertEquals("file password", myAuth.getPassword().get());
+		}
+		{
+			CredsReader.env = System.getenv();
+			CredsReader.credsFile = createApiLoginFile("file username", "file password", "", "");
+
+			final CredsOpt myAuth = CredsReader.readAuthentication();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("file password", myAuth.getPassword().get());
@@ -171,29 +175,29 @@ class AuthenticationTests {
 
 	@Test
 	public void testEmptyFile() throws Exception {
-		QueriesHelper.env = System.getenv();
+		CredsReader.env = System.getenv();
 		{
-			QueriesHelper.apiLoginFile = createApiLoginFile();
+			CredsReader.credsFile = createApiLoginFile();
 
-			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final CredsOpt myAuth = CredsReader.readAuthentication();
 
 			assertEquals("", myAuth.getUsername().get());
 			assertEquals("", myAuth.getPassword().get());
 		}
 		{
-			QueriesHelper.apiLoginFile = createApiLoginFile("", "", "", "", "");
+			CredsReader.credsFile = createApiLoginFile("", "", "", "", "");
 
-			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final CredsOpt myAuth = CredsReader.readAuthentication();
 
 			assertEquals("", myAuth.getUsername().get());
 			assertEquals("", myAuth.getPassword().get());
 		}
 		{
-			QueriesHelper.apiLoginFile = createApiLoginFile();
+			CredsReader.credsFile = createApiLoginFile();
 			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
 		}
 		{
-			QueriesHelper.apiLoginFile = createApiLoginFile("", "", "", "", "");
+			CredsReader.credsFile = createApiLoginFile("", "", "", "", "");
 			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
 		}
 	}
@@ -201,17 +205,17 @@ class AuthenticationTests {
 	@Test
 	public void testEmptyUsernameFile() throws Exception {
 		{
-			QueriesHelper.env = System.getenv();
-			QueriesHelper.apiLoginFile = createApiLoginFile("", "file password");
+			CredsReader.env = System.getenv();
+			CredsReader.credsFile = createApiLoginFile("", "file password");
 
-			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final CredsOpt myAuth = CredsReader.readAuthentication();
 
 			assertEquals("", myAuth.getUsername().get());
 			assertEquals("file password", myAuth.getPassword().get());
 		}
 		{
-			QueriesHelper.env = System.getenv();
-			QueriesHelper.apiLoginFile = createApiLoginFile("", "file password");
+			CredsReader.env = System.getenv();
+			CredsReader.credsFile = createApiLoginFile("", "file password");
 
 			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
 		}
@@ -219,83 +223,83 @@ class AuthenticationTests {
 
 	@Test
 	public void testEmptyPasswordFile() throws Exception {
-		QueriesHelper.env = System.getenv();
+		CredsReader.env = System.getenv();
 		{
-			QueriesHelper.apiLoginFile = createApiLoginFile("file username");
+			CredsReader.credsFile = createApiLoginFile("file username");
 
-			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final CredsOpt myAuth = CredsReader.readAuthentication();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("", myAuth.getPassword().get());
 		}
 		{
-			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "");
+			CredsReader.credsFile = createApiLoginFile("file username", "");
 
-			final LoginOpt myAuth = QueriesHelper.readAuthentication();
-
-			assertEquals("file username", myAuth.getUsername().get());
-			assertEquals("", myAuth.getPassword().get());
-		}
-		{
-			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "", "");
-
-			final LoginOpt myAuth = QueriesHelper.readAuthentication();
+			final CredsOpt myAuth = CredsReader.readAuthentication();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("", myAuth.getPassword().get());
 		}
 		{
-			QueriesHelper.apiLoginFile = createApiLoginFile("file username");
+			CredsReader.credsFile = createApiLoginFile("file username", "", "");
+
+			final CredsOpt myAuth = CredsReader.readAuthentication();
+
+			assertEquals("file username", myAuth.getUsername().get());
+			assertEquals("", myAuth.getPassword().get());
+		}
+		{
+			CredsReader.credsFile = createApiLoginFile("file username");
 			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
 		}
 		{
-			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "");
+			CredsReader.credsFile = createApiLoginFile("file username", "");
 			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
 		}
 		{
-			QueriesHelper.apiLoginFile = createApiLoginFile("file username", "", "", "");
+			CredsReader.credsFile = createApiLoginFile("file username", "", "", "");
 			assertDoesNotThrow(() -> QueriesHelper.setDefaultAuthenticator());
 		}
 	}
 
 	@Test
 	public void testIncorrectFileReadAuthentication() throws Exception {
-		QueriesHelper.env = System.getenv();
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "garbage");
+		CredsReader.env = System.getenv();
+		CredsReader.credsFile = createApiLoginFile("file username", "file password", "garbage");
 
-		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.readAuthentication());
+		final Exception exception = assertThrows(IllegalStateException.class, () -> CredsReader.readAuthentication());
 		assertEquals("File API_login.txt is too long: 3 lines", exception.getMessage());
 	}
 
 	@Test
 	public void testGarbageLaterFileReadAuthentication() throws Exception {
-		QueriesHelper.env = System.getenv();
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password", "", "Garbage");
+		CredsReader.env = System.getenv();
+		CredsReader.credsFile = createApiLoginFile("file username", "file password", "", "Garbage");
 
-		final Exception exception = assertThrows(IllegalStateException.class, () -> QueriesHelper.readAuthentication());
+		final Exception exception = assertThrows(IllegalStateException.class, () -> CredsReader.readAuthentication());
 		assertEquals("File API_login.txt is too long: 4 lines", exception.getMessage());
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
 	public void testHalfPropHalfEnvAndFileReadAuthentication() throws IOException {
-		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password");
+		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.credsFile = createApiLoginFile("file username", "file password");
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+		final CredsOpt myAuth = CredsReader.readAuthentication();
 
 		assertEquals("file username", myAuth.getUsername().get());
 		assertEquals("file password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
-	@SetSystemProperty(key = QueriesHelper.PASSWORD_KEY, value = "prop password")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testPropEnvAndFileReadAuthentication() throws Exception {
-		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username", QueriesHelper.PASSWORD_KEY,
+		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username", CredsReader.PASSWORD_KEY,
 				"env password");
-		QueriesHelper.apiLoginFile = createApiLoginFile("file username", "file password");
+		CredsReader.credsFile = createApiLoginFile("file username", "file password");
 
-		final LoginOpt myAuth = QueriesHelper.readAuthentication();
+		final CredsOpt myAuth = CredsReader.readAuthentication();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
@@ -303,8 +307,8 @@ class AuthenticationTests {
 
 	@Test
 	public void testNoneGetAuthenticator() throws Exception {
-		QueriesHelper.env = System.getenv();
-		QueriesHelper.apiLoginFile = getNonExistentFile();
+		CredsReader.env = System.getenv();
+		CredsReader.credsFile = getNonExistentFile();
 
 		final Exception exception = assertThrows(IllegalStateException.class,
 				() -> QueriesHelper.setDefaultAuthenticator());
@@ -313,19 +317,19 @@ class AuthenticationTests {
 
 	@Test
 	public void testHalfEnvGetAuthenticator() throws Exception {
-		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
-		QueriesHelper.apiLoginFile = getNonExistentFile();
+		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.credsFile = getNonExistentFile();
 
 		final Exception exception = assertThrows(IllegalStateException.class,
 				() -> QueriesHelper.setDefaultAuthenticator());
 		assertEquals("Found username but no password.", exception.getMessage());
 	}
 
-	@SetSystemProperty(key = QueriesHelper.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
 	@Test
 	public void testHalfPropAndHalfEnvGetAuthenticator() throws Exception {
-		QueriesHelper.env = Map.of(QueriesHelper.USERNAME_KEY, "env username");
-		QueriesHelper.apiLoginFile = getNonExistentFile();
+		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.credsFile = getNonExistentFile();
 
 		final Exception exception = assertThrows(IllegalStateException.class,
 				() -> QueriesHelper.setDefaultAuthenticator());

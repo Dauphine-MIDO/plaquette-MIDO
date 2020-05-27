@@ -92,9 +92,6 @@
         <ownedOperation xmi:type="uml:Operation" xmi:id="_cRumUJteEeq2atfbccE1vg" name="getCredentials" visibility="public" isStatic="true" raisedException="_9j6BUJwREeqOrIhZhud6Nw">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_cR3wQJteEeq2atfbccE1vg" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_cRR6YJteEeq2atfbccE1vg" name="getAuthenticator" visibility="private" isStatic="true">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_cRf80JteEeq2atfbccE1vg" type="_cRWL0JteEeq2atfbccE1vg" direction="return"/>
-        </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_cSXfgJteEeq2atfbccE1vg" name="getConstantAuthenticator" visibility="private" isStatic="true">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSZ7wJteEeq2atfbccE1vg" type="_cRWL0JteEeq2atfbccE1vg" direction="return"/>
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSc_EJteEeq2atfbccE1vg" name="Login" type="_TuJ1AJtZEeq2atfbccE1vg"/>
