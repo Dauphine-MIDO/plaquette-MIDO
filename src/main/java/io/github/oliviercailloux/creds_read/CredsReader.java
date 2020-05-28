@@ -27,17 +27,17 @@ public class CredsReader {
 
 	private final String FILE_NAME;
 
-	public static final String DEFAULT_USERNAME_KEY = "API_username";
+	private static final String DEFAULT_USERNAME_KEY = "API_username";
 
-	public static final String DEFAULT_PASSWORD_KEY = "API_password";
+	private static final String DEFAULT_PASSWORD_KEY = "API_password";
 
-	public static final String DEFAULT_FILE_NAME = "API_login.txt";
+	private static final String DEFAULT_FILE_NAME = "API_login.txt";
 
-	public static final String defaultUsernameKey = "API_username";
+	private static final String defaultUsernameKey = "API_username";
 
-	public static final String defaultPasswordKey = "API_password";
+	private static final String defaultPasswordKey = "API_password";
 
-	public static final String defaultFileName = "API_login.txt";
+	private static final String defaultFileName = "API_login.txt";
 
 	static Map<String, String> env = System.getenv();
 
