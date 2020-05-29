@@ -41,15 +41,6 @@
         </ownedOperation>
       </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_z9qXgJtbEeq2atfbccE1vg" name="CredsReader">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQfQMJteEeq2atfbccE1vg" name="FILE_NAME" visibility="private" isLeaf="true" isUnique="false" aggregation="composite">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQYigJteEeq2atfbccE1vg" name="PASSWORD_KEY" visibility="private" isLeaf="true" isUnique="false">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_cQMVQJteEeq2atfbccE1vg" name="USERNAME_KEY" visibility="private" isLeaf="true" isUnique="false" aggregation="composite">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-        </ownedAttribute>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_FO3ecJ8eEeqmn7VvkVGjbw" name="DEFAULT_FILE_NAME" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           <defaultValue xmi:type="uml:LiteralString" xmi:id="_vDG8AJ8fEeqmn7VvkVGjbw" name="defaultValue" value="API_login.txt"/>
@@ -74,15 +65,15 @@
             <body>Path.of(FILE_NAME)</body>
           </defaultValue>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_33tL4J8kEeqmn7VvkVGjbw" name="defaultFileName" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_33tL4J8kEeqmn7VvkVGjbw" name="fileName" visibility="private" isLeaf="true" isUnique="false" aggregation="composite">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           <defaultValue xmi:type="uml:LiteralString" xmi:id="_33tL4Z8kEeqmn7VvkVGjbw" name="defaultValue" value="API_login.txt"/>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_33tL4p8kEeqmn7VvkVGjbw" name="defaultPasswordKey" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_33tL4p8kEeqmn7VvkVGjbw" name="passwordKey" visibility="private" isLeaf="true" isUnique="false" aggregation="composite">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           <defaultValue xmi:type="uml:LiteralString" xmi:id="_33tL458kEeqmn7VvkVGjbw" name="defaultValue" value="API_password"/>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_33tL5J8kEeqmn7VvkVGjbw" name="defaultUsernameKey" visibility="private" isLeaf="true" isStatic="true" isUnique="false" aggregation="composite">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_33tL5J8kEeqmn7VvkVGjbw" name="usernameKey" visibility="private" isLeaf="true" isUnique="false" aggregation="composite">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           <defaultValue xmi:type="uml:LiteralString" xmi:id="_33tL5Z8kEeqmn7VvkVGjbw" name="defaultValue" value="API_username"/>
         </ownedAttribute>
@@ -92,9 +83,8 @@
         <ownedOperation xmi:type="uml:Operation" xmi:id="_cRumUJteEeq2atfbccE1vg" name="getCredentials" visibility="public" raisedException="_9j6BUJwREeqOrIhZhud6Nw">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_cR3wQJteEeq2atfbccE1vg" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_cSXfgJteEeq2atfbccE1vg" name="getConstantAuthenticator" visibility="private" isStatic="true">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cSXfgJteEeq2atfbccE1vg" name="getConstantAuthenticator" visibility="private">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSZ7wJteEeq2atfbccE1vg" type="_cRWL0JteEeq2atfbccE1vg" direction="return"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSc_EJteEeq2atfbccE1vg" name="Login" type="_TuJ1AJtZEeq2atfbccE1vg"/>
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_fMVbYJwQEeqOrIhZhud6Nw" name="CredsReader" visibility="private">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_fMVbYpwQEeqOrIhZhud6Nw" name="USERNAME_KEY">

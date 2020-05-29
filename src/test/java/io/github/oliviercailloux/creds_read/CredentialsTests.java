@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.CredsOpt;
+package io.github.oliviercailloux.creds_read;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,13 +21,14 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.jimfs.Jimfs;
 
+import io.github.oliviercailloux.creds_read.CredsOpt;
 import io.github.oliviercailloux.creds_read.CredsReader;
 import io.github.oliviercailloux.plaquette_mido_soap.QueriesHelper;
 
 
-class AuthenticationTests {
+class CredentialsTests {
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationTests.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CredentialsTests.class);
 	private FileSystem jimfs;
 
 	@BeforeEach
@@ -52,91 +53,91 @@ class AuthenticationTests {
 		return jimfs.getPath("Nonexistent.txt");
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
-	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "prop password")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.DEFAULT_PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testPropReadAuthentication() throws Exception {
 		CredsReader.env = System.getenv();
 		CredsReader.credsFile = getNonExistentFile();
 
-		final CredsOpt myAuth = CredsReader.readAuthentication();
+		final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
-	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "prop password")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.DEFAULT_PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testHalfEnvAndPropReadAuthentication() throws Exception {
-		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.env = Map.of(CredsReader.DEFAULT_USERNAME_KEY, "env username");
 		CredsReader.credsFile = getNonExistentFile();
 
-		final CredsOpt myAuth = CredsReader.readAuthentication();
+		final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "prop username")
 	@Test
 	public void testHalfPropAndEnvReadAuthentication() throws Exception {
-		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username", CredsReader.PASSWORD_KEY,
+		CredsReader.env = Map.of(CredsReader.DEFAULT_USERNAME_KEY, "env username", CredsReader.DEFAULT_PASSWORD_KEY,
 				"env password");
 		CredsReader.credsFile = getNonExistentFile();
 
-		final CredsOpt myAuth = CredsReader.readAuthentication();
+		final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 		assertEquals("env username", myAuth.getUsername().get());
 		assertEquals("env password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "prop username")
 	@Test
 	public void testHalfPropAndHalfEnvAndFullFileReadAuthentication() throws Exception {
-		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.env = Map.of(CredsReader.DEFAULT_USERNAME_KEY, "env username");
 		CredsReader.credsFile = createApiLoginFile("file username", "file password");
 
-		final CredsOpt myAuth = CredsReader.readAuthentication();
+		final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 		assertEquals("file username", myAuth.getUsername().get());
 		assertEquals("file password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
-	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "prop password")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.DEFAULT_PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testPropAndEnvReadAuthentication() throws Exception {
-		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username", CredsReader.PASSWORD_KEY,
+		CredsReader.env = Map.of(CredsReader.DEFAULT_USERNAME_KEY, "env username", CredsReader.DEFAULT_PASSWORD_KEY,
 				"env password");
 		CredsReader.credsFile = getNonExistentFile();
 
-		final CredsOpt myAuth = CredsReader.readAuthentication();
+		final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "")
-	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "")
+	@SetSystemProperty(key = CredsReader.DEFAULT_PASSWORD_KEY, value = "")
 	@Test
 	public void testPropSetToEmptyStringsReadAuthentication() throws Exception {
 		CredsReader.env = System.getenv();
 		CredsReader.credsFile = getNonExistentFile();
 
-		final CredsOpt myAuth = CredsReader.readAuthentication();
+		final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 		assertEquals("", myAuth.getUsername().get());
 		assertEquals("", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "prop username")
 	@Test
 	public void testNoPasswordReadAuthentication() throws Exception {
-		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.env = Map.of(CredsReader.DEFAULT_USERNAME_KEY, "env username");
 		CredsReader.credsFile = getNonExistentFile();
 
-		final CredsOpt myAuth = CredsReader.readAuthentication();
+		final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertTrue(myAuth.getPassword().isEmpty(), myAuth.getPassword().toString());
@@ -148,7 +149,7 @@ class AuthenticationTests {
 			CredsReader.env = System.getenv();
 			CredsReader.credsFile = createApiLoginFile("file username", "file password");
 
-			final CredsOpt myAuth = CredsReader.readAuthentication();
+			final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("file password", myAuth.getPassword().get());
@@ -157,7 +158,7 @@ class AuthenticationTests {
 			CredsReader.env = System.getenv();
 			CredsReader.credsFile = createApiLoginFile("file username", "file password", "");
 
-			final CredsOpt myAuth = CredsReader.readAuthentication();
+			final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("file password", myAuth.getPassword().get());
@@ -166,7 +167,7 @@ class AuthenticationTests {
 			CredsReader.env = System.getenv();
 			CredsReader.credsFile = createApiLoginFile("file username", "file password", "", "");
 
-			final CredsOpt myAuth = CredsReader.readAuthentication();
+			final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("file password", myAuth.getPassword().get());
@@ -179,7 +180,7 @@ class AuthenticationTests {
 		{
 			CredsReader.credsFile = createApiLoginFile();
 
-			final CredsOpt myAuth = CredsReader.readAuthentication();
+			final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 			assertEquals("", myAuth.getUsername().get());
 			assertEquals("", myAuth.getPassword().get());
@@ -187,7 +188,7 @@ class AuthenticationTests {
 		{
 			CredsReader.credsFile = createApiLoginFile("", "", "", "", "");
 
-			final CredsOpt myAuth = CredsReader.readAuthentication();
+			final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 			assertEquals("", myAuth.getUsername().get());
 			assertEquals("", myAuth.getPassword().get());
@@ -208,7 +209,7 @@ class AuthenticationTests {
 			CredsReader.env = System.getenv();
 			CredsReader.credsFile = createApiLoginFile("", "file password");
 
-			final CredsOpt myAuth = CredsReader.readAuthentication();
+			final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 			assertEquals("", myAuth.getUsername().get());
 			assertEquals("file password", myAuth.getPassword().get());
@@ -227,7 +228,7 @@ class AuthenticationTests {
 		{
 			CredsReader.credsFile = createApiLoginFile("file username");
 
-			final CredsOpt myAuth = CredsReader.readAuthentication();
+			final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("", myAuth.getPassword().get());
@@ -235,7 +236,7 @@ class AuthenticationTests {
 		{
 			CredsReader.credsFile = createApiLoginFile("file username", "");
 
-			final CredsOpt myAuth = CredsReader.readAuthentication();
+			final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("", myAuth.getPassword().get());
@@ -243,7 +244,7 @@ class AuthenticationTests {
 		{
 			CredsReader.credsFile = createApiLoginFile("file username", "", "");
 
-			final CredsOpt myAuth = CredsReader.readAuthentication();
+			final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 			assertEquals("file username", myAuth.getUsername().get());
 			assertEquals("", myAuth.getPassword().get());
@@ -267,7 +268,7 @@ class AuthenticationTests {
 		CredsReader.env = System.getenv();
 		CredsReader.credsFile = createApiLoginFile("file username", "file password", "garbage");
 
-		final Exception exception = assertThrows(IllegalStateException.class, () -> CredsReader.readAuthentication());
+		final Exception exception = assertThrows(IllegalStateException.class, () -> CredsReader.defaultCreds().readCredentials());
 		assertEquals("File API_login.txt is too long: 3 lines", exception.getMessage());
 	}
 
@@ -276,30 +277,30 @@ class AuthenticationTests {
 		CredsReader.env = System.getenv();
 		CredsReader.credsFile = createApiLoginFile("file username", "file password", "", "Garbage");
 
-		final Exception exception = assertThrows(IllegalStateException.class, () -> CredsReader.readAuthentication());
+		final Exception exception = assertThrows(IllegalStateException.class, () -> CredsReader.defaultCreds().readCredentials());
 		assertEquals("File API_login.txt is too long: 4 lines", exception.getMessage());
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "prop username")
 	public void testHalfPropHalfEnvAndFileReadAuthentication() throws IOException {
-		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.env = Map.of(CredsReader.DEFAULT_USERNAME_KEY, "env username");
 		CredsReader.credsFile = createApiLoginFile("file username", "file password");
 
-		final CredsOpt myAuth = CredsReader.readAuthentication();
+		final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 		assertEquals("file username", myAuth.getUsername().get());
 		assertEquals("file password", myAuth.getPassword().get());
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
-	@SetSystemProperty(key = CredsReader.PASSWORD_KEY, value = "prop password")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.DEFAULT_PASSWORD_KEY, value = "prop password")
 	@Test
 	public void testPropEnvAndFileReadAuthentication() throws Exception {
-		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username", CredsReader.PASSWORD_KEY,
+		CredsReader.env = Map.of(CredsReader.DEFAULT_USERNAME_KEY, "env username", CredsReader.DEFAULT_PASSWORD_KEY,
 				"env password");
 		CredsReader.credsFile = createApiLoginFile("file username", "file password");
 
-		final CredsOpt myAuth = CredsReader.readAuthentication();
+		final CredsOpt myAuth = CredsReader.defaultCreds().readCredentials();
 
 		assertEquals("prop username", myAuth.getUsername().get());
 		assertEquals("prop password", myAuth.getPassword().get());
@@ -317,7 +318,7 @@ class AuthenticationTests {
 
 	@Test
 	public void testHalfEnvGetAuthenticator() throws Exception {
-		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.env = Map.of(CredsReader.DEFAULT_USERNAME_KEY, "env username");
 		CredsReader.credsFile = getNonExistentFile();
 
 		final Exception exception = assertThrows(IllegalStateException.class,
@@ -325,10 +326,10 @@ class AuthenticationTests {
 		assertEquals("Found username but no password.", exception.getMessage());
 	}
 
-	@SetSystemProperty(key = CredsReader.USERNAME_KEY, value = "prop username")
+	@SetSystemProperty(key = CredsReader.DEFAULT_USERNAME_KEY, value = "prop username")
 	@Test
 	public void testHalfPropAndHalfEnvGetAuthenticator() throws Exception {
-		CredsReader.env = Map.of(CredsReader.USERNAME_KEY, "env username");
+		CredsReader.env = Map.of(CredsReader.DEFAULT_USERNAME_KEY, "env username");
 		CredsReader.credsFile = getNonExistentFile();
 
 		final Exception exception = assertThrows(IllegalStateException.class,

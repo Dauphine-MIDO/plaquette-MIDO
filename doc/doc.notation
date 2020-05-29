@@ -6,18 +6,6 @@
       <layoutConstraint xsi:type="notation:Location" xmi:id="_g4d7IJwSEeqOrIhZhud6Nw" y="15"/>
     </children>
     <children xsi:type="notation:BasicCompartment" xmi:id="_g4d7IZwSEeqOrIhZhud6Nw" type="Class_AttributeCompartment">
-      <children xsi:type="notation:Shape" xmi:id="_0jYG4J6AEeqhM7-Hbf1Uzg" type="Property_ClassAttributeLabel">
-        <element href="doc.uml#_cQfQMJteEeq2atfbccE1vg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_0jYG4Z6AEeqhM7-Hbf1Uzg"/>
-      </children>
-      <children xsi:type="notation:Shape" xmi:id="_0kUiEJ6AEeqhM7-Hbf1Uzg" type="Property_ClassAttributeLabel">
-        <element href="doc.uml#_cQYigJteEeq2atfbccE1vg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_0kUiEZ6AEeqhM7-Hbf1Uzg"/>
-      </children>
-      <children xsi:type="notation:Shape" xmi:id="_0koEEJ6AEeqhM7-Hbf1Uzg" type="Property_ClassAttributeLabel">
-        <element href="doc.uml#_cQMVQJteEeq2atfbccE1vg"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_0koEEZ6AEeqhM7-Hbf1Uzg"/>
-      </children>
       <children xsi:type="notation:Shape" xmi:id="_GoCwgJ8hEeqmn7VvkVGjbw" type="Property_ClassAttributeLabel">
         <element href="doc.uml#_FO3ecJ8eEeqmn7VvkVGjbw"/>
         <layoutConstraint xsi:type="notation:Location" xmi:id="_GoCwgZ8hEeqmn7VvkVGjbw"/>

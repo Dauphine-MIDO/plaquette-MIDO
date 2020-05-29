@@ -4,6 +4,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Optional;
 
+/**
+ * <p>
+ * Immutable.
+ * </p>
+ * <p>
+ * Stores two String of login information: username and password.
+ * </p>
+ */
 public class Credentials {
 
 	public static Credentials given(String username, String password) {

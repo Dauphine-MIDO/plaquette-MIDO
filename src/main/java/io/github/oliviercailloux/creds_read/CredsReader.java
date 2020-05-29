@@ -21,30 +21,48 @@ public class CredsReader {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(CredsReader.class);
 
-	private final String USERNAME_KEY;
+	/**
+	 * The default value of the username key used in
+	 * <code>CredsReader.defaultCreds()</code>.
+	 */
+	public static final String DEFAULT_USERNAME_KEY = "API_username";
 
-	private final String PASSWORD_KEY;
+	/**
+	 * The default value of the password key used in the
+	 * <code>CredsReader.defaultCreds()</code>.
+	 */
+	public static final String DEFAULT_PASSWORD_KEY = "API_password";
 
-	private final String FILE_NAME;
+	/**
+	 * The default value of the file name used in the
+	 * <code>CredsReader.defaultCreds()</code>.
+	 */
+	public static final String DEFAULT_FILE_NAME = "API_login.txt";
 
-	private static final String DEFAULT_USERNAME_KEY = "API_username";
+	/**
+	 * The value of the username key. It can be set in <code>given(String
+	 * usernameKey, String passwordKey, String fileName)
+	 */
+	private final String usernameKey;
 
-	private static final String DEFAULT_PASSWORD_KEY = "API_password";
+	/**
+	 * The value of the password key. It can be set in <code>given(String
+	 * usernameKey, String passwordKey, String fileName)
+	 */
+	private final String passwordKey;
 
-	private static final String DEFAULT_FILE_NAME = "API_login.txt";
+	/**
+	 * The value of the file name. It can be set in
+	 * <code>given(String usernameKey, String passwordKey, String fileName)</code>.
+	 */
+	private final String fileName;
 
-	private static final String defaultUsernameKey = "API_username";
+	public static Map<String, String> env = System.getenv();
 
-	private static final String defaultPasswordKey = "API_password";
+	public static Path credsFile;
 
-	private static final String defaultFileName = "API_login.txt";
-
-	static Map<String, String> env = System.getenv();
-
-	static Path credsFile;
-
-	public static CredsReader given(String USERNAME_KEY, String PASSWORD_KEY, String FILE_NAME) {
-		CredsReader credsReader = new CredsReader(USERNAME_KEY, PASSWORD_KEY, FILE_NAME);
+	public static CredsReader given(String usernameKey, String passwordKey, String fileName) {
+		CredsReader credsReader = new CredsReader(usernameKey, passwordKey, fileName);
 		return credsReader;
 	}
 
@@ -53,23 +71,23 @@ public class CredsReader {
 		return credsReader;
 	}
 
-	private CredsReader(String USERNAME_KEY, String PASSWORD_KEY, String FILE_NAME) {
-		this.USERNAME_KEY = checkNotNull(USERNAME_KEY);
-		this.PASSWORD_KEY = checkNotNull(PASSWORD_KEY);
-		this.FILE_NAME = checkNotNull(FILE_NAME);
-		credsFile = Path.of(FILE_NAME);
+	private CredsReader(String usernameKey, String passwordKey, String fileName) {
+		this.usernameKey = checkNotNull(usernameKey);
+		this.passwordKey = checkNotNull(passwordKey);
+		this.fileName = checkNotNull(fileName);
+		credsFile = Path.of(fileName);
 	}
 
 	public String getUsernameKey() {
-		return USERNAME_KEY;
+		return usernameKey;
 	}
 
 	public String getPasswordKey() {
-		return PASSWORD_KEY;
+		return passwordKey;
 	}
 
 	public String getFileName() {
-		return FILE_NAME;
+		return fileName;
 	}
 
 	/**
@@ -144,8 +162,8 @@ public class CredsReader {
 	public CredsOpt readCredentials() throws IOException, IllegalStateException {
 		final CredsOpt propertyAuthentication;
 		{
-			final String username = System.getProperty(this.USERNAME_KEY);
-			final String password = System.getProperty(this.PASSWORD_KEY);
+			final String username = System.getProperty(this.usernameKey);
+			final String password = System.getProperty(this.passwordKey);
 			propertyAuthentication = CredsOpt.given(Optional.ofNullable(username), Optional.ofNullable(password));
 			final int informationalValue = propertyAuthentication.getInformationalValue();
 			LOGGER.info(
@@ -155,8 +173,8 @@ public class CredsReader {
 
 		final CredsOpt envAuthentication;
 		{
-			final String username = env.get(this.USERNAME_KEY);
-			final String password = env.get(this.PASSWORD_KEY);
+			final String username = env.get(this.usernameKey);
+			final String password = env.get(this.passwordKey);
 			envAuthentication = CredsOpt.given(Optional.ofNullable(username), Optional.ofNullable(password));
 			final int informationalValue = envAuthentication.getInformationalValue();
 			LOGGER.info("Found {} piece" + (informationalValue >= 2 ? "s" : "")
@@ -204,8 +222,8 @@ public class CredsReader {
 		return map.lastEntry().getValue();
 	}
 
-	public static Authenticator getConstantAuthenticator(Credentials credentials) {
-		checkNotNull(credentials);
+	public Authenticator getConstantAuthenticator() {
+		Credentials credentials = this.getCredentials();
 		final PasswordAuthentication passwordAuthentication = new PasswordAuthentication(credentials.getUsername(),
 				credentials.getPassword().toCharArray());
 		final Authenticator myAuth = new Authenticator() {

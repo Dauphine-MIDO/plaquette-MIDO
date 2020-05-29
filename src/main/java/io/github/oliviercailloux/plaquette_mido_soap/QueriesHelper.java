@@ -8,10 +8,7 @@ import io.github.oliviercailloux.creds_read.CredsReader;
 public class QueriesHelper {
 
 	public static void setDefaultAuthenticator() {
-		CredsReader credsReader = CredsReader.defaultCreds();
-		final Credentials credentials = credsReader.getCredentials();
-
-		final Authenticator myAuth = CredsReader.getConstantAuthenticator(credentials);
+		final Authenticator myAuth = CredsReader.defaultCreds().getConstantAuthenticator();
 		Authenticator.setDefault(myAuth);
 	}
 }
