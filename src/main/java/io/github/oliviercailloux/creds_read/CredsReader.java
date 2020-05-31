@@ -28,41 +28,39 @@ public class CredsReader {
 	public static final String DEFAULT_USERNAME_KEY = "API_username";
 
 	/**
-	 * The default value of the password key used in the
+	 * The default value of the password key used in
 	 * <code>CredsReader.defaultCreds()</code>.
 	 */
 	public static final String DEFAULT_PASSWORD_KEY = "API_password";
 
 	/**
-	 * The default value of the file name used in the
+	 * The default value of the file path used in
 	 * <code>CredsReader.defaultCreds()</code>.
 	 */
-	public static final String DEFAULT_FILE_NAME = "API_login.txt";
+	public static final Path DEFAULT_FILE_NAME = Path.of("API_login.txt");
 
 	/**
 	 * The value of the username key. It can be set in <code>given(String
-	 * usernameKey, String passwordKey, String fileName)
+	 * usernameKey, String passwordKey, String filePath)
 	 */
 	private final String usernameKey;
 
 	/**
 	 * The value of the password key. It can be set in <code>given(String
-	 * usernameKey, String passwordKey, String fileName)
+	 * usernameKey, String passwordKey, String filePath)
 	 */
 	private final String passwordKey;
 
 	/**
-	 * The value of the file name. It can be set in
-	 * <code>given(String usernameKey, String passwordKey, String fileName)</code>.
+	 * The value of the file path. It can be set in
+	 * <code>given(String usernameKey, String passwordKey, Path filePath)</code>.
 	 */
-	private final String fileName;
+	private final Path filePath;
 
 	public static Map<String, String> env = System.getenv();
 
-	public static Path credsFile;
-
-	public static CredsReader given(String usernameKey, String passwordKey, String fileName) {
-		CredsReader credsReader = new CredsReader(usernameKey, passwordKey, fileName);
+	public static CredsReader given(String usernameKey, String passwordKey, Path filePath) {
+		CredsReader credsReader = new CredsReader(usernameKey, passwordKey, filePath);
 		return credsReader;
 	}
 
@@ -71,11 +69,10 @@ public class CredsReader {
 		return credsReader;
 	}
 
-	private CredsReader(String usernameKey, String passwordKey, String fileName) {
+	private CredsReader(String usernameKey, String passwordKey, Path filePath) {
 		this.usernameKey = checkNotNull(usernameKey);
 		this.passwordKey = checkNotNull(passwordKey);
-		this.fileName = checkNotNull(fileName);
-		credsFile = Path.of(fileName);
+		this.filePath = checkNotNull(filePath);
 	}
 
 	public String getUsernameKey() {
@@ -86,8 +83,8 @@ public class CredsReader {
 		return passwordKey;
 	}
 
-	public String getFileName() {
-		return fileName;
+	public Path getFilePath() {
+		return filePath;
 	}
 
 	/**
@@ -185,7 +182,7 @@ public class CredsReader {
 		{
 			final Optional<String> optUsername;
 			final Optional<String> optPassword;
-			final Path path = credsFile;
+			final Path path = filePath;
 			if (!Files.exists(path)) {
 				optUsername = Optional.empty();
 				optPassword = Optional.empty();
@@ -205,7 +202,7 @@ public class CredsReader {
 				while (iterator.hasNext()) {
 					if (!iterator.next().isEmpty()) {
 						throw new IllegalStateException(
-								"File " + credsFile + " is too long: " + lines.size() + " lines");
+								"File " + filePath + " is too long: " + lines.size() + " lines");
 					}
 				}
 			}
