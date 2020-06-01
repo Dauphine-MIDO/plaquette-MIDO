@@ -65,13 +65,10 @@
           <defaultValue xmi:type="uml:LiteralString" xmi:id="_33tL5Z8kEeqmn7VvkVGjbw" name="defaultValue" value="API_username"/>
         </ownedAttribute>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_cR8BsJteEeq2atfbccE1vg" name="readCredentials" visibility="private" concurrency="guarded">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_FyAbgJtfEeq2atfbccE1vg" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_FyAbgJtfEeq2atfbccE1vg" type="_10OVoJwNEeqOrIhZhud6Nw" direction="return"/>
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_cRumUJteEeq2atfbccE1vg" name="getCredentials" visibility="public" raisedException="_9j6BUJwREeqOrIhZhud6Nw">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_cR3wQJteEeq2atfbccE1vg" type="_TuJ1AJtZEeq2atfbccE1vg" direction="return"/>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_cSXfgJteEeq2atfbccE1vg" name="getConstantAuthenticator" visibility="private">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSZ7wJteEeq2atfbccE1vg" type="_cRWL0JteEeq2atfbccE1vg" direction="return"/>
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_428YYJwQEeqOrIhZhud6Nw" name="getPasswordKey" visibility="public">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_428YYZwQEeqOrIhZhud6Nw" direction="return">
@@ -167,6 +164,10 @@
     <packagedElement xmi:type="uml:Package" xmi:id="_czOgoJ8eEeqmn7VvkVGjbw" name="plaquette-MIDO">
       <packagedElement xmi:type="uml:Class" xmi:id="_z4p5MJ8gEeqmn7VvkVGjbw" name="QueriesHelper" visibility="public">
         <ownedOperation xmi:type="uml:Operation" xmi:id="_z4p5MZ8gEeqmn7VvkVGjbw" name="setDefaultAuthenticator" visibility="public" isStatic="true"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cSXfgJteEeq2atfbccE1vg" name="getConstantAuthenticator" visibility="private" isStatic="true">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_cSZ7wJteEeq2atfbccE1vg" type="_cRWL0JteEeq2atfbccE1vg" direction="return"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_D1SbkKQwEeqVLtZHA4D5Vg" name="credsReader" type="_z9qXgJtbEeq2atfbccE1vg"/>
+        </ownedOperation>
       </packagedElement>
     </packagedElement>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_aawIgJtcEeq2atfbccE1vg">
