@@ -195,7 +195,7 @@
       <layoutConstraint xsi:type="notation:Bounds" xmi:id="_iEx9UZwSEeqOrIhZhud6Nw"/>
     </children>
     <element href="doc.uml#_10OVoJwNEeqOrIhZhud6Nw"/>
-    <layoutConstraint xsi:type="notation:Bounds" xmi:id="_iEu58ZwSEeqOrIhZhud6Nw" x="320" y="480" width="445" height="261"/>
+    <layoutConstraint xsi:type="notation:Bounds" xmi:id="_iEu58ZwSEeqOrIhZhud6Nw" x="320" y="480" width="481" height="301"/>
   </children>
   <children xsi:type="notation:Shape" xmi:id="_WMO3IJ8hEeqmn7VvkVGjbw" type="Package_Shape">
     <children xsi:type="notation:DecorationNode" xmi:id="_WMO3Ip8hEeqmn7VvkVGjbw" type="Package_NameLabel"/>
