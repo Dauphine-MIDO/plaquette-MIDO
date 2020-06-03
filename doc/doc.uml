@@ -44,7 +44,7 @@
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           <defaultValue xmi:type="uml:LiteralString" xmi:id="_qdgp4J8fEeqmn7VvkVGjbw" name="defaultValue" value="API_username"/>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_c1tz8J8eEeqmn7VvkVGjbw" name="env" visibility="package" type="_c1hmsZ8eEeqmn7VvkVGjbw" isUnique="false">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_c1tz8J8eEeqmn7VvkVGjbw" name="env" visibility="package" type="_c1hmsZ8eEeqmn7VvkVGjbw" isUnique="false" aggregation="shared">
           <defaultValue xmi:type="uml:OpaqueExpression" xmi:id="_c1w3QJ8eEeqmn7VvkVGjbw" name="defaultValue">
             <language>JAVA</language>
             <body>System.getenv()</body>
@@ -64,7 +64,7 @@
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
           <defaultValue xmi:type="uml:LiteralString" xmi:id="_33tL5Z8kEeqmn7VvkVGjbw" name="defaultValue" value="API_username"/>
         </ownedAttribute>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_cR8BsJteEeq2atfbccE1vg" name="readCredentials" visibility="private" concurrency="guarded">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_cR8BsJteEeq2atfbccE1vg" name="readCredentials" visibility="package" concurrency="guarded">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_FyAbgJtfEeq2atfbccE1vg" type="_10OVoJwNEeqOrIhZhud6Nw" direction="return"/>
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_cRumUJteEeq2atfbccE1vg" name="getCredentials" visibility="public" raisedException="_9j6BUJwREeqOrIhZhud6Nw">
@@ -96,8 +96,11 @@
           </ownedParameter>
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_lKJBIJwREeqOrIhZhud6Nw" name="filePath" type="_c1z6kJ8eEeqmn7VvkVGjbw"/>
         </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_gBrZsKWtEeqKNYuT0qL5IA" name="setEnv" visibility="package">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_n8-cUKWtEeqKNYuT0qL5IA" name="env" type="_c1hmsZ8eEeqmn7VvkVGjbw"/>
+        </ownedOperation>
       </packagedElement>
-      <packagedElement xmi:type="uml:Class" xmi:id="_10OVoJwNEeqOrIhZhud6Nw" name="CredsOpt" visibility="public">
+      <packagedElement xmi:type="uml:Class" xmi:id="_10OVoJwNEeqOrIhZhud6Nw" name="CredsOpt" visibility="package">
         <ownedAttribute xmi:type="uml:Property" xmi:id="_19PHsJwNEeqOrIhZhud6Nw" name="username" visibility="private" isLeaf="true" type="_10VqYJwNEeqOrIhZhud6Nw" isUnique="false"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_19XDgJwNEeqOrIhZhud6Nw" name="password" visibility="private" isLeaf="true" type="_10VqYJwNEeqOrIhZhud6Nw" isUnique="false"/>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_18PpMJwNEeqOrIhZhud6Nw" name="given" visibility="public" isStatic="true">

@@ -57,7 +57,7 @@ public class CredsReader {
 	 */
 	private final Path filePath;
 
-	public final Map<String, String> env = System.getenv();
+	Map<String, String> env = System.getenv();
 
 	public static CredsReader given(String usernameKey, String passwordKey, Path filePath) {
 		CredsReader credsReader = new CredsReader(usernameKey, passwordKey, filePath);
@@ -85,6 +85,10 @@ public class CredsReader {
 
 	public Path getFilePath() {
 		return filePath;
+	}
+	
+	void setEnv(Map<String, String> env) {
+		this.env = env;
 	}
 
 	/**
@@ -156,7 +160,7 @@ public class CredsReader {
 	 *                               line content after the second line.
 	 * @see CredsOpt
 	 */
-	private CredsOpt readCredentials() throws IOException, IllegalStateException {
+	CredsOpt readCredentials() throws IOException, IllegalStateException {
 		final CredsOpt propertyAuthentication;
 		{
 			final String username = System.getProperty(this.usernameKey);
