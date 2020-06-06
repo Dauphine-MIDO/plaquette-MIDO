@@ -9,7 +9,8 @@ import java.util.Optional;
  * Immutable.
  * </p>
  * <p>
- * Stores two String of login information: username and password.
+ * Stores two Strings of login information: username and password. The value can
+ * be an empty String but never <code>null</code>.
  * </p>
  */
 public class Credentials {
@@ -27,10 +28,20 @@ public class Credentials {
 		this.password = checkNotNull(password);
 	}
 
+	/**
+	 * 
+	 * @return The value of the username which can be an empty String but never
+	 *         <code>null</code>.
+	 */
 	public String getUsername() {
 		return username;
 	}
 
+	/**
+	 * 
+	 * @return The value of the password which can be an empty String but never
+	 *         <code>null</code>.
+	 */
 	public String getPassword() {
 		return password;
 	}

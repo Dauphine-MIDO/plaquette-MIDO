@@ -17,6 +17,45 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * <p>
+ * Immutable.
+ * </p>
+ * <p>
+ * Allows to read the credentials: username and password. For each piece of
+ * information, distinguishes <em>missing information</em> and <em>empty
+ * string</em>. Considers the following possible sources (displayed here by
+ * order of priority).
+ * </p>
+ * <ol>
+ * <li>Properties {@value #usernameKey} and {@value #passwordKey}. Each property
+ * may be set, including to the empty string, or not set. An information is
+ * considered missing (from the properties source) iff the corresponding
+ * property is not set.</li>
+ * <li>Environment variables {@value #usernameKey} and {@value #passwordKey}.
+ * Each variable may be set, including to the empty string, or not set. An
+ * information is considered missing (from the environment variables source) iff
+ * the corresponding environment variable is not set.</li>
+ * <li>File {@value #filePath}. The two pieces of information are considered
+ * missing (from the files source) iff the file does not exist. If the file
+ * exists, no piece of information is considered missing. The first line of the
+ * file gives the username, the second one gives the password. If the file has
+ * only one line, the password (from the files source) is set to the empty
+ * string. If the file is empty, both pieces of information (from the files
+ * source) are set to the empty string. Empty lines are not considered at all.
+ * If the file has non empty line content after the second line, it is an
+ * error.</li>
+ * </ol>
+ * <p>
+ * Best login information: The source used to return information is the one that has the highest
+ * informational value, as determined by
+ * {@link CredsOpt#getInformationalValue()} (meaning that sources are ordered by
+ * increasing number of pieces of information missing), and, in case of ex-æquo,
+ * the order of priority displayed in the previous paragraph determines which
+ * source wins.
+ * </p>
+ * </p>
+ */
 public class CredsReader {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(CredsReader.class);
@@ -39,31 +78,29 @@ public class CredsReader {
 	 */
 	public static final Path DEFAULT_FILE_NAME = Path.of("API_login.txt");
 
-	/**
-	 * The value of the username key. It can be set in <code>given(String
-	 * usernameKey, String passwordKey, String filePath)
-	 */
 	private final String usernameKey;
 
-	/**
-	 * The value of the password key. It can be set in <code>given(String
-	 * usernameKey, String passwordKey, String filePath)
-	 */
 	private final String passwordKey;
 
-	/**
-	 * The value of the file path. It can be set in
-	 * <code>given(String usernameKey, String passwordKey, Path filePath)</code>.
-	 */
 	private final Path filePath;
 
 	Map<String, String> env = System.getenv();
 
+	/**
+	 * @param usernameKey the given environment value for the username key.
+	 * @param passwordKey the given environment value for the password key.
+	 * @param filePath    the given environment value for the file path.
+	 * @return a CredsReader instance that will read from the given parameters.
+	 */
 	public static CredsReader given(String usernameKey, String passwordKey, Path filePath) {
 		CredsReader credsReader = new CredsReader(usernameKey, passwordKey, filePath);
 		return credsReader;
 	}
 
+	/**
+	 * @return a CredsReader instance that will read from the default environment
+	 *         values DEFAULT_USERNAME_KEY, DEFAULT_PASSWORD_KEY, DEFAULT_FILE_NAME.
+	 */
 	public static CredsReader defaultCreds() {
 		CredsReader credsReader = new CredsReader(DEFAULT_USERNAME_KEY, DEFAULT_PASSWORD_KEY, DEFAULT_FILE_NAME);
 		return credsReader;
@@ -86,18 +123,15 @@ public class CredsReader {
 	public Path getFilePath() {
 		return filePath;
 	}
-	
-	void setEnv(Map<String, String> env) {
-		this.env = env;
-	}
 
 	/**
-	 * Returns the best login information found, or an exception if some information
+	 * @return the best login information found, or an exception if some information
 	 * is missing.
-	 *
-	 * @throws IllegalStateException if information is missing
+	 * @throws IllegalStateException if information is missing.
+	 * @throws UncheckedIOException if the file is not written correctly.
+	 * @see CredsReader
 	 */
-	public Credentials getCredentials() throws IllegalStateException {
+	public Credentials getCredentials() throws IllegalStateException, UncheckedIOException {
 		final CredsOpt credsOpt;
 		try {
 			credsOpt = readCredentials();
@@ -123,42 +157,12 @@ public class CredsReader {
 	 * Returns the best authentication information it could find, throwing no error
 	 * if some is missing.
 	 * </p>
-	 * <p>
-	 * For each piece of information, distinguishes <em>missing information</em> and
-	 * <em>empty string</em>. Considers the following possible sources (displayed
-	 * here by order of priority).
-	 * </p>
-	 * <ol>
-	 * <li>Properties {@value #USERNAME_KEY} and {@value #PASSWORD_KEY}. Each
-	 * property may be set, including to the empty string, or not set. An
-	 * information is considered missing (from the properties source) iff the
-	 * corresponding property is not set.</li>
-	 * <li>Environment variables {@value #USERNAME_KEY} and {@value #PASSWORD_KEY}.
-	 * Each variable may be set, including to the empty string, or not set. An
-	 * information is considered missing (from the environment variables source) iff
-	 * the corresponding environment variable is not set.</li>
-	 * <li>File {@value #FILE_NAME}. The two pieces of information are considered
-	 * missing (from the files source) iff the file does not exist. If the file
-	 * exists, no piece of information is considered missing. The first line of the
-	 * file gives the username, the second one gives the password. If the file has
-	 * only one line, the password (from the files source) is set to the empty
-	 * string. If the file is empty, both pieces of information (from the files
-	 * source) are set to the empty string. Empty lines are not considered at all.
-	 * If the file has non empty line content after the second line, it is an
-	 * error.</li>
-	 * </ol>
-	 * <p>
-	 * The source used to return information is the one that has the highest
-	 * informational value, as determined by
-	 * {@link CredsOpt#getInformationalValue()} (meaning that sources are ordered by
-	 * increasing number of pieces of information missing), and, in case of ex-æquo,
-	 * the order of priority displayed in the previous paragraph determines which
-	 * source wins.
-	 * </p>
 	 *
 	 * @throws IllegalStateException if a file source is provided but has non empty
 	 *                               line content after the second line.
+	 * @see CredsReader
 	 * @see CredsOpt
+	 * 
 	 */
 	CredsOpt readCredentials() throws IOException, IllegalStateException {
 		final CredsOpt propertyAuthentication;
