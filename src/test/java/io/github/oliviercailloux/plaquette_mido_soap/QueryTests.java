@@ -34,7 +34,7 @@ class QueryTests {
 	}
 
 	QueryTests() {
-		querier = new Querier();
+		querier = Querier.instance();
 	}
 
 	@Test

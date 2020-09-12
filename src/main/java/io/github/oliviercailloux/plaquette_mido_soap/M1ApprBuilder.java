@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamSource;
@@ -32,15 +33,14 @@ import org.xml.sax.InputSource;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 import ebx.ebx_dataservices.StandardException;
 import io.github.oliviercailloux.AsciidocWriter;
 import io.github.oliviercailloux.xml_utils.DocBookUtils;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
-import schemas.ebx.dataservices_1.CourseType.Root.Course.Contacts;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.CourseDescription;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.Syllabus;
+import schemas.ebx.dataservices_1.PersonType.Root.Person;
 import schemas.ebx.dataservices_1.ProgramType.Root.Program;
 
 public class M1ApprBuilder {
@@ -62,9 +62,11 @@ public class M1ApprBuilder {
 
 	static public final String PROGRAM_IDENT = "PRA4AMIA-100";
 
-	static public final String PROGRAM_NAME = "Méthodes Informatiques Appliquées pour la Gestion des Entreprises - 1ère année de Master";
 	static public final String PROGRAM_ID_PREFIX = "FRUAI0750736TPR";
 
+	static public final String PROGRAM_ID = PROGRAM_ID_PREFIX + PROGRAM_IDENT;
+
+	static public final String PROGRAM_NAME = "Méthodes Informatiques Appliquées pour la Gestion des Entreprises - 1ère année de Master";
 	static public final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
 	static public final String PROGRAM_ID_S1_L1 = "FRUAI0750736TPRCPA4AMIA-100-S1L1";
 	static public final String S1_L1_NAME = "UE Obligatoires";
@@ -90,17 +92,17 @@ public class M1ApprBuilder {
 		builder.proceed();
 	}
 
-	private final Querier querier;
-
 	private final AsciidocWriter writer;
 
+	private Cacher cache;
+
 	public M1ApprBuilder() {
-		querier = new Querier();
 		writer = new AsciidocWriter();
+		cache = null;
 	}
 
 	private void proceed() throws StandardException, IOException {
-		final Cacher cache = Cacher.cache(ImmutableSet.of(PROGRAM_ID_S1, PROGRAM_ID_S1_L1, PROGRAM_ID_S1_L2,
+		cache = Cacher.cache(ImmutableSet.of(PROGRAM_ID, PROGRAM_ID_S1, PROGRAM_ID_S1_L1, PROGRAM_ID_S1_L2,
 				PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2));
 
 		verify();
@@ -115,56 +117,48 @@ public class M1ApprBuilder {
 
 		{
 			writer.h2("Semestre 1");
-			final Program program = querier.getProgram(PROGRAM_ID_S1_L1);
+			final Program program = cache.getProgram(PROGRAM_ID_S1_L1);
 			Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
 			final String programNameFr = program.getProgramName().getValue().getFr().getValue();
 			Verify.verify(programNameFr.equals(S1_L1_NAME), programNameFr);
 
-			final List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
-			final List<Course> courses = querier.getCourses(courseRefs);
-			for (Course course : courses) {
+			for (Course course : cache.getProgramCourses(PROGRAM_ID_S1_L1).values()) {
 				writeCourse(course);
 			}
 		}
 
 		{
 			writer.h2("Semestre 1, Bloc UE d’application");
-			final Program program = querier.getProgram(PROGRAM_ID_S1_L2);
+			final Program program = cache.getProgram(PROGRAM_ID_S1_L2);
 			Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
 			final String programNameFr = program.getProgramName().getValue().getFr().getValue();
 			Verify.verify(programNameFr.equals(S1_L2_NAME), programNameFr);
 
-			final List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
-			for (String courseRef : courseRefs) {
-				final Course course = querier.getCourse(courseRef);
+			for (Course course : cache.getProgramCourses(PROGRAM_ID_S1_L2).values()) {
 				writeCourse(course);
 			}
 		}
 
 		{
 			writer.h2("Semestre 2, UEs obligatoires");
-			final Program program = querier.getProgram(PROGRAM_ID_S2_L1);
+			final Program program = cache.getProgram(PROGRAM_ID_S2_L1);
 			Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
 			final String programNameFr = program.getProgramName().getValue().getFr().getValue();
 			Verify.verify(programNameFr.equals(S2_L1_NAME), programNameFr);
 
-			final List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
-			for (String courseRef : courseRefs) {
-				final Course course = querier.getCourse(courseRef);
+			for (Course course : cache.getProgramCourses(PROGRAM_ID_S2_L1).values()) {
 				writeCourse(course);
 			}
 		}
 
 		{
 			writer.h2("Semestre 2, UEs optionnelles");
-			final Program program = querier.getProgram(PROGRAM_ID_S2_L2);
+			final Program program = cache.getProgram(PROGRAM_ID_S2_L2);
 			Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
 			final String programNameFr = program.getProgramName().getValue().getFr().getValue();
 			Verify.verify(programNameFr.equals(S2_L2_NAME), programNameFr);
 
-			final List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
-			for (String courseRef : courseRefs) {
-				final Course course = querier.getCourse(courseRef);
+			for (Course course : cache.getProgramCourses(PROGRAM_ID_S2_L2).values()) {
 				writeCourse(course);
 			}
 		}
@@ -186,10 +180,8 @@ public class M1ApprBuilder {
 		}
 	}
 
-	private void verify() throws StandardException {
-		final String predicate = "ident = '" + M1ApprBuilder.PROGRAM_IDENT + "'";
-		final List<Program> programsMain = querier.getPrograms(predicate);
-		final Program main = Iterables.getOnlyElement(programsMain);
+	private void verify() {
+		final Program main = cache.getProgram(PROGRAM_ID);
 		Verify.verify(main.getIdent().getValue().equals(PROGRAM_IDENT));
 		Verify.verify(main.getProgramID().equals(PROGRAM_ID_PREFIX + PROGRAM_IDENT));
 		final String programNameFr = main.getProgramName().getValue().getFr().getValue();
@@ -198,11 +190,11 @@ public class M1ApprBuilder {
 		final List<String> subPrograms = main.getProgramStructure().getValue().getRefProgram();
 		Verify.verify(subPrograms.equals(ImmutableList.of(PROGRAM_ID_S1, PROGRAM_ID_S2)));
 
-		final Program s1 = querier.getProgram(PROGRAM_ID_S1);
+		final Program s1 = cache.getProgram(PROGRAM_ID_S1);
 		Verify.verify(s1.getRefMention().getValue().equals(MENTION_ID));
 		final List<String> refProgram = s1.getProgramStructure().getValue().getRefProgram();
 		Verify.verify(refProgram.equals(ImmutableList.of(PROGRAM_ID_S1_L1, PROGRAM_ID_S1_L2)), refProgram.toString());
-		final Program s2 = querier.getProgram(PROGRAM_ID_S2);
+		final Program s2 = cache.getProgram(PROGRAM_ID_S2);
 		Verify.verify(s2.getRefMention().getValue().equals(MENTION_ID));
 		Verify.verify(s2.getProgramStructure().getValue().getRefProgram()
 				.equals(ImmutableList.of(PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2)));
@@ -215,11 +207,13 @@ public class M1ApprBuilder {
 		Verify.verify(course.getAdmissionInfo() == null);
 		Verify.verify(
 				course.getCoefficient().getValue().getFr().getValue().equals("\n<p>Capitalisation : Non</p>\n<br/>"));
-		final Optional<List<String>> contactsOpt = valueOpt(course.getContacts()).map(Contacts::getRefPerson);
-		if (contactsOpt.isPresent()) {
-			final List<String> contacts = contactsOpt.get();
-			writer.append("Enseignant responsable : " + contacts);
-			writer.eol();
+		final ImmutableSet<Person> teachers = cache.getCourseTeachers(course.getCourseID()).values();
+		if (!teachers.isEmpty()) {
+			final String names = teachers.stream()
+					.map(t -> t.getGivenName().getValue() + " " + t.getFamilyName().getValue())
+					.collect(Collectors.joining("; "));
+			final String prefix = teachers.size() == 1 ? "Enseignant responsable : " : "Enseignants responsables : ";
+			writer.paragraph(prefix + names);
 		}
 		Verify.verify(course.getCourseIntroduction() == null);
 		Verify.verify(course.getFormalPrerequisites() == null);
