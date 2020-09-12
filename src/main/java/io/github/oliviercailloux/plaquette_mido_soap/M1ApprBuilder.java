@@ -31,6 +31,7 @@ import org.xml.sax.InputSource;
 
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 import ebx.ebx_dataservices.StandardException;
@@ -60,7 +61,10 @@ public class M1ApprBuilder {
 	static public final String MAIN_MANAGER_2_PERSON_ID = "FRUAI0750736TPEIN711";
 
 	static public final String PROGRAM_IDENT = "PRA4AMIA-100";
+
 	static public final String PROGRAM_NAME = "Méthodes Informatiques Appliquées pour la Gestion des Entreprises - 1ère année de Master";
+	static public final String PROGRAM_ID_PREFIX = "FRUAI0750736TPR";
+
 	static public final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
 	static public final String PROGRAM_ID_S1_L1 = "FRUAI0750736TPRCPA4AMIA-100-S1L1";
 	static public final String S1_L1_NAME = "UE Obligatoires";
@@ -96,6 +100,9 @@ public class M1ApprBuilder {
 	}
 
 	private void proceed() throws StandardException, IOException {
+		final Cacher cache = Cacher.cache(ImmutableSet.of(PROGRAM_ID_S1, PROGRAM_ID_S1_L1, PROGRAM_ID_S1_L2,
+				PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2));
+
 		verify();
 
 		writer.h1("Programme du M1 MIAGE en apprentissage");
@@ -184,6 +191,7 @@ public class M1ApprBuilder {
 		final List<Program> programsMain = querier.getPrograms(predicate);
 		final Program main = Iterables.getOnlyElement(programsMain);
 		Verify.verify(main.getIdent().getValue().equals(PROGRAM_IDENT));
+		Verify.verify(main.getProgramID().equals(PROGRAM_ID_PREFIX + PROGRAM_IDENT));
 		final String programNameFr = main.getProgramName().getValue().getFr().getValue();
 		Verify.verify(programNameFr.equals(PROGRAM_NAME), programNameFr);
 		Verify.verify(main.getRefMention().getValue().equals(MENTION_ID));
@@ -191,9 +199,11 @@ public class M1ApprBuilder {
 		Verify.verify(subPrograms.equals(ImmutableList.of(PROGRAM_ID_S1, PROGRAM_ID_S2)));
 
 		final Program s1 = querier.getProgram(PROGRAM_ID_S1);
+		Verify.verify(s1.getRefMention().getValue().equals(MENTION_ID));
 		final List<String> refProgram = s1.getProgramStructure().getValue().getRefProgram();
 		Verify.verify(refProgram.equals(ImmutableList.of(PROGRAM_ID_S1_L1, PROGRAM_ID_S1_L2)), refProgram.toString());
 		final Program s2 = querier.getProgram(PROGRAM_ID_S2);
+		Verify.verify(s2.getRefMention().getValue().equals(MENTION_ID));
 		Verify.verify(s2.getProgramStructure().getValue().getRefProgram()
 				.equals(ImmutableList.of(PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2)));
 	}

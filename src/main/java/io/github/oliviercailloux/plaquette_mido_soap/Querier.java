@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class Querier {
 		dataservices = new EbxDataservicesService().getEbxDataservices();
 	}
 
-	private String toOrPredicate(String idFieldName, List<String> ids) {
+	private String toOrPredicate(String idFieldName, Set<String> ids) {
 		final ImmutableList<String> predicates = ids.stream().map(s -> idFieldName + " = '" + s + "'")
 				.collect(ImmutableList.toImmutableList());
 		final String predicate = predicates.stream().collect(Collectors.joining(" or "));
@@ -56,7 +57,7 @@ public class Querier {
 		return ImmutableList.copyOf(result.getData().getRoot().getMention());
 	}
 
-	public ImmutableList<Mention> getMentions(List<String> mentionIds) throws StandardException {
+	public ImmutableList<Mention> getMentions(Set<String> mentionIds) throws StandardException {
 		return getMentions(toOrPredicate("mentionID", mentionIds));
 	}
 
@@ -80,7 +81,7 @@ public class Querier {
 		return ImmutableList.copyOf(result.getData().getRoot().getProgram());
 	}
 
-	public ImmutableList<Program> getPrograms(List<String> programIds) throws StandardException {
+	public ImmutableList<Program> getPrograms(Set<String> programIds) throws StandardException {
 		return getPrograms(toOrPredicate("programID", programIds));
 	}
 
@@ -104,7 +105,7 @@ public class Querier {
 		return ImmutableList.copyOf(result.getData().getRoot().getCourse());
 	}
 
-	public ImmutableList<Course> getCourses(List<String> courseIds) throws StandardException {
+	public ImmutableList<Course> getCourses(Set<String> courseIds) throws StandardException {
 		return getCourses(toOrPredicate("courseID", courseIds));
 	}
 
@@ -128,7 +129,7 @@ public class Querier {
 		return ImmutableList.copyOf(result.getData().getRoot().getPerson());
 	}
 
-	public ImmutableList<Person> getPersons(List<String> personIds) throws StandardException {
+	public ImmutableList<Person> getPersons(Set<String> personIds) throws StandardException {
 		return getPersons(toOrPredicate("personID", personIds));
 	}
 
