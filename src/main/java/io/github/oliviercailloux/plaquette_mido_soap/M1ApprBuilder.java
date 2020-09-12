@@ -13,6 +13,7 @@ import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamSource;
@@ -36,6 +37,9 @@ import ebx.ebx_dataservices.StandardException;
 import io.github.oliviercailloux.AsciidocWriter;
 import io.github.oliviercailloux.xml_utils.DocBookUtils;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
+import schemas.ebx.dataservices_1.CourseType.Root.Course.Contacts;
+import schemas.ebx.dataservices_1.CourseType.Root.Course.CourseDescription;
+import schemas.ebx.dataservices_1.CourseType.Root.Course.Syllabus;
 import schemas.ebx.dataservices_1.ProgramType.Root.Program;
 
 public class M1ApprBuilder {
@@ -100,17 +104,18 @@ public class M1ApprBuilder {
 		writer.paragraph("Généré le "
 				+ DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)
 						.withZone(ZoneId.of("Europe/Paris")).format(Instant.now())
-				+ " à partir des données du site internet de Dauphine.");
+				+ " à partir des données du https://dauphine.psl.eu/formations/masters/informatique/m1-methodes-informatiques-appliquees-a-la-gestion-des-entreprises/formation[site internet] de Dauphine.");
 
 		{
 			writer.h2("Semestre 1");
 			final Program program = querier.getProgram(PROGRAM_ID_S1_L1);
 			Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
-			Verify.verify(program.getProgramName().getValue().equals(S1_L1_NAME));
+			final String programNameFr = program.getProgramName().getValue().getFr().getValue();
+			Verify.verify(programNameFr.equals(S1_L1_NAME), programNameFr);
 
 			final List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
-			for (String courseRef : courseRefs) {
-				final Course course = querier.getCourse(courseRef);
+			final List<Course> courses = querier.getCourses(courseRefs);
+			for (Course course : courses) {
 				writeCourse(course);
 			}
 		}
@@ -119,7 +124,8 @@ public class M1ApprBuilder {
 			writer.h2("Semestre 1, Bloc UE d’application");
 			final Program program = querier.getProgram(PROGRAM_ID_S1_L2);
 			Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
-			Verify.verify(program.getProgramName().getValue().equals(S1_L2_NAME), program.getProgramName().getValue());
+			final String programNameFr = program.getProgramName().getValue().getFr().getValue();
+			Verify.verify(programNameFr.equals(S1_L2_NAME), programNameFr);
 
 			final List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
 			for (String courseRef : courseRefs) {
@@ -132,7 +138,8 @@ public class M1ApprBuilder {
 			writer.h2("Semestre 2, UEs obligatoires");
 			final Program program = querier.getProgram(PROGRAM_ID_S2_L1);
 			Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
-			Verify.verify(program.getProgramName().getValue().equals(S2_L1_NAME), program.getProgramName().getValue());
+			final String programNameFr = program.getProgramName().getValue().getFr().getValue();
+			Verify.verify(programNameFr.equals(S2_L1_NAME), programNameFr);
 
 			final List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
 			for (String courseRef : courseRefs) {
@@ -145,7 +152,8 @@ public class M1ApprBuilder {
 			writer.h2("Semestre 2, UEs optionnelles");
 			final Program program = querier.getProgram(PROGRAM_ID_S2_L2);
 			Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
-			Verify.verify(program.getProgramName().getValue().equals(S2_L2_NAME), program.getProgramName().getValue());
+			final String programNameFr = program.getProgramName().getValue().getFr().getValue();
+			Verify.verify(programNameFr.equals(S2_L2_NAME), programNameFr);
 
 			final List<String> courseRefs = program.getProgramStructure().getValue().getRefCourse();
 			for (String courseRef : courseRefs) {
@@ -176,7 +184,8 @@ public class M1ApprBuilder {
 		final List<Program> programsMain = querier.getPrograms(predicate);
 		final Program main = Iterables.getOnlyElement(programsMain);
 		Verify.verify(main.getIdent().getValue().equals(PROGRAM_IDENT));
-		Verify.verify(main.getProgramName().getValue().equals(PROGRAM_NAME), main.getProgramName().getValue());
+		final String programNameFr = main.getProgramName().getValue().getFr().getValue();
+		Verify.verify(programNameFr.equals(PROGRAM_NAME), programNameFr);
 		Verify.verify(main.getRefMention().getValue().equals(MENTION_ID));
 		final List<String> subPrograms = main.getProgramStructure().getValue().getRefProgram();
 		Verify.verify(subPrograms.equals(ImmutableList.of(PROGRAM_ID_S1, PROGRAM_ID_S2)));
@@ -190,12 +199,18 @@ public class M1ApprBuilder {
 	}
 
 	private void writeCourse(Course course) {
-		final String courseName = course.getCourseName().getValue();
+		final String courseName = course.getCourseName().getValue().getFr().getValue();
 		writer.h3(courseName);
 		writer.paragraph(course.getEcts().getValue() + " ECTS");
 		Verify.verify(course.getAdmissionInfo() == null);
-		Verify.verify(course.getCoefficient().getValue().equals("\n<p>Capitalisation : Non</p>\n<br/>"));
-		Verify.verify(course.getContacts() == null);
+		Verify.verify(
+				course.getCoefficient().getValue().getFr().getValue().equals("\n<p>Capitalisation : Non</p>\n<br/>"));
+		final Optional<List<String>> contactsOpt = valueOpt(course.getContacts()).map(Contacts::getRefPerson);
+		if (contactsOpt.isPresent()) {
+			final List<String> contacts = contactsOpt.get();
+			writer.append("Enseignant responsable : " + contacts);
+			writer.eol();
+		}
 		Verify.verify(course.getCourseIntroduction() == null);
 		Verify.verify(course.getFormalPrerequisites() == null);
 		Verify.verify(course.getFormOfAssessment() == null);
@@ -212,7 +227,7 @@ public class M1ApprBuilder {
 		Verify.verify(course.getRecommendedPrerequisites() == null);
 		Verify.verify(course.getVolume().getValue().equals("0"));
 		writer.eol();
-		final Optional<String> courseDescriptionOpt = valueOpt(course.getCourseDescription());
+		final Optional<String> courseDescriptionOpt = valueOpt(course.getCourseDescription(), CourseDescription::getFr);
 		if (courseDescriptionOpt.isPresent()) {
 			final String courseDescription = courseDescriptionOpt.get();
 			if (WRITE_HTML) {
@@ -224,9 +239,9 @@ public class M1ApprBuilder {
 			writer.append(getText(courseDescription));
 			writer.eol();
 		} else {
-			Verify.verify(courseName.equals("Mémoire"));
+			Verify.verify(courseName.equals("Bloc entreprise"), courseName);
 		}
-		final Optional<String> syllabusOpt = valueOpt(course.getSyllabus());
+		final Optional<String> syllabusOpt = valueOpt(course.getSyllabus(), Syllabus::getFr);
 		if (syllabusOpt.isPresent()) {
 			final String syllabus = syllabusOpt.get();
 			if (WRITE_HTML) {
@@ -298,6 +313,11 @@ public class M1ApprBuilder {
 
 	public <T> Optional<T> valueOpt(JAXBElement<T> element) {
 		return element == null ? Optional.empty() : Optional.of(element.getValue());
+	}
+
+	public <F, T> Optional<T> valueOpt(JAXBElement<F> element, Function<F, JAXBElement<T>> toFunction) {
+		return element == null ? Optional.empty()
+				: Optional.of(element.getValue()).map(toFunction).map(JAXBElement::getValue);
 	}
 
 }
