@@ -225,7 +225,7 @@ public class M1ApprBuilder {
 		Verify.verify(
 				course.getManagingTeacher().getValue().equals(MAIN_MANAGER_PERSON_ID)
 						|| course.getManagingTeacher().getValue().equals(MAIN_MANAGER_2_PERSON_ID),
-				valueOrNull(course.getManagingTeacher()));
+				valueOpt(course.getManagingTeacher()).toString());
 		Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr")));
 		Verify.verify(course.getTeachers().isEmpty());
 		Verify.verify(course.getRecommendedPrerequisites() == null);
