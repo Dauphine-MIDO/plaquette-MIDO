@@ -22,10 +22,10 @@ jobs:
         
     - name: Write WSDL_login file
       uses: DamianReeves/write-file-action
-      with: null
-      path: WSDL_login.txt
-      contents: https://@>
-      write-mode: invalid
+      with: 
+        path: WSDL_login.txt
+        contents: https://@>
+        write-mode: invalid
       
     - name: Maven
       run: mvn -B verify
