@@ -21,7 +21,7 @@ jobs:
         path: ~/.m2/repository
         
     - name: Write WSDL_login file
-      uses: DamianReeves/write-file-action
+      uses: DamianReeves/write-file-action@v1
       with: 
         path: WSDL_login.txt
         contents: https://@>
