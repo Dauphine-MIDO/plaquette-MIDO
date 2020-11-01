@@ -3,6 +3,7 @@
 :artifactId: plaquette-mido
 :repository: plaquette-MIDO
 
+image:https://github.com/oliviercailloux/{repository}/workflows/Maven%20CI%20workflow/badge.svg?branch=master["Build Status", link="https://github.com/oliviercailloux/{repository}/actions"]
 image:https://travis-ci.com/Dauphine-MIDO/{repository}.svg?branch=master["Build Status", link="https://travis-ci.com/Dauphine-MIDO/{repository}"]
 
 Un générateur de PDF à partir de données de ROF.
