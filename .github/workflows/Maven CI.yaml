@@ -28,7 +28,7 @@ jobs:
         write-mode: overwrite
       
     - name: Check content
-      run: echo 'https://$(urlencode "${API_username}")@*'
+      run: 'echo "https://$(urlencode "${API_username}")@*"'
       
     - name: Maven
       run: mvn -B verify
