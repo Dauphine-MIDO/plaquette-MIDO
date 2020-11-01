@@ -28,7 +28,7 @@ jobs:
         write-mode: overwrite
       
     - name: Check content
-      run: cat WSDL_login.txt
+      run: cat 'https://$(urlencode "${API_username}")@*'
       
     - name: Maven
       run: mvn -B verify
