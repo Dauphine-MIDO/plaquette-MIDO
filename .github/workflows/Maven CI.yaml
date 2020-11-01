@@ -25,7 +25,7 @@ jobs:
       with: 
         path: WSDL_login.txt
         contents: https://@>
-        write-mode: invalid
+        write-mode: overwrite
       
     - name: Maven
       run: mvn -B verify
