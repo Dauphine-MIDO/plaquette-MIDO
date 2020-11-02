@@ -6,7 +6,7 @@ try {
 	const nameToGreet = 'Ol';
 	console.log(`Hello ${nameToGreet}!`);
 	fs.writeFile('helloworld.txt', 'Hello World!');
-	console.log('Written.');
+	console.log(`Written.`);
 } catch (error) {
 	core.setFailed(error.message);
 }
