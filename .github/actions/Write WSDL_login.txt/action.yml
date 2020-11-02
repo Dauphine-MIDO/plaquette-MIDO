@@ -1,14 +1,5 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
-inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
-    required: true
-    default: 'World'
-outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+name: 'Write WSDL_login.txt'
+description: 'Writes a file called WSDL_login.txt with the content of API_username and API_password, url-encoded'
 runs:
   using: 'node12'
   main: 'index.js'
-
