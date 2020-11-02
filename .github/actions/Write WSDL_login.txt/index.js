@@ -1,11 +1,12 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const fs = require('fs');
 
 try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = 'Ol';
-  console.log(`Hello ${nameToGreet}!`);
+	const nameToGreet = 'Ol';
+	console.log('Hello ${nameToGreet}!');
+	fs.writeFile('helloworld.txt', 'Hello World!');
+	console.log('Written.');
 } catch (error) {
-  core.setFailed(error.message);
+	core.setFailed(error.message);
 }
-
