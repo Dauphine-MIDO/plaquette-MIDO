@@ -4,8 +4,8 @@ const fs = require('fs');
 
 try {
 	const nameToGreet = 'Ol';
-	const API_username = process.env.API_username;
-	console.log(`Hello ${nameToGreet}!`);
+	const API_username = encodeURI(process.env.API_username);
+	console.log(`Writing ${API_username}.`);
 	fs.writeFile('WSDL_login.txt', `${API_username}`, (err) => {
 		  if (err) throw err;
 	});
