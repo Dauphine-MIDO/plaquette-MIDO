@@ -23,15 +23,8 @@ jobs:
         restore-keys: maven-cache
         path: ~/.m2/repository
         
-    - name: Write WSDL_login file
-      uses: DamianReeves/write-file-action@v1.0
-      with: 
-        path: 'WSDL_login.txt'
-        contents: 'https://$(urlencode "${API_username}")@*'
-        write-mode: overwrite
-      
     - name: Check content
-      run: 'echo "https://$(urlencode "${API_username}")@*"'
+      run: 'cat "WSDL_login.txt"'
       
     - name: Maven
       run: mvn -B verify
