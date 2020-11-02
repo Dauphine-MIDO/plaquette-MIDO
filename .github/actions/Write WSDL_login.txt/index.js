@@ -3,8 +3,7 @@ const github = require('@actions/github');
 const fs = require('fs');
 
 try {
-	console.log(`Writing ${API_username}.`);
-	fs.writeFile('WSDL_login.txt', `encodeURI(https://${API_username}:${API_password}@*)`, (err) => {
+	fs.writeFile('WSDL_login.txt', `encodeURI(https://${API_USERNAME}:${API_PASSWORD}@*)`, (err) => {
 		  if (err) throw err;
 	});
 	console.log('Written.');
