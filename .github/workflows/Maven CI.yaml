@@ -10,7 +10,9 @@ jobs:
       
     - name: Hello world action step
       uses: './.github/actions/Write WSDL_login.txt'
-
+      env:
+        API_username: ${{ secrets.API_username }}
+      
     - name: Set up JDK
       uses: actions/setup-java@v1
       with:
