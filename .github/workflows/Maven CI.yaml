@@ -4,15 +4,17 @@ jobs:
   maven_ci:
     name: Maven CI job
     runs-on: ubuntu-latest
+    
+    env:
+      API_USERNAME: ${{ secrets.API_USERNAME }}
+      API_PASSWORD: ${{ secrets.API_PASSWORD }}
+      
     steps:
     - name: Checkout
       uses: actions/checkout@v2
       
     - name: Write WSDL_login.txt
       uses: './.github/actions/Write WSDL_login.txt'
-      env:
-        API_USERNAME: ${{ secrets.API_USERNAME }}
-        API_PASSWORD: ${{ secrets.API_PASSWORD }}
       
     - name: Set up JDK
       uses: actions/setup-java@v1
