@@ -311,11 +311,7 @@ public class M1ApprBuilder {
 		return text;
 	}
 
-	public String valueOrNull(JAXBElement<String> element) {
-		return element == null ? null : element.getValue();
-	}
-
-	public <T> Optional<T> valueOpt(JAXBElement<T> element) {
+	public static <T> Optional<T> valueOpt(JAXBElement<T> element) {
 		return element == null ? Optional.empty() : Optional.of(element.getValue());
 	}
 

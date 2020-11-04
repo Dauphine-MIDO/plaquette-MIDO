@@ -93,7 +93,9 @@ class QueryTests {
 		}
 		{
 			final List<Person> persons = querier.getPersons(String.format("personID = '%s'", "FRUAI0750736TPEIN7547"));
-			assertTrue(persons.size() >= 10);
+			assertEquals(ImmutableList.of("CAILLOUX"),
+					persons.stream().map(p -> M1ApprBuilder.valueOpt(p.getFamilyName())).map(o -> o.orElse(null))
+							.collect(ImmutableList.toImmutableList()));
 		}
 		{
 			final List<Program> programs = querier.getPrograms("not(starts-with(refMention/mentionID, 'FR'))");
@@ -142,7 +144,7 @@ class QueryTests {
 	void testGetCoursesSemester1() throws Exception {
 		final String programId = M1ApprBuilder.PROGRAM_ID_S1_L1;
 		final Program program = querier.getProgram(programId);
-		assertEquals("UE Obligatoires", program.getProgramName().getValue().getFr().getValue());
+		assertEquals("Bloc Fondamental", program.getProgramName().getValue().getFr().getValue());
 		assertEquals(M1ApprBuilder.MENTION_ID, program.getRefMention().getValue());
 		final List<String> subPrograms = program.getProgramStructure().getValue().getRefProgram();
 		assertEquals(0, subPrograms.size());
