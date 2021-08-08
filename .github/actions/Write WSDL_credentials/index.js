@@ -6,7 +6,7 @@ try {
 	const encodedU = encodeURI(process.env.API_USERNAME);
 	const encodedP = encodeURI(process.env.API_PASSWORD);
 	const content = `https://${encodedU}:${encodedP}@*`;
-	fs.writeFile('WSDL_login.txt', content, (err) => {
+	fs.writeFile('WSDL_credentials.txt', content, (err) => {
 		  if (err) throw err;
 	});
 	console.log('Written.');

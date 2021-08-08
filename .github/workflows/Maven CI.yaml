@@ -13,8 +13,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Write WSDL_login.txt
-      uses: './.github/actions/Write WSDL_login.txt'
+    - name: Write WSDL_credentials
+      uses: './.github/actions/Write WSDL_credentials'
       
     - name: Set up JDK
       uses: actions/setup-java@v1
