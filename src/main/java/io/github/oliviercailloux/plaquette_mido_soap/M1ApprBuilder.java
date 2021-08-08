@@ -66,7 +66,7 @@ public class M1ApprBuilder {
       "Méthodes Informatiques Appliquées pour la Gestion des Entreprises - 1re année de Master";
   public static final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
   public static final String PROGRAM_ID_S1_L1 = "FRUAI0750736TPRCPA4AMIA-100-S1L1";
-  public static final String S1_L1_NAME = "UE Obligatoires";
+  public static final String S1_L1_NAME = "Bloc Fondamental";
 
   public static final String PROGRAM_ID_S1_L2 = "FRUAI0750736TPRCPA4AMIAS1L2";
 
@@ -76,11 +76,15 @@ public class M1ApprBuilder {
 
   public static final String PROGRAM_ID_S2_L1 = "FRUAI0750736TPRCPA4AMIA-100-S2L1";
 
-  public static final String S2_L1_NAME = "UE Obligatoires";
+  public static final String S2_L1_NAME = "Bloc Fondamental";
 
   public static final String PROGRAM_ID_S2_L2 = "FRUAI0750736TPRCPA4AMIA-100-S2L2";
 
-  public static final String S2_L2_NAME = "UE Options";
+  public static final String S2_L2_NAME = "Bloc Options";
+
+  public static final String PROGRAM_ID_S2_L3 = "FRUAI0750736TPRCPA4AMIAS2L3";
+
+  public static final String S2_L3_NAME = "Bloc entreprise";
 
   public static void main(String[] args) throws Exception {
     QueriesHelper.setDefaultAuthenticator();
@@ -100,7 +104,7 @@ public class M1ApprBuilder {
 
   private void proceed() throws StandardException, IOException {
     cache = Cacher.cache(ImmutableSet.of(PROGRAM_ID, PROGRAM_ID_S1, PROGRAM_ID_S1_L1,
-        PROGRAM_ID_S1_L2, PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2));
+        PROGRAM_ID_S1_L2, PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2, PROGRAM_ID_S2_L3));
 
     verify();
 
@@ -160,6 +164,13 @@ public class M1ApprBuilder {
       }
     }
 
+    {
+      final Program program = cache.getProgram(PROGRAM_ID_S2_L3);
+      Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
+      final String programNameFr = program.getProgramName().getValue().getFr().getValue();
+      Verify.verify(programNameFr.equals(S2_L3_NAME), programNameFr);
+    }
+
     final String adoc = writer.toString();
     Files.writeString(Paths.get("out.adoc"), adoc);
 
@@ -181,8 +192,10 @@ public class M1ApprBuilder {
     final Program main = cache.getProgram(PROGRAM_ID);
     Verify.verify(main.getIdent().getValue().equals(PROGRAM_IDENT));
     Verify.verify(main.getProgramID().equals(PROGRAM_ID_PREFIX + PROGRAM_IDENT));
-    final String programNameFr = main.getProgramName().getValue().getFr().getValue();
-    Verify.verify(programNameFr.equals(PROGRAM_NAME), programNameFr);
+    {
+      final String programNameFr = main.getProgramName().getValue().getFr().getValue();
+      Verify.verify(programNameFr.equals(PROGRAM_NAME), programNameFr);
+    }
     Verify.verify(main.getRefMention().getValue().equals(MENTION_ID));
     final List<String> subPrograms = main.getProgramStructure().getValue().getRefProgram();
     Verify.verify(subPrograms.equals(ImmutableList.of(PROGRAM_ID_S1, PROGRAM_ID_S2)));
@@ -194,14 +207,20 @@ public class M1ApprBuilder {
         refProgram.toString());
     final Program s2 = cache.getProgram(PROGRAM_ID_S2);
     Verify.verify(s2.getRefMention().getValue().equals(MENTION_ID));
-    Verify.verify(s2.getProgramStructure().getValue().getRefProgram()
-        .equals(ImmutableList.of(PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2)));
+    final List<String> refProgramS2 = s2.getProgramStructure().getValue().getRefProgram();
+    Verify.verify(
+        refProgramS2.equals(ImmutableList.of(PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2, PROGRAM_ID_S2_L3)),
+        ImmutableList.copyOf(refProgramS2).toString());
   }
 
   private void writeCourse(Course course) {
     final String courseName = course.getCourseName().getValue().getFr().getValue();
     writer.h3(courseName);
-    writer.paragraph(course.getEcts().getValue() + " ECTS");
+    final String volume = course.getVolume().getValue();
+    /* TODO */
+    // Verify.verify(!volume.equals("0"), courseName);
+    writer.paragraph(volume + " h" + " ; " + course.getEcts().getValue() + " ECTS");
+
     Verify.verify(course.getAdmissionInfo() == null);
     Verify.verify(course.getCoefficient().getValue().getFr().getValue()
         .equals("\n<p>Capitalisation : Non</p>\n<br/>"));
@@ -228,7 +247,6 @@ public class M1ApprBuilder {
     Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr")));
     Verify.verify(course.getTeachers().isEmpty());
     Verify.verify(course.getRecommendedPrerequisites() == null);
-    Verify.verify(course.getVolume().getValue().equals("0"));
     writer.eol();
     final Optional<String> courseDescriptionOpt =
         valueOpt(course.getCourseDescription(), CourseDescription::getFr);
