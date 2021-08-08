@@ -108,8 +108,9 @@ public class M1ApprBuilder {
 
     verify();
 
-    writer.h1("Programme du M1 MIAGE en apprentissage");
+    writer.h1("Programme des cours du M1 MIAGE en alternance");
     writer.addAttribute("lang", "fr");
+    writer.addAttribute("toc", "preamble");
     writer.eol();
     writer.paragraph("Généré le "
         + DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)
@@ -197,6 +198,7 @@ public class M1ApprBuilder {
       LOGGER.info("Converting to Docbook.");
       final String docbook = adocConverter.convert(adoc,
           OptionsBuilder.options().headerFooter(true).backend("docbook").get());
+      adocConverter.shutdown();
       LOGGER.info("Validating Docbook.");
       LOGGER.debug("Docbook: {}.", docbook);
       final boolean valid = DocBookUtils.validate(new InputSource(new StringReader(docbook)));
