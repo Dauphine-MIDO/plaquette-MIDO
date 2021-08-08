@@ -42,78 +42,81 @@ import com.thaiopensource.validate.auto.AutoSchemaReader;
 import com.thaiopensource.xml.sax.CountingErrorHandler;
 
 public class DocBookUtils {
-	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(DocBookUtils.class);
+  @SuppressWarnings("unused")
+  private static final Logger LOGGER = LoggerFactory.getLogger(DocBookUtils.class);
 
-	public static boolean validate(InputSource document, InputSource relaxSchema) {
-		try {
-			final Schema schema;
-			final CountingErrorHandler countingErrorHandler = new CountingErrorHandler();
-			{
-				final AutoSchemaReader reader = new AutoSchemaReader();
-				final PropertyMapBuilder propBuilder = new PropertyMapBuilder(PropertyMap.EMPTY);
-				propBuilder.put(ValidateProperty.ERROR_HANDLER, countingErrorHandler);
-				final PropertyMap schemaProperties = propBuilder.toPropertyMap();
-				schema = reader.createSchema(relaxSchema, schemaProperties);
-			}
-			{
-				final PropertyMapBuilder propBuilder = new PropertyMapBuilder(PropertyMap.EMPTY);
-				propBuilder.put(ValidateProperty.ERROR_HANDLER, countingErrorHandler);
-				final PropertyMap instanceProperties = propBuilder.toPropertyMap();
-				final Validator validator = schema.createValidator(instanceProperties);
-				final XMLReader xmlReader = ResolverFactory.createResolver(instanceProperties).createXMLReader();
-				xmlReader.setErrorHandler(countingErrorHandler);
-				xmlReader.setContentHandler(validator.getContentHandler());
-				xmlReader.parse(document);
-				return (countingErrorHandler.getFatalErrorCount() == 0) && (countingErrorHandler.getErrorCount() == 0)
-						&& (countingErrorHandler.getWarningCount() == 0);
-			}
-		} catch (SAXException | IOException | IncorrectSchemaException e) {
-			throw new IllegalStateException(e);
-		}
-	}
+  public static boolean validate(InputSource document, InputSource relaxSchema) {
+    try {
+      final Schema schema;
+      final CountingErrorHandler countingErrorHandler = new CountingErrorHandler();
+      {
+        final AutoSchemaReader reader = new AutoSchemaReader();
+        final PropertyMapBuilder propBuilder = new PropertyMapBuilder(PropertyMap.EMPTY);
+        propBuilder.put(ValidateProperty.ERROR_HANDLER, countingErrorHandler);
+        final PropertyMap schemaProperties = propBuilder.toPropertyMap();
+        schema = reader.createSchema(relaxSchema, schemaProperties);
+      }
+      {
+        final PropertyMapBuilder propBuilder = new PropertyMapBuilder(PropertyMap.EMPTY);
+        propBuilder.put(ValidateProperty.ERROR_HANDLER, countingErrorHandler);
+        final PropertyMap instanceProperties = propBuilder.toPropertyMap();
+        final Validator validator = schema.createValidator(instanceProperties);
+        final XMLReader xmlReader =
+            ResolverFactory.createResolver(instanceProperties).createXMLReader();
+        xmlReader.setErrorHandler(countingErrorHandler);
+        xmlReader.setContentHandler(validator.getContentHandler());
+        xmlReader.parse(document);
+        return (countingErrorHandler.getFatalErrorCount() == 0)
+            && (countingErrorHandler.getErrorCount() == 0)
+            && (countingErrorHandler.getWarningCount() == 0);
+      }
+    } catch (SAXException | IOException | IncorrectSchemaException e) {
+      throw new IllegalStateException(e);
+    }
+  }
 
-	public static boolean validate(InputSource docBook) {
-		InputSource schemaSource = new InputSource(DocBookUtils.class.getResource("docbook.rng").toString());
-		return validate(docBook, schemaSource);
-	}
+  public static boolean validate(InputSource docBook) {
+    InputSource schemaSource =
+        new InputSource(DocBookUtils.class.getResource("docbook.rng").toString());
+    return validate(docBook, schemaSource);
+  }
 
-	public static String asFop(InputSource docBook) {
-		final String transformed = XmlUtils.transform(new DOMSource(XmlUtils.asDocument(docBook)),
-				new StreamSource(DocBookUtils.class.getResourceAsStream("mystyle.xsl")));
-		return transformed;
-	}
+  public static String asFop(InputSource docBook) {
+    final String transformed = XmlUtils.transform(new DOMSource(XmlUtils.asDocument(docBook)),
+        new StreamSource(DocBookUtils.class.getResourceAsStream("mystyle.xsl")));
+    return transformed;
+  }
 
-	public static void asPdf(Source fo, OutputStream pdfStream) {
-		final URL configUrl = DocBookUtils.class.getResource("fop-config.xml");
-		try (InputStream configStream = configUrl.openStream()) {
-			final FopFactory fopFactory;
-			try {
-				fopFactory = FopFactory.newInstance(Hyphenator.class.getResource(".").toURI(), configStream);
-			} catch (URISyntaxException | SAXException e) {
-				throw new IllegalStateException(e);
-			}
-			final FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-			foUserAgent.getEventBroadcaster().addEventListener(new LoggingEventListener());
-			foUserAgent.getEventBroadcaster().addEventListener((e) -> {
-				/** https://xmlgraphics.apache.org/fop/2.4/events.html */
-				if (ResourceEventProducer.class.getName().equals(e.getEventGroupID())) {
-					e.setSeverity(EventSeverity.FATAL);
-				} else {
-					// ignore all other events (or do something of your choice)
-				}
-			});
+  public static void asPdf(Source fo, OutputStream pdfStream) {
+    final URL configUrl = DocBookUtils.class.getResource("fop-config.xml");
+    try (InputStream configStream = configUrl.openStream()) {
+      final FopFactory fopFactory;
+      try {
+        fopFactory =
+            FopFactory.newInstance(Hyphenator.class.getResource(".").toURI(), configStream);
+      } catch (URISyntaxException | SAXException e) {
+        throw new IllegalStateException(e);
+      }
+      final FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+      foUserAgent.getEventBroadcaster().addEventListener(new LoggingEventListener());
+      foUserAgent.getEventBroadcaster().addEventListener((e) -> {
+        /** https://xmlgraphics.apache.org/fop/2.4/events.html */
+        if (ResourceEventProducer.class.getName().equals(e.getEventGroupID())) {
+          e.setSeverity(EventSeverity.FATAL);
+        } else {
+          // ignore all other events (or do something of your choice)
+        }
+      });
 
-			final Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, pdfStream);
-			Verify.verify(fopFactory.validateStrictly());
-			Verify.verify(fopFactory.validateUserConfigStrictly());
-			final TransformerFactory factory = TransformerFactory.newInstance();
-			final Transformer transformer = factory.newTransformer();
-			final Result res = new SAXResult(fop.getDefaultHandler());
-			transformer.transform(fo, res);
-		} catch (IOException | FOPException | TransformerException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
+      final Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, pdfStream);
+      Verify.verify(fopFactory.validateStrictly());
+      Verify.verify(fopFactory.validateUserConfigStrictly());
+      final TransformerFactory factory = TransformerFactory.newInstance();
+      final Transformer transformer = factory.newTransformer();
+      final Result res = new SAXResult(fop.getDefaultHandler());
+      transformer.transform(fo, res);
+    } catch (IOException | FOPException | TransformerException e) {
+      throw new IllegalStateException(e);
+    }
+  }
 }
