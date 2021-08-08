@@ -122,7 +122,7 @@ class QueryTests {
 
   @Test
   void testForeignKeyPredicateAndProgram() throws Exception {
-    /**
+    /*
      * NB references next to refMention are limited to primary keys, see Extraction de clés
      * étrangères.
      */
