@@ -1,5 +1,12 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
+import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import ebx.ebx_dataservices.StandardException;
+import io.github.oliviercailloux.AsciidocWriter;
+import io.github.oliviercailloux.xml_utils.DocBookUtils;
+import jakarta.xml.bind.JAXBElement;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -15,10 +22,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamSource;
-
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.jsoup.Jsoup;
@@ -29,14 +33,6 @@ import org.jsoup.nodes.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
-
-import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import ebx.ebx_dataservices.StandardException;
-import io.github.oliviercailloux.AsciidocWriter;
-import io.github.oliviercailloux.xml_utils.DocBookUtils;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.CourseDescription;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.Syllabus;

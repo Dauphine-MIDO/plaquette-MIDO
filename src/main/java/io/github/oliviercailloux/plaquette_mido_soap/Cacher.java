@@ -2,19 +2,16 @@ package io.github.oliviercailloux.plaquette_mido_soap;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.xml.bind.JAXBElement;
-
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-
 import ebx.ebx_dataservices.StandardException;
+import jakarta.xml.bind.JAXBElement;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.Contacts;
 import schemas.ebx.dataservices_1.PersonType.Root.Person;
