@@ -4,8 +4,8 @@
 /target/
 .checkstyle
 
-WSDL_login.txt
-API_login.txt
+WSDL_credentials.txt
+API_credentials.txt
 
 out.adoc
 out.log
