@@ -45,42 +45,42 @@ public class M1ApprBuilder {
 
   private static final boolean WRITE_HTML = false;
 
-  static public final String MENTION_ID = "FRUAI0750736TPRMEA5IFO";
+  public static final String MENTION_ID = "FRUAI0750736TPRMEA5IFO";
   /**
    * Wendy
    */
-  static public final String MAIN_MANAGER_PERSON_ID = "FRUAI0750736TPEIN1122";
+  public static final String MAIN_MANAGER_PERSON_ID = "FRUAI0750736TPEIN1122";
 
   /**
    * Frédéric
    */
-  static public final String MAIN_MANAGER_2_PERSON_ID = "FRUAI0750736TPEIN711";
+  public static final String MAIN_MANAGER_2_PERSON_ID = "FRUAI0750736TPEIN711";
 
-  static public final String PROGRAM_IDENT = "PRA4AMIA-100";
+  public static final String PROGRAM_IDENT = "PRA4AMIA-100";
 
-  static public final String PROGRAM_ID_PREFIX = "FRUAI0750736TPR";
+  public static final String PROGRAM_ID_PREFIX = "FRUAI0750736TPR";
 
-  static public final String PROGRAM_ID = PROGRAM_ID_PREFIX + PROGRAM_IDENT;
+  public static final String PROGRAM_ID = PROGRAM_ID_PREFIX + PROGRAM_IDENT;
 
-  static public final String PROGRAM_NAME =
+  public static final String PROGRAM_NAME =
       "Méthodes Informatiques Appliquées pour la Gestion des Entreprises - 1re année de Master";
-  static public final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
-  static public final String PROGRAM_ID_S1_L1 = "FRUAI0750736TPRCPA4AMIA-100-S1L1";
-  static public final String S1_L1_NAME = "UE Obligatoires";
+  public static final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
+  public static final String PROGRAM_ID_S1_L1 = "FRUAI0750736TPRCPA4AMIA-100-S1L1";
+  public static final String S1_L1_NAME = "UE Obligatoires";
 
-  static public final String PROGRAM_ID_S1_L2 = "FRUAI0750736TPRCPA4AMIAS1L2";
+  public static final String PROGRAM_ID_S1_L2 = "FRUAI0750736TPRCPA4AMIAS1L2";
 
-  static public final String S1_L2_NAME = "Bloc UE d'application";
+  public static final String S1_L2_NAME = "Bloc UE d'application";
 
-  static public final String PROGRAM_ID_S2 = "FRUAI0750736TPRCPA4AMIA-100-S2";
+  public static final String PROGRAM_ID_S2 = "FRUAI0750736TPRCPA4AMIA-100-S2";
 
-  static public final String PROGRAM_ID_S2_L1 = "FRUAI0750736TPRCPA4AMIA-100-S2L1";
+  public static final String PROGRAM_ID_S2_L1 = "FRUAI0750736TPRCPA4AMIA-100-S2L1";
 
-  static public final String S2_L1_NAME = "UE Obligatoires";
+  public static final String S2_L1_NAME = "UE Obligatoires";
 
-  static public final String PROGRAM_ID_S2_L2 = "FRUAI0750736TPRCPA4AMIA-100-S2L2";
+  public static final String PROGRAM_ID_S2_L2 = "FRUAI0750736TPRCPA4AMIA-100-S2L2";
 
-  static public final String S2_L2_NAME = "UE Options";
+  public static final String S2_L2_NAME = "UE Options";
 
   public static void main(String[] args) throws Exception {
     QueriesHelper.setDefaultAuthenticator();

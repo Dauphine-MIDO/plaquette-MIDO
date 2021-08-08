@@ -30,7 +30,7 @@ public class XmlUtils {
   private static DocumentBuilder builder;
 
   public static String toXml(JAXBElement<?> element) {
-    /** TODO see if can use for example Transform with a Jaxbsource. */
+    /* TODO see if can use for example Transform with a Jaxbsource. */
     try {
       final JAXBContext jc = JAXBContext.newInstance(element.getValue().getClass());
       final Marshaller marshaller = jc.createMarshaller();
@@ -73,7 +73,7 @@ public class XmlUtils {
   public static String transform(Source document, Source stylesheet) {
     final StringWriter result = new StringWriter();
     try {
-      /** Fails with default transformer factory. */
+      /* Fails with default transformer factory. */
       // final Transformer transformer =
       // TransformerFactory.newDefaultInstance().newTransformer(stylesheet));
       final TransformerFactoryImpl factory = new TransformerFactoryImpl();
@@ -95,7 +95,7 @@ public class XmlUtils {
         }
       };
       factory.setErrorListener(listener);
-      /**
+      /*
        * https://www.saxonica.com/html/documentation/configuration/config-features.html
        */
       factory.setAttribute(FeatureKeys.MESSAGE_EMITTER_CLASS, MessageWarner.class.getName());

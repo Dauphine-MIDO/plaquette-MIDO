@@ -97,7 +97,7 @@ public class DocBookUtils {
       final FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
       foUserAgent.getEventBroadcaster().addEventListener(new LoggingEventListener());
       foUserAgent.getEventBroadcaster().addEventListener((e) -> {
-        /** https://xmlgraphics.apache.org/fop/2.4/events.html */
+        /* https://xmlgraphics.apache.org/fop/2.4/events.html */
         if (ResourceEventProducer.class.getName().equals(e.getEventGroupID())) {
           e.setSeverity(EventSeverity.FATAL);
         } else {
