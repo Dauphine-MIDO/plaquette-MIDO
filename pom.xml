@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.github.oliviercailloux</groupId>
 		<artifactId>pom</artifactId>
-		<version>0.0.10</version>
+		<version>0.0.11</version>
 	</parent>
 	<artifactId>plaquette-mido</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -105,13 +105,6 @@
 			<version>1.7.29</version>
 			<scope>runtime</scope>
 			<optional>true</optional>
-		</dependency>
-
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.2.0</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
