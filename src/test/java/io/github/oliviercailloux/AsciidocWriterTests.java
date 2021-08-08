@@ -4,12 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.github.oliviercailloux.xml_utils.DocBookUtils;
+import io.github.oliviercailloux.xml_utils.XmlUtils;
 import java.io.File;
 import java.io.StringReader;
-
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
-
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.junit.jupiter.api.Test;
@@ -20,9 +20,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
-import io.github.oliviercailloux.xml_utils.DocBookUtils;
-import io.github.oliviercailloux.xml_utils.XmlUtils;
 
 class AsciidocWriterTests {
   @SuppressWarnings("unused")

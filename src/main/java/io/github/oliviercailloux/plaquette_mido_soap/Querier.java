@@ -1,20 +1,17 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
 import ebx.ebx_dataservices.EbxDataservices;
 import ebx.ebx_dataservices.EbxDataservicesService;
 import ebx.ebx_dataservices.StandardException;
 import io.github.oliviercailloux.xml_utils.XmlUtils;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.MentionType.Root.Mention;
 import schemas.ebx.dataservices_1.ObjectFactory;

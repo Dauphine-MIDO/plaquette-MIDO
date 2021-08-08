@@ -1,10 +1,9 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-
 import io.github.oliviercailloux.jaris.credentials.Credentials;
 import io.github.oliviercailloux.jaris.credentials.CredsReader;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 
 public class QueriesHelper {
 
