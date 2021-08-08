@@ -72,6 +72,10 @@ public class AsciidocWriter {
     title(4, title);
   }
 
+  public void h5(String title) {
+    title(5, title);
+  }
+
   public void append(String text) {
     final String replaced = text.replace("\r\n", "\n");
     checkArgument(!replaced.contains("\r"));

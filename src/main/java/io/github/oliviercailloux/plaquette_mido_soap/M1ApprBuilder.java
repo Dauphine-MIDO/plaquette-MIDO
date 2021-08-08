@@ -117,11 +117,17 @@ public class M1ApprBuilder {
         + " à partir des données du https://dauphine.psl.eu/formations/masters/informatique/m1-methodes-informatiques-appliquees-a-la-gestion-des-entreprises/formation[site internet] de Dauphine.");
 
     {
-      writer.h2("Semestre 1");
+      final String subProgramName =
+          cache.getProgram(PROGRAM_ID_S1).getProgramName().getValue().getFr().getValue();
+      writer.h2(subProgramName);
+    }
+
+    {
       final Program program = cache.getProgram(PROGRAM_ID_S1_L1);
       Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
       final String programNameFr = program.getProgramName().getValue().getFr().getValue();
       Verify.verify(programNameFr.equals(S1_L1_NAME), programNameFr);
+      writer.h3(programNameFr);
 
       for (Course course : cache.getProgramCourses(PROGRAM_ID_S1_L1).values()) {
         writeCourse(course);
@@ -129,11 +135,11 @@ public class M1ApprBuilder {
     }
 
     {
-      writer.h2("Semestre 1, Bloc UE d’application");
       final Program program = cache.getProgram(PROGRAM_ID_S1_L2);
       Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
       final String programNameFr = program.getProgramName().getValue().getFr().getValue();
       Verify.verify(programNameFr.equals(S1_L2_NAME), programNameFr);
+      writer.h3(programNameFr);
 
       for (Course course : cache.getProgramCourses(PROGRAM_ID_S1_L2).values()) {
         writeCourse(course);
@@ -141,11 +147,17 @@ public class M1ApprBuilder {
     }
 
     {
-      writer.h2("Semestre 2, UEs obligatoires");
+      final String subProgramName =
+          cache.getProgram(PROGRAM_ID_S2).getProgramName().getValue().getFr().getValue();
+      writer.h2(subProgramName);
+    }
+
+    {
       final Program program = cache.getProgram(PROGRAM_ID_S2_L1);
       Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
       final String programNameFr = program.getProgramName().getValue().getFr().getValue();
       Verify.verify(programNameFr.equals(S2_L1_NAME), programNameFr);
+      writer.h3(programNameFr);
 
       for (Course course : cache.getProgramCourses(PROGRAM_ID_S2_L1).values()) {
         writeCourse(course);
@@ -153,11 +165,11 @@ public class M1ApprBuilder {
     }
 
     {
-      writer.h2("Semestre 2, UEs optionnelles");
       final Program program = cache.getProgram(PROGRAM_ID_S2_L2);
       Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
       final String programNameFr = program.getProgramName().getValue().getFr().getValue();
       Verify.verify(programNameFr.equals(S2_L2_NAME), programNameFr);
+      writer.h3(programNameFr);
 
       for (Course course : cache.getProgramCourses(PROGRAM_ID_S2_L2).values()) {
         writeCourse(course);
@@ -169,21 +181,32 @@ public class M1ApprBuilder {
       Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
       final String programNameFr = program.getProgramName().getValue().getFr().getValue();
       Verify.verify(programNameFr.equals(S2_L3_NAME), programNameFr);
+      writer.h3(programNameFr);
+
+      for (Course course : cache.getProgramCourses(PROGRAM_ID_S2_L3).values()) {
+        writeCourse(course);
+      }
     }
 
     final String adoc = writer.toString();
     Files.writeString(Paths.get("out.adoc"), adoc);
 
+    LOGGER.info("Creating Asciidoctor converter.");
     final Asciidoctor adocConverter = Asciidoctor.Factory.create();
     {
+      LOGGER.info("Converting to Docbook.");
       final String docbook = adocConverter.convert(adoc,
           OptionsBuilder.options().headerFooter(true).backend("docbook").get());
+      LOGGER.info("Validating Docbook.");
       LOGGER.debug("Docbook: {}.", docbook);
       final boolean valid = DocBookUtils.validate(new InputSource(new StringReader(docbook)));
       Verify.verify(valid);
+      LOGGER.info("Converting to Fop.");
       final String fop = DocBookUtils.asFop(new InputSource(new StringReader(docbook)));
+      final StreamSource fopSource = new StreamSource(new StringReader(fop));
+      LOGGER.info("Writing PDF.");
       try (OutputStream outStream = Files.newOutputStream(Path.of("out.pdf"))) {
-        DocBookUtils.asPdf(new StreamSource(new StringReader(fop)), outStream);
+        DocBookUtils.asPdf(fopSource, outStream);
       }
     }
   }
@@ -215,11 +238,12 @@ public class M1ApprBuilder {
 
   private void writeCourse(Course course) {
     final String courseName = course.getCourseName().getValue().getFr().getValue();
-    writer.h3(courseName);
+    writer.h4(courseName);
     final String volume = course.getVolume().getValue();
     /* TODO */
     // Verify.verify(!volume.equals("0"), courseName);
-    writer.paragraph(volume + " h" + " ; " + course.getEcts().getValue() + " ECTS");
+    final String volumeText = volume.equals("0") ? "" : volume + " h" + " ; ";
+    writer.paragraph(volumeText + course.getEcts().getValue() + " ECTS");
 
     Verify.verify(course.getAdmissionInfo() == null);
     Verify.verify(course.getCoefficient().getValue().getFr().getValue()
@@ -253,25 +277,25 @@ public class M1ApprBuilder {
     if (courseDescriptionOpt.isPresent()) {
       final String courseDescription = courseDescriptionOpt.get();
       if (WRITE_HTML) {
-        writer.h4("Description html");
+        writer.h5("Description html");
         writer.verbatim(courseDescription);
         writer.eol();
-        writer.h4("Description");
+        writer.h5("Description");
       }
       writer.append(getText(courseDescription));
       writer.eol();
     } else {
-      Verify.verify(courseName.equals("Bloc entreprise"), courseName);
+      Verify.verify(courseName.equals("Mémoire"), courseName);
     }
     final Optional<String> syllabusOpt = valueOpt(course.getSyllabus(), Syllabus::getFr);
     if (syllabusOpt.isPresent()) {
       final String syllabus = syllabusOpt.get();
       if (WRITE_HTML) {
-        writer.h4("Références html");
+        writer.h5("Références html");
         writer.verbatim(syllabus);
         writer.eol();
       }
-      writer.h4("Références");
+      writer.h5("Références");
       writer.append(getText(syllabus));
       writer.eol();
     }
