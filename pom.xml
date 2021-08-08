@@ -11,6 +11,10 @@
 	<artifactId>plaquette-mido</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
+	<properties>
+		<exec.mainClass>io.github.oliviercailloux.plaquette_mido_soap.M1ApprBuilder</exec.mainClass>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.sun.xml.ws</groupId>
@@ -89,7 +93,7 @@
 		<dependency>
 			<groupId>io.github.oliviercailloux</groupId>
 			<artifactId>jaris</artifactId>
-			<version>0.0.5</version>
+			<version>0.0.11</version>
 		</dependency>
 
 		<dependency>
@@ -134,6 +138,8 @@
 						</goals>
 						<configuration>
 							<wsdlUrls>https://rof.api.dauphine.fr/ebx-dataservices/tables/pvRefRof/RefRof?WSDL</wsdlUrls>
+							<!-- TODO complain about this. https://eclipse-ee4j.github.io/metro-jax-ws/3.0.0/docs/ch04.html#tools-wsimport. 
+								BTW, the link there is broken: https://eclipse-ee4j.github.io/metro-jax-ws/3.0.0/docs/ch04.html#jaxws-maven. -->
 							<xauthFile>WSDL_login.txt</xauthFile>
 							<vmArgs>
 								<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
