@@ -6,35 +6,3 @@
 image:https://github.com/Dauphine-MIDO/{repository}/workflows/Maven%20CI%20workflow/badge.svg?branch=master["Build Status", link="https://github.com/Dauphine-MIDO/{repository}/actions"]
 
 Un générateur de PDF à partir de données de ROF.
-
-== Pushing to GitHub from Travis CI
-
-The output PDF and Logs are pushed by Travis CI in a reception repository. 
-
-=== Setup a GitHub personnal access token
-
-Go to https://github.com/settings/tokens and create a new token with the "repo" scopes. The content of this token will be in a Travis' environment variable
-
-=== Setup of Travis' environment variables
-
-Add in the settings of your repository in Travis the following variables :
-
-* Your token's content, named ACCESS_TOKEN
-* Your username, named API_username
-* Your password, named API_password
-
-=== Build process
-
-Travis will run two scripts :
-
-. writeWSDL.sh to create the WSDL_login.txt file thanks to API_username and API_password variables
-. cibuild.sh which does :
-.. clean the last PDF and Log files if there are one in order to avoid pushing old files
-.. building the docs by executing M1ApprBuilder
-.. deploy the PDF and Log files in the reception repository (here is https://github.com/barnabegeffroy/receive_plaquette[receive_plaquette])
-
-.. if the PDF file is not built, then only logs are pushed and Travis' built is broken. To do so, there is a BUILT variable equals to 0 if it's built and 1 if it isn't.
-
-=== Cron Jobs
-
-Travis allows us to automate this process on a daily basis with Cron Jobs that can be activated in the Travis settings.
