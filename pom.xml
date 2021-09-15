@@ -9,7 +9,7 @@
 		<version>0.0.11</version>
 	</parent>
 	<artifactId>plaquette-mido</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4-SNAPSHOT</version>
 
 	<properties>
 		<exec.mainClass>io.github.oliviercailloux.plaquette_mido_soap.M1ApprBuilder</exec.mainClass>
