@@ -1,30 +1,65 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import ebx.ebx_dataservices.StandardException;
 import jakarta.xml.bind.JAXBElement;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.Contacts;
 import schemas.ebx.dataservices_1.PersonType.Root.Person;
 import schemas.ebx.dataservices_1.ProgramType.Root.Program;
 
 public class Cacher {
+  @SuppressWarnings("unused")
+  private static final Logger LOGGER = LoggerFactory.getLogger(Cacher.class);
+
   public static Cacher cache(Set<String> programIds) throws StandardException {
     final Querier querier = Querier.instance();
-    final ImmutableList<Program> programs = querier.getPrograms(programIds);
+    final ImmutableSet.Builder<Program> builder = ImmutableSet.builder();
+    final Set<String> programIdsSeen = new LinkedHashSet<>();
+    ImmutableSet<String> nextIds = ImmutableSet.copyOf(programIds);
+    do {
+      final ImmutableList<Program> programs = querier.getPrograms(nextIds);
+      builder.addAll(programs);
+      programs.stream().map(p -> p.getProgramID()).forEach(programIdsSeen::add);
+      LOGGER.debug("Program ids seen: {}.", programIdsSeen);
+      ImmutableSet<String> subProgramIds = programs.stream()
+          .flatMap(p -> p.getProgramStructure().getValue().getRefProgram().stream())
+          .collect(ImmutableSet.toImmutableSet());
+      nextIds = Sets.difference(subProgramIds, programIds).immutableCopy();
+      verify(Sets.intersection(nextIds, programIdsSeen).isEmpty());
+    } while (!nextIds.isEmpty());
+    final ImmutableSet<Program> programs = builder.build();
+    LOGGER.debug("Programs: {}.",
+        programs.stream().map(p -> p.getProgramName().getValue().getFr().getValue())
+            .collect(Collectors.joining(", ")));
+    LOGGER.debug("Programs and courses: {}.", programs.stream()
+        .map(p -> p.getProgramName().getValue().getFr().getValue() + ": " + p.getProgramStructure()
+            .getValue().getRefCourse().stream().collect(Collectors.joining(", ")))
+        .collect(Collectors.joining("; ")));
     final ImmutableSet<String> courseIds =
         programs.stream().flatMap(p -> p.getProgramStructure().getValue().getRefCourse().stream())
             .collect(ImmutableSet.toImmutableSet());
+    LOGGER.debug("Course ids: {}.", courseIds);
     final ImmutableList<Course> courses = querier.getCourses(courseIds);
+    LOGGER.debug("Courses: {}.",
+        courses.stream()
+            .map(c -> c.getCourseID() + " - " + c.getCourseName().getValue().getFr().getValue())
+            .collect(Collectors.joining(", ")));
     final ImmutableSet<String> teacherIds = courses.stream()
         .flatMap(c -> getTeacherRefs(c).stream()).collect(ImmutableSet.toImmutableSet());
     final ImmutableList<Person> teachers = querier.getPersons(teacherIds);
@@ -43,7 +78,7 @@ public class Cacher {
   private final ImmutableBiMap<String, Course> courses;
   private final ImmutableBiMap<String, Person> teachers;
 
-  private Cacher(List<Program> programs, List<Course> courses, List<Person> teachers) {
+  private Cacher(Set<Program> programs, List<Course> courses, List<Person> teachers) {
     this.programs =
         programs.stream().collect(ImmutableBiMap.toImmutableBiMap(Program::getProgramID, p -> p));
     this.courses =

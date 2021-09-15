@@ -1,6 +1,9 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import ebx.ebx_dataservices.EbxDataservices;
@@ -9,6 +12,7 @@ import ebx.ebx_dataservices.StandardException;
 import io.github.oliviercailloux.xml_utils.XmlUtils;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +66,8 @@ public class Querier {
   }
 
   public ImmutableList<Mention> getMentions(Set<String> mentionIds) throws StandardException {
-    return getMentions(toOrPredicate("mentionID", mentionIds));
+    final ImmutableList<Mention> mentions = getMentions(toOrPredicate("mentionID", mentionIds));
+    return reorder(mentionIds, mentions, Mention::getMentionID);
   }
 
   public Mention getMention(String mentionId) throws StandardException {
@@ -87,7 +92,8 @@ public class Querier {
   }
 
   public ImmutableList<Program> getPrograms(Set<String> programIds) throws StandardException {
-    return getPrograms(toOrPredicate("programID", programIds));
+    final ImmutableList<Program> programs = getPrograms(toOrPredicate("programID", programIds));
+    return reorder(programIds, programs, Program::getProgramID);
   }
 
   public Program getProgram(String programId) throws StandardException {
@@ -111,8 +117,27 @@ public class Querier {
     return ImmutableList.copyOf(result.getData().getRoot().getCourse());
   }
 
+  /**
+   * @param courseIds
+   * @return the courses found (a subset of those searched for), in the same ordering.
+   * @throws StandardException
+   */
   public ImmutableList<Course> getCourses(Set<String> courseIds) throws StandardException {
-    return getCourses(toOrPredicate("courseID", courseIds));
+    final ImmutableList<Course> courses = getCourses(toOrPredicate("courseID", courseIds));
+    /*
+     * Re-ordering seems mandatory: I have observed that the service does not always return the
+     * courses in the order given in the predicate.
+     */
+    return reorder(courseIds, courses, Course::getCourseID);
+  }
+
+  private <K> ImmutableList<K> reorder(Set<String> orderedIds, ImmutableList<K> matches,
+      Function<K, String> getId) {
+    final ImmutableBiMap<String, K> matchesFromIds =
+        matches.stream().collect(ImmutableBiMap.toImmutableBiMap(getId, Function.identity()));
+    verify(orderedIds.containsAll(matchesFromIds.keySet()));
+    return orderedIds.stream().filter(matchesFromIds::containsKey).map(matchesFromIds::get)
+        .collect(ImmutableList.toImmutableList());
   }
 
   public Course getCourse(String courseId) throws StandardException {
@@ -137,7 +162,8 @@ public class Querier {
   }
 
   public ImmutableList<Person> getPersons(Set<String> personIds) throws StandardException {
-    return getPersons(toOrPredicate("personID", personIds));
+    final ImmutableList<Person> persons = getPersons(toOrPredicate("personID", personIds));
+    return reorder(personIds, persons, Person::getPersonID);
   }
 
   public Person getPerson(String personId) throws StandardException {

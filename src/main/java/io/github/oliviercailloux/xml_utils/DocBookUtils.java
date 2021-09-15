@@ -13,6 +13,7 @@ import com.thaiopensource.xml.sax.CountingErrorHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import javax.xml.transform.Result;
@@ -42,7 +43,42 @@ public class DocBookUtils {
   @SuppressWarnings("unused")
   private static final Logger LOGGER = LoggerFactory.getLogger(DocBookUtils.class);
 
-  public static boolean validate(InputSource document, InputSource relaxSchema) {
+  public static boolean validate(StreamSource document, StreamSource relaxSchema) {
+    return validate(toInputSource(document), toInputSource(relaxSchema));
+  }
+
+  @SuppressWarnings("resource")
+  private static InputSource toInputSource(StreamSource document) {
+    final InputSource inputSource = new InputSource();
+
+    {
+      final InputStream inputStream = document.getInputStream();
+      if (inputStream != null) {
+        inputSource.setByteStream(inputStream);
+      }
+    }
+    {
+      final Reader reader = document.getReader();
+      if (reader != null) {
+        inputSource.setCharacterStream(reader);
+      }
+    }
+    {
+      final String publicId = document.getPublicId();
+      if (publicId != null) {
+        inputSource.setPublicId(publicId);
+      }
+    }
+    {
+      final String systemId = document.getSystemId();
+      if (systemId != null) {
+        inputSource.setSystemId(systemId);
+      }
+    }
+    return inputSource;
+  }
+
+  private static boolean validate(InputSource document, InputSource relaxSchema) {
     try {
       final Schema schema;
       final CountingErrorHandler countingErrorHandler = new CountingErrorHandler();
@@ -72,16 +108,27 @@ public class DocBookUtils {
     }
   }
 
-  public static boolean validate(InputSource docBook) {
+  static boolean validate(InputSource docBook) {
     InputSource schemaSource =
         new InputSource(DocBookUtils.class.getResource("docbook.rng").toString());
     return validate(docBook, schemaSource);
   }
 
-  public static String asFop(InputSource docBook) {
-    final String transformed = XmlUtils.transform(new DOMSource(XmlUtils.asDocument(docBook)),
-        new StreamSource(DocBookUtils.class.getResourceAsStream("mystyle.xsl")));
-    return transformed;
+  public static boolean validate(StreamSource docBook) {
+    final StreamSource schemaSource =
+        new StreamSource(DocBookUtils.class.getResource("docbook.rng").toString());
+    return validate(docBook, schemaSource);
+  }
+
+  static String asFop(InputSource docBook) throws IOException {
+    final DOMSource source = new DOMSource(XmlUtils.asDocument(docBook));
+    return asFop(source);
+  }
+
+  public static String asFop(Source docBook) throws IOException {
+    try (InputStream myStyle = DocBookUtils.class.getResourceAsStream("mystyle.xsl")) {
+      return XmlUtils.transform(docBook, new StreamSource(myStyle));
+    }
   }
 
   public static void asPdf(Source fo, OutputStream pdfStream) {

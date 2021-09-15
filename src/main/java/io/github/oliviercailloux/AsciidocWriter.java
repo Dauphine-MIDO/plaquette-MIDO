@@ -2,10 +2,13 @@ package io.github.oliviercailloux;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.collect.Streams;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 
@@ -105,6 +108,51 @@ public class AsciidocWriter {
     for (String item : items) {
       content.append("* " + item + '\n');
     }
+  }
+
+  public void table(String cols, List<String> headers, List<? extends List<String>> rows) {
+    checkArgument(!cols.contains("\""));
+    final int longestLength = Streams.concat(Stream.of(headers), rows.stream()).map(r -> r.size())
+        .max(Comparator.naturalOrder()).orElseThrow();
+
+    append("[cols = \"" + cols + "\"]");
+    append("|===");
+    {
+      final StringBuilder headerLineBuilder = new StringBuilder();
+      for (int i = 0; i < longestLength; ++i) {
+        final String header;
+        if (i < headers.size()) {
+          header = headers.get(i);
+          checkArgument(!header.contains("\r"));
+          checkArgument(!header.contains("\n"));
+          checkArgument(!header.contains("|"));
+        } else {
+          header = "";
+        }
+        headerLineBuilder.append("|" + header);
+      }
+      final String headerLine = headerLineBuilder.toString();
+      if (!headers.isEmpty()) {
+        append(headerLine);
+        eol();
+      }
+    }
+
+    for (List<String> row : rows) {
+      for (int i = 0; i < longestLength; ++i) {
+        final String cell;
+        if (i < row.size()) {
+          cell = row.get(i);
+          checkArgument(!cell.contains("\r"));
+          checkArgument(!cell.contains("\n"));
+          checkArgument(!cell.contains("|"));
+        } else {
+          cell = "";
+        }
+        append("|" + cell);
+      }
+    }
+    append("|===");
   }
 
   public void eol() {

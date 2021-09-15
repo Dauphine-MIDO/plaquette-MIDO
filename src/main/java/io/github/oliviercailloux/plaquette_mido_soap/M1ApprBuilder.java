@@ -17,8 +17,10 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,7 +34,6 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.CourseDescription;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.Syllabus;
@@ -116,6 +117,8 @@ public class M1ApprBuilder {
         + DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)
             .withZone(ZoneId.of("Europe/Paris")).format(Instant.now())
         + " à partir des données du https://dauphine.psl.eu/formations/masters/informatique/m1-methodes-informatiques-appliquees-a-la-gestion-des-entreprises/formation[site internet] de Dauphine.");
+
+    writeSummary();
 
     {
       final String subProgramName =
@@ -201,16 +204,36 @@ public class M1ApprBuilder {
       adocConverter.shutdown();
       LOGGER.info("Validating Docbook.");
       LOGGER.debug("Docbook: {}.", docbook);
-      final boolean valid = DocBookUtils.validate(new InputSource(new StringReader(docbook)));
+      final boolean valid = DocBookUtils.validate(new StreamSource(new StringReader(docbook)));
       Verify.verify(valid);
       LOGGER.info("Converting to Fop.");
-      final String fop = DocBookUtils.asFop(new InputSource(new StringReader(docbook)));
+      final String fop = DocBookUtils.asFop(new StreamSource(new StringReader(docbook)));
       final StreamSource fopSource = new StreamSource(new StringReader(fop));
       LOGGER.info("Writing PDF.");
       try (OutputStream outStream = Files.newOutputStream(Path.of("out.pdf"))) {
         DocBookUtils.asPdf(fopSource, outStream);
       }
     }
+  }
+
+  private void writeSummary() {
+    writer.h2("Vue d’ensemble");
+    final ImmutableList.Builder<ImmutableList<String>> summaryBuilder = ImmutableList.builder();
+    for (Course course : cache.getCourses().values()) {
+      final String courseId = course.getCourseID();
+      final ImmutableSet<Person> teachers = cache.getCourseTeachers(courseId).values();
+      final String names = teachers.stream()
+          .map(t -> t.getGivenName().getValue() + " " + t.getFamilyName().getValue())
+          .collect(Collectors.joining("; "));
+      final ImmutableList<String> row = ImmutableList.of(
+          course.getCourseName().getValue().getFr().getValue(), names, course.getEcts().getValue());
+      summaryBuilder.add(row);
+    }
+    final boolean someMultipleTeachers = cache.getCourses().keySet().stream()
+        .map(cache::getCourseTeachers).map(Map::values).map(Collection::size).anyMatch(i -> i >= 2);
+    final String resp =
+        someMultipleTeachers ? "Enseignants responsables" : "Enseignant responsable";
+    writer.table("6, 6, 1", ImmutableList.of("Cours", resp, "ECTS"), summaryBuilder.build());
   }
 
   private void verify() {
