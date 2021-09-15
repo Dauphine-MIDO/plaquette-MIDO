@@ -43,14 +43,10 @@ public class DocBookUtils {
   @SuppressWarnings("unused")
   private static final Logger LOGGER = LoggerFactory.getLogger(DocBookUtils.class);
 
-  public static boolean validate(StreamSource document, StreamSource relaxSchema) {
-    return validate(toInputSource(document), toInputSource(relaxSchema));
-  }
-
   @SuppressWarnings("resource")
   private static InputSource toInputSource(StreamSource document) {
     final InputSource inputSource = new InputSource();
-
+  
     {
       final InputStream inputStream = document.getInputStream();
       if (inputStream != null) {
@@ -76,6 +72,16 @@ public class DocBookUtils {
       }
     }
     return inputSource;
+  }
+
+  public static boolean validate(StreamSource docBook) {
+    final StreamSource schemaSource =
+        new StreamSource(DocBookUtils.class.getResource("docbook.rng").toString());
+    return validate(docBook, schemaSource);
+  }
+
+  public static boolean validate(StreamSource document, StreamSource relaxSchema) {
+    return validate(toInputSource(document), toInputSource(relaxSchema));
   }
 
   private static boolean validate(InputSource document, InputSource relaxSchema) {
@@ -111,12 +117,6 @@ public class DocBookUtils {
   static boolean validate(InputSource docBook) {
     InputSource schemaSource =
         new InputSource(DocBookUtils.class.getResource("docbook.rng").toString());
-    return validate(docBook, schemaSource);
-  }
-
-  public static boolean validate(StreamSource docBook) {
-    final StreamSource schemaSource =
-        new StreamSource(DocBookUtils.class.getResource("docbook.rng").toString());
     return validate(docBook, schemaSource);
   }
 
