@@ -39,6 +39,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+/**
+ * The public API of this class favors {@link StreamSource} (from {@code javax.xml.transform}) to
+ * {@link InputSource} (from {@code org.xml.sax}). Both classes come from the {@code java.xml}
+ * module, and their APIs are almost identical, the only difference being that {@code InputSource}
+ * has an “encoding” parameter; and that {@code StreamSource} is part of a hierarchy (as it
+ * implements {@link Source}), which makes it nicer to use in this context.
+ */
 public class DocBookUtils {
   @SuppressWarnings("unused")
   private static final Logger LOGGER = LoggerFactory.getLogger(DocBookUtils.class);
@@ -46,7 +53,7 @@ public class DocBookUtils {
   @SuppressWarnings("resource")
   private static InputSource toInputSource(StreamSource document) {
     final InputSource inputSource = new InputSource();
-  
+
     {
       final InputStream inputStream = document.getInputStream();
       if (inputStream != null) {
