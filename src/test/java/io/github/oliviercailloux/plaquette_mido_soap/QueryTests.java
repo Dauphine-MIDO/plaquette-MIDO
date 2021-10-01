@@ -26,7 +26,7 @@ class QueryTests {
 
   @BeforeAll
   static void setDefaultAuthenticator() throws Exception {
-    QueriesHelper.setDefaultAuthenticator();
+    AuthenticatorHelper.setDefaultAuthenticator();
   }
 
   QueryTests() {

@@ -6,7 +6,7 @@ import io.github.oliviercailloux.jaris.credentials.CredentialsReader.ClassicalCr
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
-public class QueriesHelper {
+public class AuthenticatorHelper {
 
   public static void setDefaultAuthenticator() {
     final Authenticator myAuth =

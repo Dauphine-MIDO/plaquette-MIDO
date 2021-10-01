@@ -9,7 +9,11 @@ import com.google.common.collect.Iterables;
 import ebx.ebx_dataservices.EbxDataservices;
 import ebx.ebx_dataservices.EbxDataservicesService;
 import ebx.ebx_dataservices.StandardException;
-import io.github.oliviercailloux.xml_utils.XmlUtils;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -46,6 +50,20 @@ public class Querier {
     dataservices = new EbxDataservicesService().getEbxDataservices();
   }
 
+  private static String toXml(JAXBElement<?> element) {
+    /* TODO see if can use for example Transform with a Jaxbsource. */
+    try {
+      final JAXBContext jc = JAXBContext.newInstance(element.getValue().getClass());
+      final Marshaller marshaller = jc.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+      final StringWriter wr = new StringWriter();
+      marshaller.marshal(element, wr);
+      return wr.toString();
+    } catch (JAXBException exc) {
+      throw new IllegalStateException(exc);
+    }
+  }
+
   private String toOrPredicate(String idFieldName, Set<String> ids) {
     final ImmutableList<String> predicates = ids.stream().map(s -> idFieldName + " = '" + s + "'")
         .collect(ImmutableList.toImmutableList());
@@ -53,15 +71,23 @@ public class Querier {
     return predicate;
   }
 
+  private <K> ImmutableList<K> reorder(Set<String> orderedIds, ImmutableList<K> matches,
+      Function<K, String> getId) {
+    final ImmutableBiMap<String, K> matchesFromIds =
+        matches.stream().collect(ImmutableBiMap.toImmutableBiMap(getId, Function.identity()));
+    verify(orderedIds.containsAll(matchesFromIds.keySet()));
+    return orderedIds.stream().filter(matchesFromIds::containsKey).map(matchesFromIds::get)
+        .collect(ImmutableList.toImmutableList());
+  }
+
   public ImmutableList<Mention> getMentions(String predicate) throws StandardException {
     final SelectMentionRequestType request = new SelectMentionRequestType();
     request.setBranch("pvRefRof");
     request.setInstance("RefRof");
     request.setPredicate(predicate);
-    LOGGER.debug("Request: {}.", XmlUtils.toXml(new ObjectFactory().createSelectMention(request)));
+    LOGGER.debug("Request: {}.", toXml(new ObjectFactory().createSelectMention(request)));
     final SelectMentionResponseType result = dataservices.selectMentionOperation(request);
-    LOGGER.debug("Result: {}.",
-        XmlUtils.toXml(new ObjectFactory().createSelectMentionResponse(result)));
+    LOGGER.debug("Result: {}.", toXml(new ObjectFactory().createSelectMentionResponse(result)));
     return ImmutableList.copyOf(result.getData().getRoot().getMention());
   }
 
@@ -84,10 +110,9 @@ public class Querier {
     request.setBranch("pvRefRof");
     request.setInstance("RefRof");
     request.setPredicate(predicate);
-    LOGGER.debug("Request: {}.", XmlUtils.toXml(new ObjectFactory().createSelectProgram(request)));
+    LOGGER.debug("Request: {}.", toXml(new ObjectFactory().createSelectProgram(request)));
     final SelectProgramResponseType result = dataservices.selectProgramOperation(request);
-    LOGGER.debug("Result: {}.",
-        XmlUtils.toXml(new ObjectFactory().createSelectProgramResponse(result)));
+    LOGGER.debug("Result: {}.", toXml(new ObjectFactory().createSelectProgramResponse(result)));
     return ImmutableList.copyOf(result.getData().getRoot().getProgram());
   }
 
@@ -110,10 +135,9 @@ public class Querier {
     request.setBranch("pvRefRof");
     request.setInstance("RefRof");
     request.setPredicate(predicate);
-    LOGGER.debug("Request: {}.", XmlUtils.toXml(new ObjectFactory().createSelectCourse(request)));
+    LOGGER.debug("Request: {}.", toXml(new ObjectFactory().createSelectCourse(request)));
     final SelectCourseResponseType result = dataservices.selectCourseOperation(request);
-    LOGGER.debug("Result: {}.",
-        XmlUtils.toXml(new ObjectFactory().createSelectCourseResponse(result)));
+    LOGGER.debug("Result: {}.", toXml(new ObjectFactory().createSelectCourseResponse(result)));
     return ImmutableList.copyOf(result.getData().getRoot().getCourse());
   }
 
@@ -131,15 +155,6 @@ public class Querier {
     return reorder(courseIds, courses, Course::getCourseID);
   }
 
-  private <K> ImmutableList<K> reorder(Set<String> orderedIds, ImmutableList<K> matches,
-      Function<K, String> getId) {
-    final ImmutableBiMap<String, K> matchesFromIds =
-        matches.stream().collect(ImmutableBiMap.toImmutableBiMap(getId, Function.identity()));
-    verify(orderedIds.containsAll(matchesFromIds.keySet()));
-    return orderedIds.stream().filter(matchesFromIds::containsKey).map(matchesFromIds::get)
-        .collect(ImmutableList.toImmutableList());
-  }
-
   public Course getCourse(String courseId) throws StandardException {
     final String predicate = "courseID = '" + courseId + "'";
     final List<Course> courses = getCourses(predicate);
@@ -154,10 +169,9 @@ public class Querier {
     request.setBranch("pvRefRof");
     request.setInstance("RefRof");
     request.setPredicate(predicate);
-    LOGGER.debug("Request: {}.", XmlUtils.toXml(new ObjectFactory().createSelectPerson(request)));
+    LOGGER.debug("Request: {}.", toXml(new ObjectFactory().createSelectPerson(request)));
     final SelectPersonResponseType result = dataservices.selectPersonOperation(request);
-    LOGGER.debug("Result: {}.",
-        XmlUtils.toXml(new ObjectFactory().createSelectPersonResponse(result)));
+    LOGGER.debug("Result: {}.", toXml(new ObjectFactory().createSelectPersonResponse(result)));
     return ImmutableList.copyOf(result.getData().getRoot().getPerson());
   }
 

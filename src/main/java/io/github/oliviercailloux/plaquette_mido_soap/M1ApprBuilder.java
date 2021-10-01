@@ -88,7 +88,7 @@ public class M1ApprBuilder {
   public static final String S2_L3_NAME = "Bloc entreprise";
 
   public static void main(String[] args) throws Exception {
-    QueriesHelper.setDefaultAuthenticator();
+    AuthenticatorHelper.setDefaultAuthenticator();
 
     final M1ApprBuilder builder = new M1ApprBuilder();
     builder.proceed();
