@@ -5,17 +5,21 @@ import com.thaiopensource.util.PropertyMap;
 import com.thaiopensource.util.PropertyMapBuilder;
 import com.thaiopensource.validate.IncorrectSchemaException;
 import com.thaiopensource.validate.ResolverFactory;
-import com.thaiopensource.validate.Schema;
 import com.thaiopensource.validate.ValidateProperty;
 import com.thaiopensource.validate.Validator;
 import com.thaiopensource.validate.auto.AutoSchemaReader;
 import com.thaiopensource.xml.sax.CountingErrorHandler;
+import com.thaiopensource.xml.sax.DraconianErrorHandler;
+import io.github.oliviercailloux.jaris.xml.XmlUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -23,7 +27,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 import org.apache.fop.ResourceEventProducer;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -35,6 +42,8 @@ import org.apache.fop.hyphenation.Hyphenator;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -44,81 +53,81 @@ import org.xml.sax.XMLReader;
  * {@link InputSource} (from {@code org.xml.sax}). Both classes come from the {@code java.xml}
  * module, and their APIs are almost identical, the only difference being that {@code InputSource}
  * has an “encoding” parameter; and that {@code StreamSource} is part of a hierarchy (as it
- * implements {@link Source}), which makes it nicer to use in this context.
+ * implements {@link Source}), which makes it nicer to use in this context. See also
+ * <a href="https://stackoverflow.com/q/69194590">SO</a>.
  */
 public class DocBookUtils {
   @SuppressWarnings("unused")
   private static final Logger LOGGER = LoggerFactory.getLogger(DocBookUtils.class);
 
-  @SuppressWarnings("resource")
-  private static InputSource toInputSource(StreamSource document) {
-    final InputSource inputSource = new InputSource();
-
-    {
-      final InputStream inputStream = document.getInputStream();
-      if (inputStream != null) {
-        inputSource.setByteStream(inputStream);
-      }
-    }
-    {
-      final Reader reader = document.getReader();
-      if (reader != null) {
-        inputSource.setCharacterStream(reader);
-      }
-    }
-    {
-      final String publicId = document.getPublicId();
-      if (publicId != null) {
-        inputSource.setPublicId(publicId);
-      }
-    }
-    {
-      final String systemId = document.getSystemId();
-      if (systemId != null) {
-        inputSource.setSystemId(systemId);
-      }
-    }
-    return inputSource;
-  }
-
-  public static boolean validate(StreamSource docBook) {
+  public static void validate(StreamSource docBook) throws SAXException, IOException {
     final StreamSource schemaSource =
         new StreamSource(DocBookUtils.class.getResource("docbook.rng").toString());
+//    final io.github.oliviercailloux.jaris.xml.XmlUtils.Validator validator = XmlUtils.validator();
+//    validator.setSchema(schemaSource);
+//    validator.validate(docBook);
     return validate(docBook, schemaSource);
   }
 
   public static boolean validate(StreamSource document, StreamSource relaxSchema) {
-    return validate(toInputSource(document), toInputSource(relaxSchema));
+    return validate(XmlUtils.toInputSource(document), XmlUtils.toInputSource(relaxSchema));
   }
 
   private static boolean validate(InputSource document, InputSource relaxSchema) {
     try {
-      final Schema schema;
       final CountingErrorHandler countingErrorHandler = new CountingErrorHandler();
+      final ContentHandler contentHandler;
+      final XMLReader xmlReader;
       {
-        final AutoSchemaReader reader = new AutoSchemaReader();
+        final PropertyMap countingErrorProperties;
         final PropertyMapBuilder propBuilder = new PropertyMapBuilder(PropertyMap.EMPTY);
         propBuilder.put(ValidateProperty.ERROR_HANDLER, countingErrorHandler);
-        final PropertyMap schemaProperties = propBuilder.toPropertyMap();
-        schema = reader.createSchema(relaxSchema, schemaProperties);
+        countingErrorProperties = propBuilder.toPropertyMap();
+        final com.thaiopensource.validate.Schema schema =
+            new AutoSchemaReader().createSchema(relaxSchema, countingErrorProperties);
+        final Validator validator = schema.createValidator(countingErrorProperties);
+        contentHandler = validator.getContentHandler();
+        xmlReader = ResolverFactory.createResolver(PropertyMap.EMPTY).createXMLReader();
+        // xmlReader.setp
+        // new Sax2XMLReaderCreator().
       }
       {
-        final PropertyMapBuilder propBuilder = new PropertyMapBuilder(PropertyMap.EMPTY);
-        propBuilder.put(ValidateProperty.ERROR_HANDLER, countingErrorHandler);
-        final PropertyMap instanceProperties = propBuilder.toPropertyMap();
-        final Validator validator = schema.createValidator(instanceProperties);
-        final XMLReader xmlReader =
-            ResolverFactory.createResolver(instanceProperties).createXMLReader();
         xmlReader.setErrorHandler(countingErrorHandler);
-        xmlReader.setContentHandler(validator.getContentHandler());
+        xmlReader.setContentHandler(contentHandler);
         xmlReader.parse(document);
         return (countingErrorHandler.getFatalErrorCount() == 0)
             && (countingErrorHandler.getErrorCount() == 0)
             && (countingErrorHandler.getWarningCount() == 0);
       }
-    } catch (SAXException | IOException | IncorrectSchemaException e) {
+    } catch (SAXException | IOException e) {
+      throw new IllegalStateException(e);
+    } catch (IncorrectSchemaException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  public static void validate(String documentId, InputStream relaxSchema)
+      throws SAXException, ParserConfigurationException, IOException {
+    ErrorHandler errorHandler = new DraconianErrorHandler();
+
+    System.setProperty(SchemaFactory.class.getName() + ":" + XMLConstants.RELAXNG_NS_URI,
+        "com.thaiopensource.relaxng.jaxp.XMLSyntaxSchemaFactory");
+    SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);
+    schemaFactory.setErrorHandler(errorHandler);
+    Schema schema = schemaFactory.newSchema(new StreamSource(relaxSchema));
+
+    final Source document = new SAXSource();
+    document.setSystemId(documentId);
+    schema.newValidator().validate(document);
+    SAXParserFactory factory = SAXParserFactory.newInstance();
+    factory.setNamespaceAware(true);
+    factory.setSchema(schema);
+
+    SAXParser parser = factory.newSAXParser();
+    XMLReader reader = parser.getXMLReader();
+    reader.setContentHandler(schema.newValidator());
+    reader.setErrorHandler(errorHandler);
+    reader.parse(documentId);
   }
 
   static boolean validate(InputSource docBook) {
