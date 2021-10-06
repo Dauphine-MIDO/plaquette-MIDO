@@ -59,6 +59,11 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>Saxon-HE</artifactId>
+			<version>10.6</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<!-- NB fop and fop-core seem identical, and fop includes fop-core. -->
 			<artifactId>fop-core</artifactId>
@@ -93,7 +98,7 @@
 		<dependency>
 			<groupId>io.github.oliviercailloux</groupId>
 			<artifactId>jaris</artifactId>
-			<version>0.0.12-SNAPSHOT</version>
+			<version>0.0.12</version>
 		</dependency>
 
 		<dependency>

@@ -3,23 +3,23 @@ package io.github.oliviercailloux.plaquette_mido_soap;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import ebx.ebx_dataservices.EbxDataservices;
 import ebx.ebx_dataservices.EbxDataservicesService;
 import ebx.ebx_dataservices.StandardException;
+import io.github.oliviercailloux.jaris.exceptions.Unchecker;
+import io.github.oliviercailloux.publish.JaxbHelper;
 import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import schemas.ebx.dataservices_1.CountCourseRequestType;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.MentionType.Root.Mention;
 import schemas.ebx.dataservices_1.ObjectFactory;
@@ -46,22 +46,12 @@ public class Querier {
 
   private final EbxDataservices dataservices;
 
+  private final JaxbHelper helper;
+
   private Querier() {
     dataservices = new EbxDataservicesService().getEbxDataservices();
-  }
-
-  private static String toXml(JAXBElement<?> element) {
-    /* TODO see if can use for example Transform with a Jaxbsource. */
-    try {
-      final JAXBContext jc = JAXBContext.newInstance(element.getValue().getClass());
-      final Marshaller marshaller = jc.createMarshaller();
-      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-      final StringWriter wr = new StringWriter();
-      marshaller.marshal(element, wr);
-      return wr.toString();
-    } catch (JAXBException exc) {
-      throw new IllegalStateException(exc);
-    }
+    helper = JaxbHelper.using(Unchecker.wrappingWith(VerifyException::new)
+        .getUsing(() -> JAXBContext.newInstance(CountCourseRequestType.class.getPackageName())));
   }
 
   private String toOrPredicate(String idFieldName, Set<String> ids) {
@@ -85,9 +75,10 @@ public class Querier {
     request.setBranch("pvRefRof");
     request.setInstance("RefRof");
     request.setPredicate(predicate);
-    LOGGER.debug("Request: {}.", toXml(new ObjectFactory().createSelectMention(request)));
+    LOGGER.debug("Request: {}.", helper.toXml(new ObjectFactory().createSelectMention(request)));
     final SelectMentionResponseType result = dataservices.selectMentionOperation(request);
-    LOGGER.debug("Result: {}.", toXml(new ObjectFactory().createSelectMentionResponse(result)));
+    LOGGER.debug("Result: {}.",
+        helper.toXml(new ObjectFactory().createSelectMentionResponse(result)));
     return ImmutableList.copyOf(result.getData().getRoot().getMention());
   }
 
@@ -110,9 +101,10 @@ public class Querier {
     request.setBranch("pvRefRof");
     request.setInstance("RefRof");
     request.setPredicate(predicate);
-    LOGGER.debug("Request: {}.", toXml(new ObjectFactory().createSelectProgram(request)));
+    LOGGER.debug("Request: {}.", helper.toXml(new ObjectFactory().createSelectProgram(request)));
     final SelectProgramResponseType result = dataservices.selectProgramOperation(request);
-    LOGGER.debug("Result: {}.", toXml(new ObjectFactory().createSelectProgramResponse(result)));
+    LOGGER.debug("Result: {}.",
+        helper.toXml(new ObjectFactory().createSelectProgramResponse(result)));
     return ImmutableList.copyOf(result.getData().getRoot().getProgram());
   }
 
@@ -135,9 +127,10 @@ public class Querier {
     request.setBranch("pvRefRof");
     request.setInstance("RefRof");
     request.setPredicate(predicate);
-    LOGGER.debug("Request: {}.", toXml(new ObjectFactory().createSelectCourse(request)));
+    LOGGER.debug("Request: {}.", helper.toXml(new ObjectFactory().createSelectCourse(request)));
     final SelectCourseResponseType result = dataservices.selectCourseOperation(request);
-    LOGGER.debug("Result: {}.", toXml(new ObjectFactory().createSelectCourseResponse(result)));
+    LOGGER.debug("Result: {}.",
+        helper.toXml(new ObjectFactory().createSelectCourseResponse(result)));
     return ImmutableList.copyOf(result.getData().getRoot().getCourse());
   }
 
@@ -169,9 +162,10 @@ public class Querier {
     request.setBranch("pvRefRof");
     request.setInstance("RefRof");
     request.setPredicate(predicate);
-    LOGGER.debug("Request: {}.", toXml(new ObjectFactory().createSelectPerson(request)));
+    LOGGER.debug("Request: {}.", helper.toXml(new ObjectFactory().createSelectPerson(request)));
     final SelectPersonResponseType result = dataservices.selectPersonOperation(request);
-    LOGGER.debug("Result: {}.", toXml(new ObjectFactory().createSelectPersonResponse(result)));
+    LOGGER.debug("Result: {}.",
+        helper.toXml(new ObjectFactory().createSelectPersonResponse(result)));
     return ImmutableList.copyOf(result.getData().getRoot().getPerson());
   }
 

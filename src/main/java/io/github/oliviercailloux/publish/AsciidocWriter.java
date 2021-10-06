@@ -1,7 +1,8 @@
-package io.github.oliviercailloux;
+package io.github.oliviercailloux.publish;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Streams;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,9 +15,6 @@ import org.asciidoctor.OptionsBuilder;
 
 /**
  * TODO should sanitize input.
- *
- * @author Olivier Cailloux
- *
  */
 public class AsciidocWriter {
   public static void main(String[] args) throws Exception {
@@ -165,8 +163,12 @@ public class AsciidocWriter {
     eol();
   }
 
+  public String getContent() {
+    return content.toString();
+  }
+
   @Override
   public String toString() {
-    return content.toString();
+    return MoreObjects.toStringHelper(this).add("content", content.toString()).toString();
   }
 }

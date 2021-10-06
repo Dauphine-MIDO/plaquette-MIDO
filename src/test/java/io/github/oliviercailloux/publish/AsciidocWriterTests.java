@@ -1,12 +1,12 @@
-package io.github.oliviercailloux;
+package io.github.oliviercailloux.publish;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.collect.ImmutableList;
-import io.github.oliviercailloux.xml_utils.DocBookUtils;
-import io.github.oliviercailloux.xml_utils.XmlUtils;
+import io.github.oliviercailloux.jaris.xml.XmlUtils;
+import io.github.oliviercailloux.jaris.xml.XmlUtils.XmlException;
 import java.io.File;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -22,14 +22,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 class AsciidocWriterTests {
   @SuppressWarnings("unused")
   private static final Logger LOGGER = LoggerFactory.getLogger(AsciidocWriterTests.class);
 
   private String getSingleParagraph(String xml) {
-    final Document adocXmlDoc = XmlUtils.asDocument(new InputSource(new StringReader(xml)));
+    final Document adocXmlDoc =
+        XmlUtils.loadAndSave().asDocument(new StreamSource(new StringReader(xml)));
     final Element root = adocXmlDoc.getDocumentElement();
     assertEquals("simpara", root.getTagName());
     final NodeList childNodes = root.getChildNodes();
@@ -85,15 +85,14 @@ class AsciidocWriterTests {
     {
       final String docBookPartial =
           adocConverter.convert(written, OptionsBuilder.options().backend("docbook").get());
-      final boolean partialValid =
-          DocBookUtils.validate(new StreamSource(new StringReader(docBookPartial)));
-      assertFalse(partialValid);
+      assertThrows(XmlException.class, () -> DocBookHelper.instance()
+          .verifyValid(new StreamSource(new StringReader(docBookPartial))));
     }
     {
       final String docBookFull = adocConverter.convert(written,
           OptionsBuilder.options().headerFooter(true).backend("docbook").get());
-      final boolean valid = DocBookUtils.validate(new StreamSource(new StringReader(docBookFull)));
-      assertTrue(valid);
+      assertDoesNotThrow(() -> DocBookHelper.instance()
+          .verifyValid(new StreamSource(new StringReader(docBookFull))));
     }
   }
 
@@ -114,7 +113,8 @@ class AsciidocWriterTests {
     final String docBookFull = adocConverter.convert(written,
         OptionsBuilder.options().headerFooter(true).backend("docbook").get());
     final StreamSource docBookInput = new StreamSource(new StringReader(docBookFull));
-    final String transformed = DocBookUtils.asFop(docBookInput);
+    final String transformed =
+        DocBookHelper.instance().docBookToFop(docBookInput, XmlUtils.EMPTY_SOURCE);
     LOGGER.debug("Transformed: {}.", transformed);
   }
 

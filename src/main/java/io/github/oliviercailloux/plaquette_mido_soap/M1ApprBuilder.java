@@ -4,8 +4,9 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import ebx.ebx_dataservices.StandardException;
-import io.github.oliviercailloux.AsciidocWriter;
-import io.github.oliviercailloux.xml_utils.DocBookUtils;
+import io.github.oliviercailloux.jaris.xml.XmlUtils;
+import io.github.oliviercailloux.publish.AsciidocWriter;
+import io.github.oliviercailloux.publish.DocBookHelper;
 import jakarta.xml.bind.JAXBElement;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -192,26 +193,24 @@ public class M1ApprBuilder {
       }
     }
 
-    final String adoc = writer.toString();
+    final String adoc = writer.getContent();
     Files.writeString(Paths.get("out.adoc"), adoc);
 
     LOGGER.info("Creating Asciidoctor converter.");
     final Asciidoctor adocConverter = Asciidoctor.Factory.create();
     {
       LOGGER.info("Converting to Docbook.");
-      final String docbook = adocConverter.convert(adoc,
+      final String docBook = adocConverter.convert(adoc,
           OptionsBuilder.options().headerFooter(true).backend("docbook").get());
       adocConverter.shutdown();
       LOGGER.info("Validating Docbook.");
-      LOGGER.debug("Docbook: {}.", docbook);
-      final boolean valid = DocBookUtils.validate(new StreamSource(new StringReader(docbook)));
-      Verify.verify(valid);
-      LOGGER.info("Converting to Fop.");
-      final String fop = DocBookUtils.asFop(new StreamSource(new StringReader(docbook)));
-      final StreamSource fopSource = new StreamSource(new StringReader(fop));
-      LOGGER.info("Writing PDF.");
+      LOGGER.debug("Docbook: {}.", docBook);
+      final DocBookHelper helper = DocBookHelper.instance();
+      helper.verifyValid(new StreamSource(new StringReader(docBook)));
+      final StreamSource myStyle =
+          new StreamSource(DocBookHelper.class.getResource("mystyle.xsl").toString());
       try (OutputStream outStream = Files.newOutputStream(Path.of("out.pdf"))) {
-        DocBookUtils.asPdf(fopSource, outStream);
+        helper.docBookToPdf(XmlUtils.asSource(docBook), myStyle, outStream);
       }
     }
   }
