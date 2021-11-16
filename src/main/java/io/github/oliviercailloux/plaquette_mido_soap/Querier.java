@@ -38,10 +38,8 @@ public class Querier {
   @SuppressWarnings("unused")
   private static final Logger LOGGER = LoggerFactory.getLogger(Querier.class);
 
-  private static final Querier INSTANCE = new Querier();
-
   public static Querier instance() {
-    return INSTANCE;
+    return new Querier();
   }
 
   private final EbxDataservices dataservices;

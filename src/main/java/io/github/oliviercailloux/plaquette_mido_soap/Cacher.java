@@ -27,8 +27,7 @@ public class Cacher {
   @SuppressWarnings("unused")
   private static final Logger LOGGER = LoggerFactory.getLogger(Cacher.class);
 
-  public static Cacher cache(Set<String> programIds) throws StandardException {
-    final Querier querier = Querier.instance();
+  public static Cacher cache(Querier querier, Set<String> programIds) throws StandardException {
     final ImmutableSet.Builder<Program> builder = ImmutableSet.builder();
     final Set<String> programIdsSeen = new LinkedHashSet<>();
     ImmutableSet<String> nextIds = ImmutableSet.copyOf(programIds);

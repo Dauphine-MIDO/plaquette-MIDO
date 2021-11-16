@@ -27,7 +27,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.xml.transform.stream.StreamSource;
 import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.Options;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.CourseDescription;
+import schemas.ebx.dataservices_1.CourseType.Root.Course.LearningObjectives;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.Syllabus;
 import schemas.ebx.dataservices_1.PersonType.Root.Person;
 import schemas.ebx.dataservices_1.ProgramType.Root.Program;
@@ -89,6 +90,8 @@ public class M1ApprBuilder {
   public static final String S2_L3_NAME = "Bloc entreprise";
 
   public static void main(String[] args) throws Exception {
+    LOGGER.info("Obtained {}.", M1ApprBuilder.class.getResource("M1ApprBuilder.class"));
+
     AuthenticatorHelper.setDefaultAuthenticator();
 
     final M1ApprBuilder builder = new M1ApprBuilder();
@@ -105,8 +108,9 @@ public class M1ApprBuilder {
   }
 
   private void proceed() throws StandardException, IOException {
-    cache = Cacher.cache(ImmutableSet.of(PROGRAM_ID, PROGRAM_ID_S1, PROGRAM_ID_S1_L1,
-        PROGRAM_ID_S1_L2, PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2, PROGRAM_ID_S2_L3));
+    cache = Cacher.cache(Querier.instance(),
+        ImmutableSet.of(PROGRAM_ID, PROGRAM_ID_S1, PROGRAM_ID_S1_L1, PROGRAM_ID_S1_L2,
+            PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2, PROGRAM_ID_S2_L3));
 
     verify();
 
@@ -197,21 +201,20 @@ public class M1ApprBuilder {
     Files.writeString(Paths.get("out.adoc"), adoc);
 
     LOGGER.info("Creating Asciidoctor converter.");
-    final Asciidoctor adocConverter = Asciidoctor.Factory.create();
-    {
+    final String docBook;
+    try (Asciidoctor adocConverter = Asciidoctor.Factory.create()) {
       LOGGER.info("Converting to Docbook.");
-      final String docBook = adocConverter.convert(adoc,
-          OptionsBuilder.options().headerFooter(true).backend("docbook").get());
-      adocConverter.shutdown();
-      LOGGER.info("Validating Docbook.");
-      LOGGER.debug("Docbook: {}.", docBook);
-      final DocBookHelper helper = DocBookHelper.instance();
-      helper.verifyValid(new StreamSource(new StringReader(docBook)));
-      final StreamSource myStyle =
-          new StreamSource(DocBookHelper.class.getResource("mystyle.xsl").toString());
-      try (OutputStream outStream = Files.newOutputStream(Path.of("out.pdf"))) {
-        helper.docBookToPdf(XmlUtils.asSource(docBook), myStyle, outStream);
-      }
+      docBook = adocConverter.convert(adoc,
+          Options.builder().headerFooter(true).backend("docbook").build());
+    }
+    LOGGER.info("Validating Docbook.");
+    LOGGER.debug("Docbook: {}.", docBook);
+    final DocBookHelper helper = DocBookHelper.instance();
+    helper.verifyValid(new StreamSource(new StringReader(docBook)));
+    final StreamSource myStyle =
+        new StreamSource(DocBookHelper.class.getResource("mystyle.xsl").toString());
+    try (OutputStream outStream = Files.newOutputStream(Path.of("out.pdf"))) {
+      helper.docBookToPdf(XmlUtils.asSource(docBook), myStyle, outStream);
     }
   }
 
@@ -285,7 +288,6 @@ public class M1ApprBuilder {
     Verify.verify(course.getFormalPrerequisites() == null);
     Verify.verify(course.getFormOfAssessment() == null);
     Verify.verify(course.getFormOfTeaching() == null);
-    Verify.verify(course.getLearningObjectives() == null);
     Verify.verify(course.getLevel() == null);
     Verify.verify(course.getLevelLang() == null);
     Verify.verify(
@@ -296,39 +298,35 @@ public class M1ApprBuilder {
     Verify.verify(course.getTeachers().isEmpty());
     Verify.verify(course.getRecommendedPrerequisites() == null);
     writer.eol();
+    final Optional<String> learningObjectivesOpt =
+        valueOpt(course.getLearningObjectives(), LearningObjectives::getFr);
+    addOptionalSection("Compétences à acquérir", learningObjectivesOpt);
     final Optional<String> courseDescriptionOpt =
         valueOpt(course.getCourseDescription(), CourseDescription::getFr);
-    if (courseDescriptionOpt.isPresent()) {
-      final String courseDescription = courseDescriptionOpt.get();
-      if (WRITE_HTML) {
-        writer.h5("Description html");
-        writer.verbatim(courseDescription);
-        writer.eol();
-        writer.h5("Description");
-      }
-      writer.append(getText(courseDescription));
-      writer.eol();
-    } else {
+    addOptionalSection("Contenu", courseDescriptionOpt);
+    if (courseDescriptionOpt.isEmpty()) {
       Verify.verify(courseName.equals("Mémoire"), courseName);
     }
     final Optional<String> syllabusOpt = valueOpt(course.getSyllabus(), Syllabus::getFr);
-    if (syllabusOpt.isPresent()) {
-      final String syllabus = syllabusOpt.get();
-      if (WRITE_HTML) {
-        writer.h5("Références html");
-        writer.verbatim(syllabus);
-        writer.eol();
-      }
-      writer.h5("Références");
-      writer.append(getText(syllabus));
-      writer.eol();
-    }
-    // writer.h3("Objectifs d’apprentissage");
-    // writer.paragraph(course.getLearningObjectives().getValue());
+    addOptionalSection("Références", syllabusOpt);
     // writer.h3("Prérequis");
     // writer.paragraph(course.getRecommendedPrerequisites().getValue());
     // writer.h3("Évaluation");
     // writer.paragraph(course.getFormOfAssessment().getValue());
+  }
+
+  private void addOptionalSection(final String title, final Optional<String> contentOpt) {
+    if (contentOpt.isPresent()) {
+      final String content = contentOpt.get();
+      if (WRITE_HTML) {
+        writer.h5(title + " html");
+        writer.verbatim(content);
+        writer.eol();
+      }
+      writer.h5(title);
+      writer.append(getText(content));
+      writer.eol();
+    }
   }
 
   private String getText(String htmlText) {
