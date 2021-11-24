@@ -4,7 +4,6 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import ebx.ebx_dataservices.StandardException;
-import io.github.oliviercailloux.jaris.xml.XmlUtils;
 import io.github.oliviercailloux.publish.AsciidocWriter;
 import io.github.oliviercailloux.publish.DocBookHelper;
 import jakarta.xml.bind.JAXBElement;
@@ -210,11 +209,13 @@ public class M1ApprBuilder {
     LOGGER.info("Validating Docbook.");
     LOGGER.debug("Docbook: {}.", docBook);
     final DocBookHelper helper = DocBookHelper.instance();
-    helper.verifyValid(new StreamSource(new StringReader(docBook)));
+    final StreamSource sourceDocBook = new StreamSource(new StringReader(docBook));
+    helper.verifyValid(sourceDocBook);
     final StreamSource myStyle =
         new StreamSource(DocBookHelper.class.getResource("mystyle.xsl").toString());
     try (OutputStream outStream = Files.newOutputStream(Path.of("out.pdf"))) {
-      helper.docBookToPdf(XmlUtils.asSource(docBook), myStyle, outStream);
+      helper.docBookToPdf(Path.of("non-existent-" + Instant.now()).toUri(), sourceDocBook, myStyle,
+          outStream);
     }
   }
 

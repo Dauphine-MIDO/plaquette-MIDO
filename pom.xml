@@ -59,9 +59,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.sun.xml.ws</groupId>
-			<artifactId>jaxws-rt</artifactId>
-			<version>3.0.2</version>
+			<groupId>jakarta.xml.ws</groupId>
+			<artifactId>jakarta.xml.ws-api</artifactId>
+			<version>3.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -70,19 +70,34 @@
 		</dependency>
 		<dependency>
 			<groupId>io.github.oliviercailloux</groupId>
-			<artifactId>jaris</artifactId>
-			<version>0.0.13</version>
-		</dependency>
-		<dependency>
-			<groupId>io.github.oliviercailloux</groupId>
 			<artifactId>publish</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.2.3</version>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.7.32</version>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>jaxws-rt</artifactId>
+			<version>3.0.2</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.offo</groupId>
+			<artifactId>fop-hyph</artifactId>
+			<version>2.0</version>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
