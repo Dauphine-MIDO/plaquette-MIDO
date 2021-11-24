@@ -35,9 +35,6 @@ import org.jsoup.nodes.TextNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
-import schemas.ebx.dataservices_1.CourseType.Root.Course.CourseDescription;
-import schemas.ebx.dataservices_1.CourseType.Root.Course.LearningObjectives;
-import schemas.ebx.dataservices_1.CourseType.Root.Course.Syllabus;
 import schemas.ebx.dataservices_1.PersonType.Root.Person;
 import schemas.ebx.dataservices_1.ProgramType.Root.Program;
 
@@ -209,13 +206,12 @@ public class M1ApprBuilder {
     LOGGER.info("Validating Docbook.");
     LOGGER.debug("Docbook: {}.", docBook);
     final DocBookHelper helper = DocBookHelper.instance();
-    final StreamSource sourceDocBook = new StreamSource(new StringReader(docBook));
-    helper.verifyValid(sourceDocBook);
+    helper.verifyValid(new StreamSource(new StringReader(docBook)));
     final StreamSource myStyle =
         new StreamSource(DocBookHelper.class.getResource("mystyle.xsl").toString());
     try (OutputStream outStream = Files.newOutputStream(Path.of("out.pdf"))) {
-      helper.docBookToPdf(Path.of("non-existent-" + Instant.now()).toUri(), sourceDocBook, myStyle,
-          outStream);
+      helper.docBookToPdf(Path.of("non-existent-" + Instant.now()).toUri(),
+          new StreamSource(new StringReader(docBook)), myStyle, outStream);
     }
   }
 
@@ -274,8 +270,9 @@ public class M1ApprBuilder {
     writer.paragraph(volumeText + course.getEcts().getValue() + " ECTS");
 
     Verify.verify(course.getAdmissionInfo() == null);
-    Verify.verify(course.getCoefficient().getValue().getFr().getValue()
-        .equals("\n<p>Capitalisation : Non</p>\n<br/>"));
+    // Verify.verify(course.getCoefficient().getValue().getFr().getValue()
+    // .equals("\n<p>Capitalisation : Non</p>\n<br/>"));
+    // LOGGER.info(course.getCoefficient().getValue().getFr().getValue());
     final ImmutableSet<Person> teachers = cache.getCourseTeachers(course.getCourseID()).values();
     if (!teachers.isEmpty()) {
       final String names = teachers.stream()
@@ -286,8 +283,6 @@ public class M1ApprBuilder {
       writer.paragraph(prefix + names);
     }
     Verify.verify(course.getCourseIntroduction() == null);
-    Verify.verify(course.getFormalPrerequisites() == null);
-    Verify.verify(course.getFormOfAssessment() == null);
     Verify.verify(course.getFormOfTeaching() == null);
     Verify.verify(course.getLevel() == null);
     Verify.verify(course.getLevelLang() == null);
@@ -295,25 +290,30 @@ public class M1ApprBuilder {
         course.getManagingTeacher().getValue().equals(MAIN_MANAGER_PERSON_ID)
             || course.getManagingTeacher().getValue().equals(MAIN_MANAGER_2_PERSON_ID),
         valueOpt(course.getManagingTeacher()).toString());
-    Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr")));
+    Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr"))
+        || course.getTeachingLang().equals(ImmutableList.of("fr+en")));
     Verify.verify(course.getTeachers().isEmpty());
-    Verify.verify(course.getRecommendedPrerequisites() == null);
     writer.eol();
+    final Optional<String> recommendedPrerequisitesOpt =
+        valueOpt(course.getRecommendedPrerequisites(), Course.RecommendedPrerequisites::getFr);
+    addOptionalSection("Prérequis recommandés", recommendedPrerequisitesOpt);
+    final Optional<String> formalPrerequisitesOpt =
+        valueOpt(course.getFormalPrerequisites(), Course.FormalPrerequisites::getFr);
+    addOptionalSection("Prérequis obligatoires", formalPrerequisitesOpt);
     final Optional<String> learningObjectivesOpt =
-        valueOpt(course.getLearningObjectives(), LearningObjectives::getFr);
+        valueOpt(course.getLearningObjectives(), Course.LearningObjectives::getFr);
     addOptionalSection("Compétences à acquérir", learningObjectivesOpt);
     final Optional<String> courseDescriptionOpt =
-        valueOpt(course.getCourseDescription(), CourseDescription::getFr);
+        valueOpt(course.getCourseDescription(), Course.CourseDescription::getFr);
     addOptionalSection("Contenu", courseDescriptionOpt);
     if (courseDescriptionOpt.isEmpty()) {
       Verify.verify(courseName.equals("Mémoire"), courseName);
     }
-    final Optional<String> syllabusOpt = valueOpt(course.getSyllabus(), Syllabus::getFr);
+    final Optional<String> syllabusOpt = valueOpt(course.getSyllabus(), Course.Syllabus::getFr);
     addOptionalSection("Références", syllabusOpt);
-    // writer.h3("Prérequis");
-    // writer.paragraph(course.getRecommendedPrerequisites().getValue());
-    // writer.h3("Évaluation");
-    // writer.paragraph(course.getFormOfAssessment().getValue());
+    final Optional<String> formOfAssessmentOpt =
+        valueOpt(course.getFormOfAssessment(), Course.FormOfAssessment::getFr);
+    addOptionalSection("Évaluation", formOfAssessmentOpt);
   }
 
   private void addOptionalSection(final String title, final Optional<String> contentOpt) {
@@ -355,6 +355,8 @@ public class M1ApprBuilder {
       final String tag = element.normalName();
       if (tag.equals("br")) {
         text = "\n\n";
+      } else if (tag.equals("strong")) {
+        text = "*" + getText(element.childNodes()) + "*";
       } else if (tag.equals("p")) {
         text = "\n\n" + getText(element.childNodes());
       } else if (tag.equals("ul")) {
