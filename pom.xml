@@ -38,13 +38,13 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
 			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.0</version>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<failOnWarnings>false</failOnWarnings>
+				</configuration>
 			</plugin>
-
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
