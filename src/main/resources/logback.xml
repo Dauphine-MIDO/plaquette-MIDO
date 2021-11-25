@@ -34,4 +34,6 @@
 		name="io.github.oliviercailloux.plaquette_mido_soap.Querier"
 		level="OFF">
 	</logger>
+	<logger name="org.apache.fop" level="INFO">
+	</logger>
 </configuration>
