@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.github.oliviercailloux</groupId>
@@ -8,10 +10,6 @@
 	</parent>
 	<artifactId>plaquette-mido</artifactId>
 	<version>0.0.6-SNAPSHOT</version>
-
-	<properties>
-		<exec.mainClass>io.github.oliviercailloux.plaquette_mido_soap.M1ApprBuilder</exec.mainClass>
-	</properties>
 
 	<build>
 		<plugins>
@@ -50,6 +48,26 @@
 					<consoleOutput>false</consoleOutput>
 					<!-- Ignore generated (JAX-B) code. -->
 					<sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>--class-path</argument>
+						<classpath />
+						<argument>--add-opens</argument>
+						<argument>
+							java.base/sun.nio.ch=ALL-UNNAMED</argument>
+						<argument>
+							--add-opens</argument>
+						<argument>
+							java.base/java.io=ALL-UNNAMED</argument>
+						<argument>io.github.oliviercailloux.plaquette_mido_soap.M1ApprBuilder</argument>
+					</arguments>
 				</configuration>
 			</plugin>
 		</plugins>
