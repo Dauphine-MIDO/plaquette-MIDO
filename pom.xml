@@ -24,8 +24,7 @@
 						</goals>
 						<configuration>
 							<wsdlUrls>https://rof.api.dauphine.fr/ebx-dataservices/tables/pvRefRof/RefRof?WSDL</wsdlUrls>
-							<!-- TODO complain about this. https://eclipse-ee4j.github.io/metro-jax-ws/3.0.0/docs/ch04.html#tools-wsimport. 
-								BTW, the link there is broken: https://eclipse-ee4j.github.io/metro-jax-ws/3.0.0/docs/ch04.html#jaxws-maven. -->
+							<!-- TODO complain about this. https://eclipse-ee4j.github.io/metro-jax-ws/3.0.0/docs/ch04.html#tools-wsimport. -->
 							<xauthFile>WSDL_credentials.txt</xauthFile>
 							<vmArgs>
 								<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
