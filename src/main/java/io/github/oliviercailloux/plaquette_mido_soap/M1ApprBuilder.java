@@ -62,7 +62,8 @@ public class M1ApprBuilder {
   public static final String PROGRAM_ID = PROGRAM_ID_PREFIX + PROGRAM_IDENT;
 
   public static final String PROGRAM_NAME =
-      "Méthodes Informatiques Appliquées pour la Gestion des Entreprises - 1re année de Master - Formation en apprentissage";
+      "Méthodes Informatiques Appliquées pour la Gestion des Entreprises" + " - "
+          + "1re année de Master - Formation en apprentissage";
   public static final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
   public static final String PROGRAM_ID_S1_L1 = "FRUAI0750736TPRCPA4AMIA-100-S1L1";
   public static final String S1_L1_NAME = "Bloc Fondamental";
