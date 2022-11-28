@@ -103,7 +103,9 @@ public class Querier {
     final SelectProgramResponseType result = dataservices.selectProgramOperation(request);
     LOGGER.debug("Result: {}.",
         helper.toXml(new ObjectFactory().createSelectProgramResponse(result)));
-    return ImmutableList.copyOf(result.getData().getRoot().getProgram());
+    final ImmutableList<Program> programs =
+        ImmutableList.copyOf(result.getData().getRoot().getProgram());
+    return programs;
   }
 
   public ImmutableList<Program> getPrograms(Set<String> programIds) throws StandardException {
