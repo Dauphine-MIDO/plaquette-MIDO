@@ -105,9 +105,9 @@ public class M1ApprBuilder {
   }
 
   private void proceed() throws StandardException, IOException {
-    cache = Cacher.cache(Querier.instance(),
-        ImmutableSet.of(PROGRAM_ID, PROGRAM_ID_S1, PROGRAM_ID_S1_L1, PROGRAM_ID_S1_L2,
-            PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2, PROGRAM_ID_S2_L3));
+    final ImmutableSet<String> programs = ImmutableSet.of(PROGRAM_ID, PROGRAM_ID_S1,
+        PROGRAM_ID_S1_L1, PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2, PROGRAM_ID_S2_L3);
+    cache = Cacher.cache(Querier.instance(), programs);
 
     verify();
 
@@ -140,17 +140,17 @@ public class M1ApprBuilder {
       }
     }
 
-    {
-      final Program program = cache.getProgram(PROGRAM_ID_S1_L2);
-      Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
-      final String programNameFr = program.getProgramName().getValue().getFr().getValue();
-      Verify.verify(programNameFr.equals(S1_L2_NAME), programNameFr);
-      writer.h3(programNameFr);
-
-      for (Course course : cache.getProgramCourses(PROGRAM_ID_S1_L2).values()) {
-        writeCourse(course);
-      }
-    }
+    // {
+    // final Program program = cache.getProgram(PROGRAM_ID_S1_L2);
+    // Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
+    // final String programNameFr = program.getProgramName().getValue().getFr().getValue();
+    // Verify.verify(programNameFr.equals(S1_L2_NAME), programNameFr);
+    // writer.h3(programNameFr);
+    //
+    // for (Course course : cache.getProgramCourses(PROGRAM_ID_S1_L2).values()) {
+    // writeCourse(course);
+    // }
+    // }
 
     {
       final String subProgramName =
@@ -251,8 +251,8 @@ public class M1ApprBuilder {
     final Program s1 = cache.getProgram(PROGRAM_ID_S1);
     Verify.verify(s1.getRefMention().getValue().equals(MENTION_ID));
     final List<String> refProgram = s1.getProgramStructure().getValue().getRefProgram();
-    Verify.verify(refProgram.equals(ImmutableList.of(PROGRAM_ID_S1_L1, PROGRAM_ID_S1_L2)),
-        refProgram.toString());
+    Verify.verify(refProgram.equals(ImmutableList.of(PROGRAM_ID_S1_L1)), refProgram.toString());
+    Verify.verify(refProgram.equals(ImmutableList.of(PROGRAM_ID_S1_L1)), refProgram.toString());
     final Program s2 = cache.getProgram(PROGRAM_ID_S2);
     Verify.verify(s2.getRefMention().getValue().equals(MENTION_ID));
     final List<String> refProgramS2 = s2.getProgramStructure().getValue().getRefProgram();
