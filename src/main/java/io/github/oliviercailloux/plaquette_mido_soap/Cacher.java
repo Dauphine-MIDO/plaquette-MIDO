@@ -44,12 +44,11 @@ public class Cacher {
     } while (!nextIds.isEmpty());
     final ImmutableSet<Program> programs = builder.build();
     LOGGER.debug("Programs: {}.",
-        programs.stream().map(p -> p.getProgramName().getValue().getFr().getValue())
-            .collect(Collectors.joining(", ")));
-    LOGGER.debug("Programs and courses: {}.", programs.stream()
-        .map(p -> p.getProgramName().getValue().getFr().getValue() + ": " + p.getProgramStructure()
-            .getValue().getRefCourse().stream().collect(Collectors.joining(", ")))
-        .collect(Collectors.joining("; ")));
+        programs.stream().map(p -> name(p)).collect(Collectors.joining(", ")));
+    LOGGER.debug("Programs and courses: {}.",
+        programs.stream().map(p -> name(p) + ": " + p.getProgramStructure().getValue()
+            .getRefCourse().stream().collect(Collectors.joining(", ")))
+            .collect(Collectors.joining("; ")));
     final ImmutableSet<String> courseIds =
         programs.stream().flatMap(p -> p.getProgramStructure().getValue().getRefCourse().stream())
             .collect(ImmutableSet.toImmutableSet());
@@ -63,6 +62,11 @@ public class Cacher {
         .flatMap(c -> getTeacherRefs(c).stream()).collect(ImmutableSet.toImmutableSet());
     final ImmutableList<Person> teachers = querier.getPersons(teacherIds);
     return new Cacher(programs, courses, teachers);
+  }
+
+  private static String name(Program p) {
+    // p.getProgramName() == null ? p.getProgramID():
+    return p.getProgramName().getValue().getFr().getValue();
   }
 
   private static <T> Optional<T> valueOpt(JAXBElement<T> element) {
