@@ -4,6 +4,7 @@ jobs:
   maven_ci:
     name: Maven CI job
     runs-on: ubuntu-latest
+    environment: API
     
     steps:
     - name: Checkout
