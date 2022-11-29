@@ -100,7 +100,7 @@
 							--add-opens</argument>
 						<argument>
 							java.base/java.io=ALL-UNNAMED</argument>
-						<argument>io.github.oliviercailloux.plaquette_mido_soap.M1ApprBuilder</argument>
+						<argument>io.github.oliviercailloux.plaquette_mido_soap.M1AltBuilder</argument>
 					</arguments>
 				</configuration>
 			</plugin>
