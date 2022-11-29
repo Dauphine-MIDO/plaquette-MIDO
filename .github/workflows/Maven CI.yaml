@@ -24,6 +24,10 @@ jobs:
         
     - name: Maven
       env:
+        #For mvn generate-sources (WSDL access credentials)
         URL_ENCODED_API_USERNAME: ${{ secrets.URL_ENCODED_API_USERNAME }}
         URL_ENCODED_API_PASSWORD: ${{ secrets.URL_ENCODED_API_PASSWORD }}
+        #For mvn test (runtime credentials)
+        API_USERNAME: ${{ secrets.API_USERNAME }}
+        API_PASSWORD: ${{ secrets.API_PASSWORD }}
       run: mvn -PCI verify
