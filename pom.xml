@@ -9,6 +9,43 @@
 	<artifactId>plaquette-mido</artifactId>
 	<version>0.0.9-SNAPSHOT</version>
 
+	<profiles>
+		<profile>
+			<!-- Use this profile ONLY IF you do not care overwriting your WSDL credentials file.-->
+			<id>CI</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>3.3.0</version>
+						<executions>
+							<execution>
+								<id>copy-resources</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<resources>
+										<resource>
+											<directory>filtered</directory>
+											<filtering>true</filtering>
+										</resource>
+									</resources>
+									<outputDirectory>${basedir}</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Repeat for later execution. -->
+					<plugin>
+						<groupId>com.sun.xml.ws</groupId>
+						<artifactId>jaxws-maven-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
 			<plugin>
