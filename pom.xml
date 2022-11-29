@@ -7,7 +7,7 @@
 		<version>0.0.16</version>
 	</parent>
 	<artifactId>plaquette-mido</artifactId>
-	<version>0.0.9</version>
+	<version>0.0.10-SNAPSHOT</version>
 
 	<profiles>
 		<profile>
