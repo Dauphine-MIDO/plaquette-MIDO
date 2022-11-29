@@ -35,10 +35,10 @@ class QueryTests {
 
   @Test
   void testRelativePredicate() throws Exception {
-    final String predicate = "../../root/Mention/mentionID = '" + M1ApprBuilder.MENTION_ID + "'";
+    final String predicate = "../../root/Mention/mentionID = '" + M1AltBuilder.MENTION_ID + "'";
     final List<Mention> mentions = querier.getMentions(predicate);
     assertEquals(1, mentions.size());
-    assertEquals(M1ApprBuilder.MENTION_ID, Iterables.getOnlyElement(mentions).getMentionID());
+    assertEquals(M1AltBuilder.MENTION_ID, Iterables.getOnlyElement(mentions).getMentionID());
     assertEquals("Master - Informatique",
         Iterables.getOnlyElement(mentions).getName().getValue().getFr().getValue());
   }
@@ -71,14 +71,14 @@ class QueryTests {
   void testVariousPredicates() throws Exception {
     {
       final List<Program> programs =
-          querier.getPrograms("refMention/mentionID='" + M1ApprBuilder.MENTION_ID + "'");
+          querier.getPrograms("refMention/mentionID='" + M1AltBuilder.MENTION_ID + "'");
       final ImmutableList<String> programIds = programs.stream().map(Program::getIdent)
           .map(JAXBElement::getValue).collect(ImmutableList.toImmutableList());
       assertTrue(programs.size() >= 10, programIds.toString());
     }
     {
       final List<Program> programs =
-          querier.getPrograms("programID='" + M1ApprBuilder.PROGRAM_ID_S1 + "'");
+          querier.getPrograms("programID='" + M1AltBuilder.PROGRAM_ID_S1 + "'");
       assertTrue(programs.size() == 1);
       // final Program program = Iterables.getOnlyElement(programs);
       // LOGGER.info("Program: {}.", program.getIdent().getValue());
@@ -94,7 +94,7 @@ class QueryTests {
       final List<Person> persons =
           querier.getPersons(String.format("personID = '%s'", "FRUAI0750736TPEIN7547"));
       assertEquals(ImmutableList.of("CAILLOUX"),
-          persons.stream().map(p -> M1ApprBuilder.valueOpt(p.getFamilyName()))
+          persons.stream().map(p -> M1AltBuilder.valueOpt(p.getFamilyName()))
               .map(o -> o.orElse(null)).collect(ImmutableList.toImmutableList()));
     }
     {
@@ -108,7 +108,7 @@ class QueryTests {
   void testCourseJavaObject() throws Exception {
     final Course course = querier.getCourse("FRUAI0750736TCOENA3AMIA-100-S6L1C1");
     assertEquals("Java-Objet", course.getCourseName().getValue().getFr().getValue());
-    assertEquals(M1ApprBuilder.MAIN_MANAGER_2_PERSON_ID, course.getManagingTeacher().getValue());
+    assertEquals(M1AltBuilder.MAIN_MANAGER_2_PERSON_ID, course.getManagingTeacher().getValue());
     assertEquals(ImmutableList.of(), course.getTeachers());
     final JAXBElement<Contacts> contactsElement = course.getContacts();
     assertNotNull(contactsElement);
@@ -126,15 +126,15 @@ class QueryTests {
      * NB references next to refMention are limited to primary keys, see Extraction de clés
      * étrangères.
      */
-    final String predicate = "ident = '" + M1ApprBuilder.PROGRAM_IDENT + "' and refMention = '"
-        + M1ApprBuilder.MENTION_ID + "' and refMention/mentionID = '" + M1ApprBuilder.MENTION_ID
+    final String predicate = "ident = '" + M1AltBuilder.PROGRAM_IDENT + "' and refMention = '"
+        + M1AltBuilder.MENTION_ID + "' and refMention/mentionID = '" + M1AltBuilder.MENTION_ID
         + "'";
 
     final List<Program> programs = querier.getPrograms(predicate);
     assertEquals(1, programs.size());
     final Program program = Iterables.getOnlyElement(programs);
-    assertEquals(M1ApprBuilder.PROGRAM_IDENT, program.getIdent().getValue());
-    assertEquals(M1ApprBuilder.PROGRAM_NAME,
+    assertEquals(M1AltBuilder.PROGRAM_IDENT, program.getIdent().getValue());
+    assertEquals(M1AltBuilder.PROGRAM_NAME,
         program.getProgramName().getValue().getFr().getValue());
     final List<String> subPrograms = program.getProgramStructure().getValue().getRefProgram();
     LOGGER.info("Sub program: {}.", subPrograms);
@@ -145,10 +145,10 @@ class QueryTests {
 
   @Test
   void testGetCoursesSemester1() throws Exception {
-    final String programId = M1ApprBuilder.PROGRAM_ID_S1_L1;
+    final String programId = M1AltBuilder.PROGRAM_ID_S1_L1;
     final Program program = querier.getProgram(programId);
     assertEquals("Bloc Fondamental", program.getProgramName().getValue().getFr().getValue());
-    assertEquals(M1ApprBuilder.MENTION_ID, program.getRefMention().getValue());
+    assertEquals(M1AltBuilder.MENTION_ID, program.getRefMention().getValue());
     final List<String> subPrograms = program.getProgramStructure().getValue().getRefProgram();
     assertEquals(0, subPrograms.size());
     final List<String> courses = program.getProgramStructure().getValue().getRefCourse();

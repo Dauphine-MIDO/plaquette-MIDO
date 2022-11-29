@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.github.oliviercailloux</groupId>
 		<artifactId>pom</artifactId>
-		<version>0.0.13</version>
+		<version>0.0.16</version>
 	</parent>
 	<artifactId>plaquette-mido</artifactId>
 	<version>0.0.8-SNAPSHOT</version>
@@ -84,20 +84,20 @@
 		<dependency>
 			<groupId>io.github.oliviercailloux</groupId>
 			<artifactId>publish</artifactId>
-			<version>0.0.4</version>
+			<version>0.0.8</version>
 		</dependency>
 
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.2.3</version>
+			<version>1.4.5</version>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.7.32</version>
+			<version>2.0.5</version>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>

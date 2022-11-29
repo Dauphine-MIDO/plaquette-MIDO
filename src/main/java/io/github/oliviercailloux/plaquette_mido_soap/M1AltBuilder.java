@@ -2,13 +2,16 @@ package io.github.oliviercailloux.plaquette_mido_soap;
 
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.MoreFiles;
 import ebx.ebx_dataservices.StandardException;
 import io.github.oliviercailloux.publish.AsciidocWriter;
-import io.github.oliviercailloux.publish.DocBookHelper;
+import io.github.oliviercailloux.publish.DocBookConformityChecker;
+import io.github.oliviercailloux.publish.DocBookTransformer;
+import io.github.oliviercailloux.publish.ToBytesTransformer;
 import jakarta.xml.bind.JAXBElement;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,9 +41,9 @@ import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.PersonType.Root.Person;
 import schemas.ebx.dataservices_1.ProgramType.Root.Program;
 
-public class M1ApprBuilder {
+public class M1AltBuilder {
   @SuppressWarnings("unused")
-  private static final Logger LOGGER = LoggerFactory.getLogger(M1ApprBuilder.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(M1AltBuilder.class);
 
   private static final boolean WRITE_HTML = false;
 
@@ -87,11 +90,11 @@ public class M1ApprBuilder {
   public static final String S2_L3_NAME = "Bloc entreprise";
 
   public static void main(String[] args) throws Exception {
-    LOGGER.info("Obtained {}.", M1ApprBuilder.class.getResource("M1ApprBuilder.class"));
+    LOGGER.info("Obtained {}.", M1AltBuilder.class.getResource("M1ApprBuilder.class"));
 
     AuthenticatorHelper.setDefaultAuthenticator();
 
-    final M1ApprBuilder builder = new M1ApprBuilder();
+    final M1AltBuilder builder = new M1AltBuilder();
     builder.proceed();
   }
 
@@ -99,7 +102,7 @@ public class M1ApprBuilder {
 
   private Cacher cache;
 
-  public M1ApprBuilder() {
+  public M1AltBuilder() {
     writer = new AsciidocWriter();
     cache = null;
   }
@@ -206,14 +209,15 @@ public class M1ApprBuilder {
     }
     LOGGER.info("Validating Docbook.");
     LOGGER.debug("Docbook: {}.", docBook);
-    final DocBookHelper helper = DocBookHelper.instance();
-    helper.verifyValid(new StreamSource(new StringReader(docBook)));
+    DocBookConformityChecker.usingDefaults()
+        .verifyValid(new StreamSource(new StringReader(docBook)));
     final StreamSource myStyle =
-        new StreamSource(DocBookHelper.class.getResource("mystyle.xsl").toString());
-    try (OutputStream outStream = Files.newOutputStream(Path.of("out.pdf"))) {
-      helper.docBookToPdf(Path.of("non-existent-" + Instant.now()).toUri(),
-          new StreamSource(new StringReader(docBook)), myStyle, outStream);
-    }
+        new StreamSource(M1AltBuilder.class.getResource("dauphine.xsl").toString());
+    final ToBytesTransformer toPdf =
+        DocBookTransformer.usingDefaultFactory().usingFoStylesheet(myStyle, ImmutableMap.of())
+            .asDocBookToPdfTransformer(Path.of("non-existent-" + Instant.now()).toUri());
+    toPdf.toSink(new StreamSource(new StringReader(docBook)),
+        MoreFiles.asByteSink(Path.of("out.pdf")));
   }
 
   private void writeSummary() {
@@ -251,7 +255,6 @@ public class M1ApprBuilder {
     final Program s1 = cache.getProgram(PROGRAM_ID_S1);
     Verify.verify(s1.getRefMention().getValue().equals(MENTION_ID));
     final List<String> refProgram = s1.getProgramStructure().getValue().getRefProgram();
-    Verify.verify(refProgram.equals(ImmutableList.of(PROGRAM_ID_S1_L1)), refProgram.toString());
     Verify.verify(refProgram.equals(ImmutableList.of(PROGRAM_ID_S1_L1)), refProgram.toString());
     final Program s2 = cache.getProgram(PROGRAM_ID_S2);
     Verify.verify(s2.getRefMention().getValue().equals(MENTION_ID));

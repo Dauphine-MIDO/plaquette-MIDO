@@ -1,8 +1,7 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
-import io.github.oliviercailloux.jaris.collections.ImmutableCompleteMap;
+import io.github.oliviercailloux.jaris.credentials.Credentials;
 import io.github.oliviercailloux.jaris.credentials.CredentialsReader;
-import io.github.oliviercailloux.jaris.credentials.CredentialsReader.ClassicalCredentials;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
@@ -14,11 +13,9 @@ public class AuthenticatorHelper {
     Authenticator.setDefault(myAuth);
   }
 
-  private static Authenticator
-      getConstantAuthenticator(ImmutableCompleteMap<ClassicalCredentials, String> credentials) {
-    final PasswordAuthentication passwordAuthentication =
-        new PasswordAuthentication(credentials.get(ClassicalCredentials.API_USERNAME),
-            credentials.get(ClassicalCredentials.API_PASSWORD).toCharArray());
+  private static Authenticator getConstantAuthenticator(Credentials credentials) {
+    final PasswordAuthentication passwordAuthentication = new PasswordAuthentication(
+        credentials.API_USERNAME(), credentials.API_PASSWORD().toCharArray());
     final Authenticator myAuth = new Authenticator() {
       @Override
       protected PasswordAuthentication getPasswordAuthentication() {
