@@ -25,4 +25,4 @@ jobs:
       env:
         URL_ENCODED_API_USERNAME: ${{ secrets.URL_ENCODED_API_USERNAME }}
         URL_ENCODED_API_PASSWORD: ${{ secrets.URL_ENCODED_API_PASSWORD }}
-      run: mvn verify
+      run: mvn -PCI verify
