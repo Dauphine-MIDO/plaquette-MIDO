@@ -58,6 +58,11 @@ public class M1AltBuilder {
    */
   public static final String MAIN_MANAGER_2_PERSON_ID = "FRUAI0750736TPEIN711";
 
+  /**
+   * Ouissem SAFRAOU
+   */
+  public static final String MAIN_MANAGER_3_PERSON_ID = "FRUAI0750736TPEIN14902";
+
   public static final String PROGRAM_IDENT = "PRA4AMIA-100";
 
   public static final String PROGRAM_ID_PREFIX = "FRUAI0750736TPR";
@@ -102,15 +107,18 @@ public class M1AltBuilder {
 
   private Cacher cache;
 
+  private final Querier querier;
+
   public M1AltBuilder() {
     writer = new AsciidocWriter();
     cache = null;
+    querier = Querier.instance();
   }
 
   private void proceed() throws StandardException, IOException {
     final ImmutableSet<String> programs = ImmutableSet.of(PROGRAM_ID, PROGRAM_ID_S1,
         PROGRAM_ID_S1_L1, PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2, PROGRAM_ID_S2_L3);
-    cache = Cacher.cache(Querier.instance(), programs);
+    cache = Cacher.cache(querier, programs);
 
     verify();
 
@@ -269,7 +277,7 @@ public class M1AltBuilder {
     writer.h4(courseName);
     final String volume = course.getVolume().getValue();
     /* TODO */
-    // Verify.verify(!volume.equals("0"), courseName);
+    // Verify.verify(volume.equals("0") == courseName.equals("Mémoire"), courseName);
     final String volumeText = volume.equals("0") ? "" : volume + " h" + " ; ";
     writer.paragraph(volumeText + course.getEcts().getValue() + " ECTS");
 
@@ -291,8 +299,8 @@ public class M1AltBuilder {
     Verify.verify(course.getLevel() == null);
     Verify.verify(course.getLevelLang() == null);
     Verify.verify(
-        course.getManagingTeacher().getValue().equals(MAIN_MANAGER_PERSON_ID)
-            || course.getManagingTeacher().getValue().equals(MAIN_MANAGER_2_PERSON_ID),
+        ImmutableSet.of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID)
+            .contains(course.getManagingTeacher().getValue()),
         valueOpt(course.getManagingTeacher()).toString());
     Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr"))
         || course.getTeachingLang().equals(ImmutableList.of("fr+en")));
