@@ -74,7 +74,7 @@ public class M1AltBuilder {
           + "1re année de Master - Formation en apprentissage";
   public static final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
   public static final String PROGRAM_ID_S1_L1 = "FRUAI0750736TPRCPA4AMIA-100-S1L1";
-  public static final String S1_L1_NAME = "Bloc Fondamental";
+  public static final String S1_L1_NAME = "Tronc commun";
 
   public static final String PROGRAM_ID_S1_L2 = "FRUAI0750736TPRCPA4AMIAS1L2";
 
@@ -84,15 +84,11 @@ public class M1AltBuilder {
 
   public static final String PROGRAM_ID_S2_L1 = "FRUAI0750736TPRCPA4AMIA-100-S2L1";
 
-  public static final String S2_L1_NAME = "Bloc Fondamental";
+  public static final String S2_L1_NAME = "Tronc commun";
 
   public static final String PROGRAM_ID_S2_L2 = "FRUAI0750736TPRCPA4AMIA-100-S2L2";
 
-  public static final String S2_L2_NAME = "Bloc Options";
-
-  public static final String PROGRAM_ID_S2_L3 = "FRUAI0750736TPRCPA4AMIAS2L3";
-
-  public static final String S2_L3_NAME = "Bloc entreprise";
+  public static final String S2_L2_NAME = "?Options";
 
   public static void main(String[] args) throws Exception {
     LOGGER.info("Obtained {}.", M1AltBuilder.class.getResource("M1ApprBuilder.class"));
@@ -117,7 +113,7 @@ public class M1AltBuilder {
 
   private void proceed() throws StandardException, IOException {
     final ImmutableSet<String> programs = ImmutableSet.of(PROGRAM_ID, PROGRAM_ID_S1,
-        PROGRAM_ID_S1_L1, PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2, PROGRAM_ID_S2_L3);
+        PROGRAM_ID_S1_L1, PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2);
     cache = Cacher.cache(querier, programs);
 
     verify();
@@ -193,18 +189,6 @@ public class M1AltBuilder {
       }
     }
 
-    {
-      final Program program = cache.getProgram(PROGRAM_ID_S2_L3);
-      Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
-      final String programNameFr = program.getProgramName().getValue().getFr().getValue();
-      Verify.verify(programNameFr.equals(S2_L3_NAME), programNameFr);
-      writer.h3(programNameFr);
-
-      for (Course course : cache.getProgramCourses(PROGRAM_ID_S2_L3).values()) {
-        writeCourse(course);
-      }
-    }
-
     final String adoc = writer.getContent();
     Files.writeString(Paths.get("out.adoc"), adoc);
 
@@ -267,8 +251,7 @@ public class M1AltBuilder {
     final Program s2 = cache.getProgram(PROGRAM_ID_S2);
     Verify.verify(s2.getRefMention().getValue().equals(MENTION_ID));
     final List<String> refProgramS2 = s2.getProgramStructure().getValue().getRefProgram();
-    Verify.verify(
-        refProgramS2.equals(ImmutableList.of(PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2, PROGRAM_ID_S2_L3)),
+    Verify.verify(refProgramS2.equals(ImmutableList.of(PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2)),
         ImmutableList.copyOf(refProgramS2).toString());
   }
 
