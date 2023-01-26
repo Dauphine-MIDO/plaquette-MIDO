@@ -137,9 +137,7 @@ public class M1AltBuilder {
 
     {
       final Program program = cache.getProgram(PROGRAM_ID_S1_L1);
-      Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
       final String programNameFr = program.getProgramName().getValue().getFr().getValue();
-      Verify.verify(programNameFr.equals(S1_L1_NAME), programNameFr);
       writer.h3(programNameFr);
 
       for (Course course : cache.getProgramCourses(PROGRAM_ID_S1_L1).values()) {
@@ -167,9 +165,7 @@ public class M1AltBuilder {
 
     {
       final Program program = cache.getProgram(PROGRAM_ID_S2_L1);
-      Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
       final String programNameFr = program.getProgramName().getValue().getFr().getValue();
-      Verify.verify(programNameFr.equals(S2_L1_NAME), programNameFr);
       writer.h3(programNameFr);
 
       for (Course course : cache.getProgramCourses(PROGRAM_ID_S2_L1).values()) {
@@ -179,9 +175,7 @@ public class M1AltBuilder {
 
     {
       final Program program = cache.getProgram(PROGRAM_ID_S2_L2);
-      Verify.verify(program.getProgramStructure().getValue().getRefProgram().isEmpty());
       final String programNameFr = program.getProgramName().getValue().getFr().getValue();
-      Verify.verify(programNameFr.equals(S2_L2_NAME), programNameFr);
       writer.h3(programNameFr);
 
       for (Course course : cache.getProgramCourses(PROGRAM_ID_S2_L2).values()) {
@@ -253,6 +247,27 @@ public class M1AltBuilder {
     final List<String> refProgramS2 = s2.getProgramStructure().getValue().getRefProgram();
     Verify.verify(refProgramS2.equals(ImmutableList.of(PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2)),
         ImmutableList.copyOf(refProgramS2).toString());
+
+    final Program s1l1 = cache.getProgram(PROGRAM_ID_S1_L1);
+    Verify.verify(s1l1.getProgramStructure().getValue().getRefProgram().isEmpty());
+    {
+      final String programNameFr = s1l1.getProgramName().getValue().getFr().getValue();
+      Verify.verify(programNameFr.equals(S1_L1_NAME), programNameFr);
+    }
+
+    final Program s2l1 = cache.getProgram(PROGRAM_ID_S2_L1);
+    Verify.verify(s2l1.getProgramStructure().getValue().getRefProgram().isEmpty());
+    {
+      final String programNameFr = s2l1.getProgramName().getValue().getFr().getValue();
+      Verify.verify(programNameFr.equals(S2_L1_NAME), programNameFr);
+    }
+
+    final Program s2l2 = cache.getProgram(PROGRAM_ID_S2_L2);
+    Verify.verify(s2l2.getProgramStructure().getValue().getRefProgram().isEmpty());
+    {
+      final String programNameFr = s2l2.getProgramName().getValue().getFr().getValue();
+      Verify.verify(programNameFr.equals(S2_L2_NAME), programNameFr);
+    }
   }
 
   private void writeCourse(Course course) {
