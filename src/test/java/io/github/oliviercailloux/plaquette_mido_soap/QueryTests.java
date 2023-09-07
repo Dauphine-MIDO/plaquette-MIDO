@@ -147,7 +147,7 @@ class QueryTests {
   void testGetCoursesSemester1() throws Exception {
     final String programId = M1AltBuilder.PROGRAM_ID_S1_L1;
     final Program program = querier.getProgram(programId);
-    assertEquals("Bloc Fondamental", program.getProgramName().getValue().getFr().getValue());
+    assertEquals(M1AltBuilder.S1_L1_NAME, program.getProgramName().getValue().getFr().getValue());
     assertEquals(M1AltBuilder.MENTION_ID, program.getRefMention().getValue());
     final List<String> subPrograms = program.getProgramStructure().getValue().getRefProgram();
     assertEquals(0, subPrograms.size());
