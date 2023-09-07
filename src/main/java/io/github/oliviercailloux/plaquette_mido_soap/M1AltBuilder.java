@@ -70,8 +70,10 @@ public class M1AltBuilder {
   public static final String PROGRAM_ID = PROGRAM_ID_PREFIX + PROGRAM_IDENT;
 
   public static final String PROGRAM_NAME =
-      "Méthodes Informatiques Appliquées pour la Gestion des Entreprises" + " - "
-          + "1re année de Master - Formation en apprentissage";
+      "MIAGE" + " - "
+          + "1re année de Master";
+  public static final String PROGRAM_URL =
+      "https://dauphine.psl.eu/formations/masters/informatique/1re-annee-de-master-miage/programme";
   public static final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
   public static final String PROGRAM_ID_S1_L1 = "FRUAI0750736TPRCPA4AMIA-100-S1L1";
   public static final String S1_L1_NAME = "Tronc commun";
@@ -88,7 +90,7 @@ public class M1AltBuilder {
 
   public static final String PROGRAM_ID_S2_L2 = "FRUAI0750736TPRCPA4AMIA-100-S2L2";
 
-  public static final String S2_L2_NAME = "?Options";
+  public static final String S2_L2_NAME = "Options";
 
   public static void main(String[] args) throws Exception {
     LOGGER.info("Obtained {}.", M1AltBuilder.class.getResource("M1ApprBuilder.class"));
@@ -125,7 +127,7 @@ public class M1AltBuilder {
     writer.paragraph("Généré le "
         + DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)
             .withZone(ZoneId.of("Europe/Paris")).format(Instant.now())
-        + " à partir des données du https://dauphine.psl.eu/formations/masters/informatique/m1-methodes-informatiques-appliquees-a-la-gestion-des-entreprises/formation[site internet] de Dauphine.");
+        + " à partir des données du "+PROGRAM_URL+"[site internet] de Dauphine.");
 
     writeSummary();
 
@@ -274,8 +276,7 @@ public class M1AltBuilder {
     final String courseName = course.getCourseName().getValue().getFr().getValue();
     writer.h4(courseName);
     final String volume = course.getVolume().getValue();
-    /* TODO */
-    // Verify.verify(volume.equals("0") == courseName.equals("Mémoire"), courseName);
+    Verify.verify(volume.equals("0") == courseName.equals("Mémoire"), courseName);
     final String volumeText = volume.equals("0") ? "" : volume + " h" + " ; ";
     writer.paragraph(volumeText + course.getEcts().getValue() + " ECTS");
 
