@@ -69,9 +69,7 @@ public class M1AltBuilder {
 
   public static final String PROGRAM_ID = PROGRAM_ID_PREFIX + PROGRAM_IDENT;
 
-  public static final String PROGRAM_NAME =
-      "MIAGE" + " - "
-          + "1re année de Master";
+  public static final String PROGRAM_NAME = "MIAGE" + " - " + "1re année de Master";
   public static final String PROGRAM_URL =
       "https://dauphine.psl.eu/formations/masters/informatique/1re-annee-de-master-miage/programme";
   public static final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
@@ -127,7 +125,7 @@ public class M1AltBuilder {
     writer.paragraph("Généré le "
         + DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)
             .withZone(ZoneId.of("Europe/Paris")).format(Instant.now())
-        + " à partir des données du "+PROGRAM_URL+"[site internet] de Dauphine.");
+        + " à partir des données du " + PROGRAM_URL + "[site internet] de Dauphine.");
 
     writeSummary();
 
