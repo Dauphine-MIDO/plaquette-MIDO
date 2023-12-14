@@ -277,12 +277,13 @@ public class M1AltBuilder {
     Verify.verify(volume.equals("0") == courseName.equals("Mémoire"), courseName);
     final String volumeText = volume.equals("0") ? "" : volume + " h" + " ; ";
     writer.paragraph(volumeText + course.getEcts().getValue() + " ECTS");
-
+    
     Verify.verify(course.getAdmissionInfo() == null);
     // Verify.verify(course.getCoefficient().getValue().getFr().getValue()
     // .equals("\n<p>Capitalisation : Non</p>\n<br/>"));
     // LOGGER.info(course.getCoefficient().getValue().getFr().getValue());
     final ImmutableSet<Person> teachers = cache.getCourseTeachers(course.getCourseID()).values();
+    // Verify.verify(teachers.isEmpty() == courseName.equals("Mémoire"), courseName);
     if (!teachers.isEmpty()) {
       final String names = teachers.stream()
           .map(t -> t.getGivenName().getValue() + " " + t.getFamilyName().getValue())
