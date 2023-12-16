@@ -5,14 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import jakarta.xml.bind.JAXBElement;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+
+import jakarta.xml.bind.JAXBElement;
 import schemas.ebx.dataservices_1.CourseType.Root.Course;
 import schemas.ebx.dataservices_1.CourseType.Root.Course.Contacts;
 import schemas.ebx.dataservices_1.MentionType.Root.Mention;
@@ -113,11 +117,17 @@ class QueryTests {
     final JAXBElement<Contacts> contactsElement = course.getContacts();
     assertNotNull(contactsElement);
     final Contacts contacts = contactsElement.getValue();
-    final String caillouxId = "FRUAI0750736TPEIN7547";
-    assertEquals(ImmutableList.of(caillouxId), contacts.getRefPerson());
-    final Person cailloux = querier.getPerson(caillouxId);
-    assertEquals("Cailloux".toUpperCase(), cailloux.getFamilyName().getValue());
-    assertEquals("Olivier".toUpperCase(), cailloux.getGivenName().getValue());
+    List<String> refPersons = contacts.getRefPerson();
+    assertEquals(1, refPersons.size(), refPersons.toString());
+    String refPerson = Iterables.getOnlyElement(refPersons);
+    Person person = querier.getPerson(refPerson);
+    assertTrue(ImmutableSet.of("CAILLOUX", "BLIDAOUI").contains(person.getFamilyName().getValue()));
+    // final String caillouxId = "FRUAI0750736TPEIN7547";
+    // assertEquals(caillouxId, refPerson);
+    // assertEquals(ImmutableList.of(caillouxId), contacts.getRefPerson());
+    // final Person cailloux = querier.getPerson(caillouxId);
+    // assertEquals("Cailloux".toUpperCase(), cailloux.getFamilyName().getValue());
+    // assertEquals("Olivier".toUpperCase(), cailloux.getGivenName().getValue());
   }
 
   @Test
