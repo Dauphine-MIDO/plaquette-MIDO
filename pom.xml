@@ -7,7 +7,7 @@
 		<version>0.0.20</version>
 	</parent>
 	<artifactId>plaquette-mido</artifactId>
-	<version>0.0.13</version>
+	<version>0.0.14-SNAPSHOT</version>
 
 	<profiles>
 		<profile>
@@ -127,7 +127,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.4.5</version>
+			<version>1.4.14</version>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
