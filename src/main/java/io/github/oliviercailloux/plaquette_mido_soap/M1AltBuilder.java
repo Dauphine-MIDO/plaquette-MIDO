@@ -279,7 +279,7 @@ public class M1AltBuilder {
     Verify.verify(volume.equals("0") == courseName.equals("Mémoire"), courseName);
     final String volumeText = volume.equals("0") ? "" : volume + " h" + " ; ";
     writer.paragraph(volumeText + course.getEcts().getValue() + " ECTS");
-    
+
     Verify.verify(course.getAdmissionInfo() == null);
     // Verify.verify(course.getCoefficient().getValue().getFr().getValue()
     // .equals("\n<p>Capitalisation : Non</p>\n<br/>"));
@@ -299,8 +299,8 @@ public class M1AltBuilder {
     Verify.verify(course.getLevel() == null);
     Verify.verify(course.getLevelLang() == null);
     Verify.verify(
-        ImmutableSet.of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID, MAIN_MANAGER_4_PERSON_ID)
-            .contains(course.getManagingTeacher().getValue()),
+        ImmutableSet.of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID,
+            MAIN_MANAGER_4_PERSON_ID).contains(course.getManagingTeacher().getValue()),
         valueOpt(course.getManagingTeacher()).toString());
     Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr"))
         || course.getTeachingLang().equals(ImmutableList.of("fr+en")));
