@@ -52,16 +52,18 @@ public class M1AltBuilder {
    * Wendy
    */
   public static final String MAIN_MANAGER_PERSON_ID = "FRUAI0750736TPEIN1122";
-
   /**
    * Frédéric
    */
   public static final String MAIN_MANAGER_2_PERSON_ID = "FRUAI0750736TPEIN711";
-
   /**
    * Ouissem SAFRAOU
    */
   public static final String MAIN_MANAGER_3_PERSON_ID = "FRUAI0750736TPEIN14902";
+  /**
+   * Does not exist!
+   */
+  public static final String MAIN_MANAGER_4_PERSON_ID = "FRUAI0750736TPEIN15575";
 
   public static final String PROGRAM_IDENT = "PRA4AMIA-100";
 
@@ -297,7 +299,7 @@ public class M1AltBuilder {
     Verify.verify(course.getLevel() == null);
     Verify.verify(course.getLevelLang() == null);
     Verify.verify(
-        ImmutableSet.of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID)
+        ImmutableSet.of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID, MAIN_MANAGER_4_PERSON_ID)
             .contains(course.getManagingTeacher().getValue()),
         valueOpt(course.getManagingTeacher()).toString());
     Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr"))
