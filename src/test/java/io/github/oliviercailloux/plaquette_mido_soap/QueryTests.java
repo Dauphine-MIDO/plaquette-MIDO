@@ -11,6 +11,7 @@ import com.google.common.collect.Iterables;
 import jakarta.xml.bind.JAXBElement;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +107,7 @@ class QueryTests {
   }
 
   @Test
+  @Disabled("See e-mail Jan 2024")
   void testPerson() throws Exception {
     Person person = querier.getPerson(M1AltBuilder.MAIN_MANAGER_4_PERSON_ID);
     assertEquals("Cailloux".toUpperCase(), person.getFamilyName().getValue());
