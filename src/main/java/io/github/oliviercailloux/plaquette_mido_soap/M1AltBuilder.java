@@ -64,6 +64,7 @@ public class M1AltBuilder {
    * Does not exist!
    */
   public static final String MAIN_MANAGER_4_PERSON_ID = "FRUAI0750736TPEIN15575";
+  public static final String MAIN_MANAGER_5_PERSON_ID = "FRUAI0750736TPEIN13667";
 
   public static final String PROGRAM_IDENT = "PRA4AMIA-100";
 
@@ -300,7 +301,7 @@ public class M1AltBuilder {
     Verify.verify(course.getLevelLang() == null);
     Verify.verify(
         ImmutableSet.of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID,
-            MAIN_MANAGER_4_PERSON_ID).contains(course.getManagingTeacher().getValue()),
+        MAIN_MANAGER_4_PERSON_ID, MAIN_MANAGER_5_PERSON_ID).contains(course.getManagingTeacher().getValue()),
         valueOpt(course.getManagingTeacher()).toString());
     Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr"))
         || course.getTeachingLang().equals(ImmutableList.of("fr+en")));
