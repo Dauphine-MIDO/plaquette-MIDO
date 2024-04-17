@@ -51,6 +51,7 @@ class QueryTests {
         querier.getPersons(String.format("personID = '%s' or personID = '%s'",
             "FRUAI0750736TPEIN7547", "FRUAI0750736TPEIN7547"));
     assertTrue(persons.size() == 1);
+    LOGGER.info("Person: {}.", Iterables.getOnlyElement(persons).getFamilyName().getValue());
   }
 
   @Test
@@ -112,7 +113,7 @@ class QueryTests {
     Person person = querier.getPerson(M1AltBuilder.MAIN_MANAGER_4_PERSON_ID);
     assertEquals("Cailloux".toUpperCase(), person.getFamilyName().getValue());
   }
-  
+
   @Test
   void testCourseJavaObject() throws Exception {
     final Course course = querier.getCourse("FRUAI0750736TCOENA3AMIA-100-S6L1C1");
