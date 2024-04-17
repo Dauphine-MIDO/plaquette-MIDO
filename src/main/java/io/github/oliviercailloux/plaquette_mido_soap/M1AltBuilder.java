@@ -300,8 +300,10 @@ public class M1AltBuilder {
     Verify.verify(course.getLevel() == null);
     Verify.verify(course.getLevelLang() == null);
     Verify.verify(
-        ImmutableSet.of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID,
-        MAIN_MANAGER_4_PERSON_ID, MAIN_MANAGER_5_PERSON_ID).contains(course.getManagingTeacher().getValue()),
+        ImmutableSet
+            .of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID,
+                MAIN_MANAGER_4_PERSON_ID, MAIN_MANAGER_5_PERSON_ID)
+            .contains(course.getManagingTeacher().getValue()),
         valueOpt(course.getManagingTeacher()).toString());
     Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr"))
         || course.getTeachingLang().equals(ImmutableList.of("fr+en")));
