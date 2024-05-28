@@ -50,23 +50,6 @@ public class M1AltBuilder {
   private static final boolean WRITE_HTML = false;
 
   public static final String MENTION_ID = "FRUAI0750736TPRMEA5IFO";
-  /**
-   * Wendy
-   */
-  public static final String MAIN_MANAGER_PERSON_ID = "FRUAI0750736TPEIN1122";
-  /**
-   * Frédéric
-   */
-  public static final String MAIN_MANAGER_2_PERSON_ID = "FRUAI0750736TPEIN711";
-  /**
-   * Ouissem SAFRAOU
-   */
-  public static final String MAIN_MANAGER_3_PERSON_ID = "FRUAI0750736TPEIN14902";
-  /**
-   * Does not exist!
-   */
-  public static final String MAIN_MANAGER_4_PERSON_ID = "FRUAI0750736TPEIN15575";
-  public static final String MAIN_MANAGER_5_PERSON_ID = "FRUAI0750736TPEIN13667";
 
   public static final String PROGRAM_IDENT = "PRA4AMIA-100";
 
