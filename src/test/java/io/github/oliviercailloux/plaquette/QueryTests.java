@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.plaquette_mido_soap;
+package io.github.oliviercailloux.plaquette;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
