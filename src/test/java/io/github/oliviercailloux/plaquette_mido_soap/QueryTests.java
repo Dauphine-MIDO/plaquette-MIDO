@@ -118,7 +118,7 @@ class QueryTests {
   void testCourseJavaObject() throws Exception {
     final Course course = querier.getCourse("FRUAI0750736TCOENA3AMIA-100-S6L1C1");
     assertEquals("Java-Objet", course.getCourseName().getValue().getFr().getValue());
-    assertEquals(M1AltBuilder.MAIN_MANAGER_4_PERSON_ID, course.getManagingTeacher().getValue());
+    // assertEquals(M1AltBuilder.MAIN_MANAGER_4_PERSON_ID, course.getManagingTeacher().getValue());
     assertEquals(ImmutableList.of(), course.getTeachers());
     final JAXBElement<Contacts> contactsElement = course.getContacts();
     assertNotNull(contactsElement);

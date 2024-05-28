@@ -1,5 +1,7 @@
 package io.github.oliviercailloux.plaquette_mido_soap;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -299,12 +301,14 @@ public class M1AltBuilder {
     Verify.verify(course.getFormOfTeaching() == null);
     Verify.verify(course.getLevel() == null);
     Verify.verify(course.getLevelLang() == null);
-    Verify.verify(
-        ImmutableSet
-            .of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID,
-                MAIN_MANAGER_4_PERSON_ID, MAIN_MANAGER_5_PERSON_ID)
-            .contains(course.getManagingTeacher().getValue()),
-        valueOpt(course.getManagingTeacher()).toString());
+    Optional<String> managingTeacherOpt = valueOpt(course.getManagingTeacher());
+    Verify.verify(managingTeacherOpt.isEmpty(), managingTeacherOpt.toString());
+    // Verify.verify(
+    //     ImmutableSet
+    //         .of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID,
+    //             MAIN_MANAGER_4_PERSON_ID, MAIN_MANAGER_5_PERSON_ID)
+    //         .contains(course.getManagingTeacher().getValue()),
+    //     managingTeacherOpt.toString());
     Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr"))
         || course.getTeachingLang().equals(ImmutableList.of("fr+en")));
     Verify.verify(course.getTeachers().isEmpty());
