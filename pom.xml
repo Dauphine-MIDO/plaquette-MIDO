@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.github.oliviercailloux</groupId>
 		<artifactId>pom</artifactId>
-		<version>0.0.20</version>
+		<version>0.0.22</version>
 	</parent>
 	<artifactId>plaquette-mido</artifactId>
 	<version>0.0.17-SNAPSHOT</version>
