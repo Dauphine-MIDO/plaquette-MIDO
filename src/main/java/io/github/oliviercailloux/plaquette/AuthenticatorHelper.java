@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.plaquette_mido_soap;
+package io.github.oliviercailloux.plaquette;
 
 import io.github.oliviercailloux.jaris.credentials.Credentials;
 import io.github.oliviercailloux.jaris.credentials.CredentialsReader;
