@@ -111,13 +111,6 @@ class QueryTests {
   }
 
   @Test
-  @Disabled("See e-mail Jan 2024")
-  void testPerson() throws Exception {
-    Person person = querier.getPerson(M1AltBuilder.MAIN_MANAGER_4_PERSON_ID);
-    assertEquals("Cailloux".toUpperCase(), person.getFamilyName().getValue());
-  }
-
-  @Test
   void testCourseJavaObject() throws Exception {
     final Course course = querier.getCourse("FRUAI0750736TCOENA3AMIA-100-S6L1C1");
     assertEquals("Java-Objet", course.getCourseName().getValue().getFr().getValue());
