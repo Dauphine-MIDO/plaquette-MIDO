@@ -78,8 +78,6 @@
 			<plugin>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<configuration>
-					<!-- Do not report warnings (about Javadoc) to the console. -->
-					<consoleOutput>false</consoleOutput>
 					<!-- Ignore generated (JAX-B) code. -->
 					<sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
 				</configuration>
