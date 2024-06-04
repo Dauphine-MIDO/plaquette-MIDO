@@ -3,6 +3,7 @@ package io.github.oliviercailloux.plaquette;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -302,13 +303,12 @@ public class M1AltBuilder {
     Verify.verify(course.getLevel() == null);
     Verify.verify(course.getLevelLang() == null);
     Optional<String> managingTeacherOpt = valueOpt(course.getManagingTeacher());
-    Verify.verify(managingTeacherOpt.isEmpty(), managingTeacherOpt.toString());
-    // Verify.verify(
-    //     ImmutableSet
-    //         .of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID,
-    //             MAIN_MANAGER_4_PERSON_ID, MAIN_MANAGER_5_PERSON_ID)
-    //         .contains(course.getManagingTeacher().getValue()),
-    //     managingTeacherOpt.toString());
+    String managingTeacher = managingTeacherOpt.orElseThrow(VerifyException::new);
+    Verify.verify(
+        ImmutableSet.of(MAIN_MANAGER_PERSON_ID, MAIN_MANAGER_2_PERSON_ID, MAIN_MANAGER_3_PERSON_ID,
+            MAIN_MANAGER_4_PERSON_ID, MAIN_MANAGER_5_PERSON_ID).contains(managingTeacher),
+        managingTeacherOpt.toString());
+    writer.paragraph("Managing teacher: " + managingTeacher);
     Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr"))
         || course.getTeachingLang().equals(ImmutableList.of("fr+en")));
     Verify.verify(course.getTeachers().isEmpty());
