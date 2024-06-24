@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.MoreFiles;
 import ebx.ebx_dataservices.StandardException;
+import io.github.oliviercailloux.jaris.xml.DomHelper;
 import io.github.oliviercailloux.publish.AsciidocWriter;
 import io.github.oliviercailloux.publish.DocBookConformityChecker;
 import io.github.oliviercailloux.publish.DocBookTransformer;
@@ -34,6 +35,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Options;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -358,12 +360,20 @@ public class M1AltBuilder {
         text = "\n\n" + getText(element.childNodes());
       } else if (tag.equals("li")) {
         final List<Node> liChildren = element.childNodes();
-        Verify.verify(liChildren.size() == 1);
-        final Node liChild = liChildren.get(0);
-        Verify.verify(liChild instanceof TextNode);
-        final String inner = ((TextNode) liChild).text();
-        Verify.verify(!inner.isBlank());
-        text = "- " + inner + "\n";
+        if (liChildren.size() == 1) {
+          final Node liChild = liChildren.get(0);
+          Verify.verify(liChild instanceof TextNode);
+          final String inner = ((TextNode) liChild).text();
+          Verify.verify(!inner.isBlank());
+          text = "- " + inner + "\n";
+        } else {
+          String outerHtml = node.outerHtml();
+          Document asDoc = Jsoup.parseBodyFragment(outerHtml);
+          String asString = W3CDom.convert(asDoc).getDocumentElement().getTextContent();
+          // LOGGER.info("Outer: {}.", outerHtml);
+          // LOGGER.info("As string: {}.", asString);
+          text = "- " + asString.replace("\n", "");
+        }
       } else {
         throw new IllegalArgumentException(node.outerHtml());
       }
