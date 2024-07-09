@@ -267,8 +267,14 @@ public class M1AltBuilder {
     final String volume = course.getVolume().getValue();
     Verify.verify(volume.equals("0") == courseName.equals("Mémoire"), courseName);
     final String volumeText = volume.equals("0") ? "" : volume + " h" + " ; ";
-    writer.paragraph(volumeText + course.getEcts().getValue() + " ECTS");
-
+    String shortInfo = volumeText + course.getEcts().getValue() + " ECTS";
+    ImmutableSet<List<String>> otherLangs = ImmutableSet.of(ImmutableList.of("fr+en"), ImmutableList.of("en"));
+    ImmutableSet<List<String>> langs = Sets.<List<String>>union(ImmutableSet.of(ImmutableList.of("fr")), otherLangs).immutableCopy();
+    Verify.verify(langs.contains(course.getTeachingLang()));
+    if(course.getTeachingLang().equals(ImmutableList.of("en"))) {
+      shortInfo += " ; Dispensé en anglais";
+    }
+    writer.paragraph(shortInfo);
     Verify.verify(course.getAdmissionInfo() == null);
     // Verify.verify(course.getCoefficient().getValue().getFr().getValue()
     // .equals("\n<p>Capitalisation : Non</p>\n<br/>"));
@@ -287,8 +293,6 @@ public class M1AltBuilder {
     Verify.verify(course.getFormOfTeaching() == null);
     Verify.verify(course.getLevel() == null);
     Verify.verify(course.getLevelLang() == null);
-    Verify.verify(course.getTeachingLang().equals(ImmutableList.of("fr"))
-        || course.getTeachingLang().equals(ImmutableList.of("fr+en")));
     Verify.verify(course.getTeachers().isEmpty());
     writer.eol();
     final Optional<String> recommendedPrerequisitesOpt =
