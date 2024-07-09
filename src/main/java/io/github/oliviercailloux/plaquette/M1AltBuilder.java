@@ -269,10 +269,12 @@ public class M1AltBuilder {
     Verify.verify(volume.equals("0") == courseName.equals("Mémoire"), courseName);
     final String volumeText = volume.equals("0") ? "" : volume + " h" + " ; ";
     String shortInfo = volumeText + course.getEcts().getValue() + " ECTS";
-    ImmutableSet<List<String>> otherLangs = ImmutableSet.of(ImmutableList.of("fr+en"), ImmutableList.of("en"));
-    ImmutableSet<List<String>> langs = Sets.<List<String>>union(ImmutableSet.of(ImmutableList.of("fr")), otherLangs).immutableCopy();
+    ImmutableSet<List<String>> otherLangs =
+        ImmutableSet.of(ImmutableList.of("fr+en"), ImmutableList.of("en"));
+    ImmutableSet<List<String>> langs = Sets
+        .<List<String>>union(ImmutableSet.of(ImmutableList.of("fr")), otherLangs).immutableCopy();
     Verify.verify(langs.contains(course.getTeachingLang()));
-    if(course.getTeachingLang().equals(ImmutableList.of("en"))) {
+    if (course.getTeachingLang().equals(ImmutableList.of("en"))) {
       shortInfo += " ; Dispensé en anglais";
     }
     writer.paragraph(shortInfo);
