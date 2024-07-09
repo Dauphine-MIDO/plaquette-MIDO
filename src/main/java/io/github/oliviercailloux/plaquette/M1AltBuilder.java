@@ -7,6 +7,7 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.common.io.MoreFiles;
 import ebx.ebx_dataservices.StandardException;
 import io.github.oliviercailloux.jaris.xml.DomHelper;
@@ -213,7 +214,7 @@ public class M1AltBuilder {
     final boolean someMultipleTeachers = cache.getCourses().keySet().stream()
         .map(cache::getCourseTeachers).map(Map::values).map(Collection::size).anyMatch(i -> i >= 2);
     final String resp =
-        someMultipleTeachers ? "Enseignants responsables" : "Enseignant responsable";
+        someMultipleTeachers ? "Enseignant·e·s responsables" : "Enseignant·e responsable";
     writer.table("6, 6, 1", ImmutableList.of("Cours", resp, "ECTS"), summaryBuilder.build());
   }
 
@@ -286,7 +287,7 @@ public class M1AltBuilder {
           .map(t -> t.getGivenName().getValue() + " " + t.getFamilyName().getValue())
           .collect(Collectors.joining("; "));
       final String prefix =
-          teachers.size() == 1 ? "Enseignant responsable : " : "Enseignants responsables : ";
+          teachers.size() == 1 ? "Enseignant·e responsable : " : "Enseignant·e·s responsables : ";
       writer.paragraph(prefix + names);
     }
     Verify.verify(course.getCourseIntroduction() == null);
