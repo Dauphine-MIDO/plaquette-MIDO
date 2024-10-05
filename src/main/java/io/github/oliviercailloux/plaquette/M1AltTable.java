@@ -70,10 +70,11 @@ public class M1AltTable {
     Path file = Paths.get("out.csv");
     try (CsvWriter csv = CsvWriter.builder().build(file)) {
       csv.writeRecord("Title", "ECTS");
-      
+
       ImmutableCollection<Course> courses = cache.getCourses().values();
       for (Course course : courses) {
-        csv.writeRecord(course.getCourseName().getValue().getFr().getValue(), course.getEcts().getValue());
+        csv.writeRecord(course.getCourseName().getValue().getFr().getValue(),
+            course.getEcts().getValue());
       }
     }
   }
