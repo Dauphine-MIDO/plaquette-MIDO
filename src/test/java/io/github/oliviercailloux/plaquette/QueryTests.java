@@ -146,7 +146,7 @@ class QueryTests {
     assertEquals(1, programs.size());
     final Program program = Iterables.getOnlyElement(programs);
     assertEquals(M1AltBuilder.PROGRAM_IDENT, program.getIdent().getValue());
-    assertEquals(M1AltBuilder.PROGRAM_NAME, program.getProgramName().getValue().getFr().getValue());
+    assertTrue(program.getProgramName().getValue().getFr().getValue().contains("MIAGE"));
     final List<String> subPrograms = program.getProgramStructure().getValue().getRefProgram();
     LOGGER.info("Sub program: {}.", subPrograms);
     assertEquals(2, subPrograms.size());

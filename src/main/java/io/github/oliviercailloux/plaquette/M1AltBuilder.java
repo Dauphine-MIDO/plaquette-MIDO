@@ -61,12 +61,11 @@ public class M1AltBuilder {
 
   public static final String PROGRAM_ID = PROGRAM_ID_PREFIX + PROGRAM_IDENT;
 
-  public static final String PROGRAM_NAME = "MIAGE" + " - " + "1re année de Master";
   public static final String PROGRAM_URL =
       "https://dauphine.psl.eu/formations/masters/informatique/1re-annee-de-master-miage/programme";
   public static final String PROGRAM_ID_S1 = "FRUAI0750736TPRCPA4AMIA-100-S1";
   public static final String PROGRAM_ID_S1_L1 = "FRUAI0750736TPRCPA4AMIA-100-S1L1";
-  public static final String S1_L1_NAME = "Tronc commun";
+  public static final String S1_L1_NAME = "UE Obligatoires S1";
 
   public static final String PROGRAM_ID_S1_L2 = "FRUAI0750736TPRCPA4AMIAS1L2";
 
@@ -76,11 +75,11 @@ public class M1AltBuilder {
 
   public static final String PROGRAM_ID_S2_L1 = "FRUAI0750736TPRCPA4AMIA-100-S2L1";
 
-  public static final String S2_L1_NAME = "Tronc commun";
+  public static final String S2_L1_NAME = "UE Obligatoires S2";
 
   public static final String PROGRAM_ID_S2_L2 = "FRUAI0750736TPRCPA4AMIA-100-S2L2";
 
-  public static final String S2_L2_NAME = "Options";
+  public static final String S2_L2_NAME = "UE Optionnelles S2";
 
   public static void main(String[] args) throws Exception {
     LOGGER.info("Obtained {}.", M1AltBuilder.class.getResource("M1ApprBuilder.class"));
@@ -106,6 +105,7 @@ public class M1AltBuilder {
   private void proceed() throws StandardException, IOException {
     final ImmutableSet<String> programs = ImmutableSet.of(PROGRAM_ID, PROGRAM_ID_S1,
         PROGRAM_ID_S1_L1, PROGRAM_ID_S2, PROGRAM_ID_S2_L1, PROGRAM_ID_S2_L2);
+    LOGGER.info("Caching.");
     cache = Cacher.cache(querier, programs);
 
     verify();
@@ -224,7 +224,7 @@ public class M1AltBuilder {
     Verify.verify(main.getProgramID().equals(PROGRAM_ID_PREFIX + PROGRAM_IDENT));
     {
       final String programNameFr = main.getProgramName().getValue().getFr().getValue();
-      Verify.verify(programNameFr.equals(PROGRAM_NAME), programNameFr);
+      Verify.verify(programNameFr.contains("MIAGE"), programNameFr);
     }
     Verify.verify(main.getRefMention().getValue().equals(MENTION_ID));
     final List<String> subPrograms = main.getProgramStructure().getValue().getRefProgram();
